@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>高中大气环流全解（高考完整版）</title>
+<meta name="description" content="高中地理大气环流专题教学页：热力环流、三圈环流、气压带风带、季风、副高雨带、气候类型、非地带性、沃克环流与答题模板。">
+<style>
+/* ========== 设计变量：深浅色主题 ========== */
+:root{
+  --bg:#eef5f3; --bg-soft:#f7fbfa; --card:#ffffff; --text:#17302e; --muted:#55706d;
+  --primary:#0f766e; --primary-dark:#0b5f59; --primary-soft:#d9efec;
+  --accent:#d9480f; --accent-soft:#ffe8d9;
+  --line:#cfe0dd; --hi:#ffe9a8; --shadow:0 2px 10px rgba(16,60,55,.08); --radius:14px;
+}
+html[data-theme="dark"]{
+  --bg:#0e1a19; --bg-soft:#122322; --card:#162b29; --text:#e6f2f0; --muted:#a3bcb8;
+  --primary:#4fd1c5; --primary-dark:#7fe3d9; --primary-soft:#1c3a37;
+  --accent:#ff8a5b; --accent-soft:#3a241c;
+  --line:#2a4744; --hi:#6b5a1f; --shadow:0 2px 10px rgba(0,0,0,.35);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:14px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,sans-serif;line-height:1.75;font-size:16px}
+img,svg{max-width:100%}
+a{color:var(--primary-dark)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip{position:absolute;left:-999px;top:0;background:var(--card);padding:8px 12px;z-index:99}
+.skip:focus{left:8px;top:8px}
+
+/* ========== 顶部 ========== */
+.wrap{max-width:1320px;margin:0 auto;padding:0 18px}
+.site-header{background:linear-gradient(135deg,#0f766e,#0e7490);color:#fff;padding:20px 0 16px;box-shadow:0 4px 18px rgba(9,60,55,.18)}
+.header-top{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap}
+.kicker{margin:0;font-size:.78rem;letter-spacing:2px;opacity:.85}
+.site-header h1{margin:4px 0;font-size:clamp(1.5rem,3.2vw,2.15rem);letter-spacing:1px}
+.sub{margin:0;font-size:.95rem;opacity:.92}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.search-box{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.5);border-radius:10px;padding:3px 10px}
+.search-box input{width:200px;max-width:52vw;border:0;outline:none;background:transparent;color:#fff;font-family:inherit;font-size:.9rem;padding:5px 0}
+.search-box input::placeholder{color:rgba(255,255,255,.82)}
+.btn{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:10px;padding:7px 11px;font-size:.85rem;font-family:inherit;cursor:pointer}
+.btn:hover,.btn:focus-visible{background:rgba(255,255,255,.32)}
+.btn:focus-visible{outline:2px solid #ffd166;outline-offset:2px}
+.search-count{min-height:1.2em;margin:4px 0 0;font-size:.8rem;color:rgba(255,255,255,.92)}
+
+/* ========== 布局与目录 ========== */
+.layout{max-width:1320px;margin:0 auto;padding:18px;display:grid;grid-template-columns:236px minmax(0,1fr);gap:20px;align-items:start}
+.toc{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px}
+.toc-title{margin:4px 8px 8px;font-size:.82rem;letter-spacing:2px;color:var(--muted)}
+.toc ol{list-style:none;margin:0;padding:0}
+.toc li{margin:1px 0}
+.toc a{display:block;padding:6px 9px;border-radius:8px;border-left:3px solid transparent;color:var(--text);text-decoration:none;font-size:.86rem}
+.toc a:hover,.toc a:focus-visible{background:var(--primary-soft);outline:none}
+.toc a.active{background:var(--primary-soft);border-left-color:var(--accent);color:var(--primary-dark);font-weight:700}
+.toc-toggle{display:none;width:100%;padding:9px;border:1px solid var(--line);border-radius:10px;background:var(--primary-soft);color:var(--text);font-family:inherit;font-size:.95rem;cursor:pointer}
+
+/* ========== 知识卡片 ========== */
+.module{margin-bottom:18px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:12px}
+.module>details>summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;cursor:pointer;list-style:none;border-left:6px solid var(--primary);background:linear-gradient(90deg,var(--primary-soft),transparent 70%)}
+.module>details>summary::-webkit-details-marker{display:none}
+.module summary h2{display:flex;align-items:center;gap:8px;flex:1 1 auto;margin:0;font-size:1.1rem;line-height:1.4}
+.num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--primary);color:#fff;font-size:.85rem;flex:none}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{display:inline-block;padding:1px 8px;border-radius:999px;border:1px solid currentColor;font-size:.7rem;line-height:1.7;white-space:nowrap}
+.tag.core{color:#0b5f59;background:rgba(15,118,110,.12)}
+.tag.high{color:#b45309;background:rgba(217,72,15,.12)}
+.tag.ext{color:#6d28d9;background:rgba(109,40,217,.1)}
+.tag.warn{color:#b91c1c;background:rgba(185,28,28,.1)}
+.tag.tpl{color:#1d4ed8;background:rgba(29,78,216,.1)}
+.tag.up{color:#047857;background:rgba(4,120,87,.12)}
+.tag.down{color:#9a3412;background:rgba(154,52,18,.1)}
+.chev{margin-left:auto;color:var(--primary);transition:transform .2s;font-size:1rem}
+details[open] .chev{transform:rotate(90deg)}
+.body{padding:4px 20px 20px}
+.body h3{margin:18px 0 6px;padding-left:9px;border-left:4px solid var(--accent);font-size:1rem}
+.body h4{margin:12px 0 4px;font-size:.95rem;color:var(--primary-dark)}
+.body p{margin:8px 0}
+.body ul,.body ol{margin:6px 0;padding-left:1.35em}
+.body li{margin:3px 0}
+.lead{font-size:1.02rem}
+.muted{color:var(--muted);font-size:.9rem}
+blockquote{margin:10px 0;padding:10px 14px;border-left:4px solid var(--primary);background:var(--bg-soft);border-radius:0 10px 10px 0}
+
+/* 提示框 */
+.callout{margin:12px 0;padding:10px 14px;border-left:4px solid var(--primary);background:var(--primary-soft);border-radius:0 10px 10px 0}
+.callout.warn{border-color:var(--accent);background:var(--accent-soft)}
+.callout.exam{border-color:#b45309;background:rgba(180,83,9,.1)}
+.callout.tpl{border-color:#1d4ed8;background:rgba(29,78,216,.08)}
+.callout strong{color:var(--text)}
+
+/* 网格卡片 */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:12px 0}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
+.mini-card{padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg-soft)}
+.mini-card h4{margin:0 0 6px;color:var(--primary-dark);font-size:.95rem}
+.mini-card p{margin:4px 0;font-size:.92rem}
+
+/* 流程链 */
+.flow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:12px 0}
+.flow .node{padding:6px 11px;border:1px solid var(--line);border-radius:999px;background:var(--primary-soft);font-size:.88rem}
+.flow .arrow{color:var(--accent);font-weight:700}
+
+/* 表格 */
+.table-wrap{width:100%;overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:720px}
+caption{caption-side:top;text-align:left;padding:9px 12px;font-weight:700;color:var(--primary-dark);background:var(--bg-soft);border-bottom:1px solid var(--line)}
+th,td{padding:8px 10px;border:1px solid var(--line);vertical-align:top;text-align:left}
+thead th{position:sticky;top:0;z-index:2;background:#0f766e;color:#fff;font-weight:700}
+tbody tr:nth-child(even){background:var(--bg-soft)}
+td.hl{background:var(--accent-soft);font-weight:600}
+.table-note{margin:6px 0 14px;font-size:.86rem;color:var(--muted)}
+
+/* 图示 */
+.fig{margin:16px 0;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg-soft)}
+.fig svg{display:block;width:100%;height:auto;background:transparent}
+.fig figcaption{margin-top:8px;text-align:center;font-size:.86rem;color:var(--muted)}
+.readpoints{margin-top:8px;padding:8px 10px;border-top:1px dashed var(--line);font-size:.87rem}
+.readpoints strong{color:var(--accent)}
+
+/* 搜索命中 */
+mark.hit{background:var(--hi);color:inherit;padding:0 1px;border-radius:2px}
+.module[hidden]{display:none}
+
+/* 回到顶部 */
+.backtop{position:fixed;right:18px;bottom:18px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--primary);color:#fff;font-size:1.15rem;cursor:pointer;box-shadow:var(--shadow);opacity:0;visibility:hidden;transition:.2s;z-index:50}
+.backtop.show{opacity:1;visibility:visible}
+.backtop:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* 页脚 */
+.site-footer{margin:26px auto 0;padding:18px;text-align:center;color:var(--muted);font-size:.88rem;border-top:1px solid var(--line)}
+
+/* ========== 响应式 ========== */
+@media (max-width:900px){
+  .layout{display:block;padding:14px}
+  .toc{position:static;max-height:none;margin-bottom:16px;padding:8px}
+  .toc-title{display:none}
+  .toc-toggle{display:block}
+  .toc ol{display:none;margin-top:8px}
+  .toc ol.open{display:block}
+  .grid2,.grid3{grid-template-columns:1fr}
+}
+@media (max-width:480px){
+  body{font-size:15px}
+  .header-top{align-items:stretch}
+  .toolbar{width:100%}
+  .search-box{flex:1 1 100%}
+  .search-box input{width:100%}
+  .btn{padding:6px 9px;font-size:.8rem}
+  .body{padding:2px 13px 16px}
+  .module>details>summary{padding:10px 13px}
+  .module summary h2{font-size:1rem}
+  .tags{order:3;width:100%}
+  .chev{margin-left:0}
+}
+
+/* ========== 打印 ========== */
+@media print{
+  @page{margin:12mm}
+  html,body{background:#fff !important;color:#000 !important;font-size:11pt}
+  .site-header{background:#fff !important;color:#000 !important;box-shadow:none;padding:0 0 6px;border-bottom:2px solid #000}
+  .site-header h1{font-size:18pt}
+  .toolbar,.search-box,.search-count,.toc,.toc-toggle,.backtop,.skip,button{display:none !important}
+  .layout{display:block;padding:0;max-width:none}
+  .module{break-inside:avoid;page-break-inside:avoid;box-shadow:none;border:1px solid #666;margin-bottom:10px}
+  .module>details>summary{background:none;border-left:4px solid #000}
+  .chev{display:none}
+  .body{padding:4px 10px 10px}
+  .fig{break-inside:avoid;page-break-inside:avoid;background:#fff}
+  .table-wrap{overflow:visible;border:1px solid #666;break-inside:auto}
+  table{font-size:8.5pt;min-width:0}
+  thead{display:table-header-group}
+  thead th{background:#ddd !important;color:#000 !important;position:static}
+  tr,td,th{break-inside:avoid;page-break-inside:avoid}
+  tbody tr:nth-child(even){background:#f2f2f2 !important}
+  .callout,.mini-card,.flow .node{background:#fff !important;border:1px solid #666}
+  a{color:#000;text-decoration:none}
+  .tag{border:1px solid #555;color:#000 !important;background:#fff !important}
+  .num{background:#000;color:#fff}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+
+<!-- ========== 页头 ========== -->
+<header class="site-header">
+  <div class="wrap">
+    <div class="header-top">
+      <div class="brand">
+        <p class="kicker">高中地理 · 自然地理核心专题</p>
+        <h1>高中大气环流全解</h1>
+        <p class="sub">从热力环流到三圈环流 · 从季风副高到气候输出 · 高考完整版</p>
+      </div>
+      <div class="toolbar" role="group" aria-label="页面工具">
+        <div class="search-box">
+          <span aria-hidden="true">🔍</span>
+          <label class="sr-only" for="search">搜索知识点</label>
+          <input id="search" type="search" placeholder="搜索：副高、信风、非地带性" autocomplete="off">
+        </div>
+        <button class="btn" id="printBtn" type="button" aria-label="打印本页">🖨 打印</button>
+        <button class="btn" id="expandBtn" type="button" aria-label="展开全部知识模块">展开全部</button>
+        <button class="btn" id="collapseBtn" type="button" aria-label="收起全部知识模块">收起全部</button>
+        <button class="btn" id="themeBtn" type="button" aria-label="切换深浅色主题" aria-pressed="false">🌙 深色</button>
+        <button class="btn" id="topBtn" type="button" aria-label="回到页面顶部">↑ 顶部</button>
+      </div>
+    </div>
+    <p class="search-count" id="searchCount" role="status" aria-live="polite"></p>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- ========== 侧边目录 ========== -->
+  <nav class="toc" id="toc" aria-label="章节目录">
+    <button class="toc-toggle" id="tocToggle" type="button" aria-expanded="false" aria-controls="tocList">☰ 章节目录</button>
+    <p class="toc-title">章 节 目 录</p>
+    <ol id="tocList">
+      <li><a href="#s0">0 考纲定位与学习目标</a></li>
+      <li><a href="#s1">1 概念、尺度与意义</a></li>
+      <li><a href="#s2">2 热力环流原理</a></li>
+      <li><a href="#s3">3 三圈环流</a></li>
+      <li><a href="#s4">4 七气压带六风带</a></li>
+      <li><a href="#s5">5 气压带风带季节移动</a></li>
+      <li><a href="#s6">6 海陆分布与活动中心</a></li>
+      <li><a href="#s7">7 季风环流</a></li>
+      <li><a href="#s8">8 副热带高压与雨带</a></li>
+      <li><a href="#s9">9 大气环流与降水</a></li>
+      <li><a href="#s10">10 气候类型全表</a></li>
+      <li><a href="#s11">11 非地带性特殊情况</a></li>
+      <li><a href="#s12">12 局地环流与修正</a></li>
+      <li><a href="#s13">13 沃克环流与 ENSO</a></li>
+      <li><a href="#s14">14 判读方法与答题模板</a></li>
+      <li><a href="#s15">15 高频易错清单</a></li>
+      <li><a href="#s16">16 知识网络与因果链</a></li>
+    </ol>
+  </nav>
+
+  <main id="main">
+    <!-- ========== 0 考纲定位 ========== -->
+    <section class="module" id="s0" aria-labelledby="h0">
+      <details open>
+        <summary>
+          <h2 id="h0"><span class="num">0</span>考纲定位与学习目标</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag high">高考高频</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <p class="lead">大气环流是自然地理环境中最核心的“骨架”之一。高考对本专题的考查很少孤立设问，通常把它放进“气候成因—天气变化—区域旱涝—海气相互作用”的综合链条中，要求由气压带、风带的位置与性质，推导气温、降水、天气及农业生态后果。</p>
+          <div class="callout exam"><strong>考纲定位：</strong>大气环流是高考高频考点，常与气候类型、天气系统、海气相互作用、区域旱涝结合考查；既可单独考原理，也可作为综合题的前置条件。</div>
+          <h3>学习目标</h3>
+          <ol>
+            <li>理解热力环流的完整因果链，会用等压面判断高低压。</li>
+            <li>掌握三圈环流的形成条件、三个环流圈与七个气压带、六个风带。</li>
+            <li>会判读任意半球、任意季节的风向与干湿属性。</li>
+            <li>能解释季风环流、副高雨带、非地带性特殊现象与局地环流修正。</li>
+            <li>能完成气候类型判读、特点描述与成因分析。</li>
+            <li>能写出“环流—水汽—抬升—降水—影响”的综合题因果链。</li>
+          </ol>
+          <h3>内容深度标注</h3>
+          <div class="grid3">
+            <div class="mini-card"><h4><span class="tag core">必考核心</span></h4><p>热力环流、三圈环流、气压带风带、季风、主要气候类型。</p></div>
+            <div class="mini-card"><h4><span class="tag high">高考高频</span></h4><p>副高与我国雨带、非地带性、沃克环流与 ENSO、局地环流修正。</p></div>
+            <div class="mini-card"><h4><span class="tag ext">拓展了解</span></h4><p>沃克环流的海洋动力细节、ENSO 的指数监测与长周期变化。</p></div>
+          </div>
+          <div class="callout"><strong>使用建议：</strong>先按目录通读一遍建立框架，再用搜索框定位关键词；复习时把每个气压带、风带都翻译成“上升还是下沉—多雨还是少雨—对区域意味着什么”。</div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 1 概念、尺度与意义 ========== -->
+    <section class="module" id="s1" aria-labelledby="h1">
+      <details open>
+        <summary>
+          <h2 id="h1"><span class="num">1</span>大气环流：概念、尺度与意义</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag high">概念基础</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <blockquote><strong>定义：</strong>大气环流是地球上各种规模大气运动的综合表现，包括行星风系、季风环流和地方性环流。</blockquote>
+          <h3>三个尺度</h3>
+          <div class="table-wrap">
+            <table>
+              <caption>大气环流的三个尺度及其高考呈现方式</caption>
+              <thead><tr><th>尺度</th><th>主要系统</th><th>空间与时间特征</th><th>高考呈现方式</th></tr></thead>
+              <tbody>
+                <tr><td class="hl">行星尺度</td><td>三圈环流、气压带风带、副热带高压、急流</td><td>全球或半球范围，常年稳定存在</td><td>作为气候成因的背景条件，要求判断风带性质与季节移动</td></tr>
+                <tr><td class="hl">海陆尺度</td><td>季风环流、大气活动中心</td><td>大陆与大洋之间，随季节反向</td><td>东亚、南亚季风成因与强弱比较，我国雨带与旱涝</td></tr>
+                <tr><td class="hl">局地尺度</td><td>海陆风、山谷风、城市热岛、湖陆风、冰川风</td><td>几千米到几十千米，昼夜变化明显</td><td>解释某地昼夜风向反转、背景环流被局地环流修正</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>根本能源与形成基础</h3>
+          <p><strong>根本能源是太阳辐射。</strong>高低纬度获得的太阳辐射量不同，形成高低纬之间的热量差额；赤道多余热量向北、向南输送，极地亏损热量则通过大气和洋流补充。地转偏向力使气流发生偏转，海陆热力差异使纬向气压带被切断，地形与洋流再作局部修正。</p>
+          <h3>作用</h3>
+          <ul>
+            <li>促进高低纬之间、海陆之间的热量与水汽交换。</li>
+            <li>调整全球水热分布，缓解高低纬温差。</li>
+            <li>是天气变化和气候形成的基础背景，也是水循环的重要动力。</li>
+            <li>通过风带影响洋流、航海、风力发电与污染物扩散。</li>
+          </ul>
+          <div class="callout"><strong>逻辑主线：</strong>太阳辐射差异 → 高低纬受热不均 → 大气运动 → 三圈环流 → 气压带风带 → 叠加季节移动、海陆差异、地形洋流 → 气候类型输出。</div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 2 热力环流 ========== -->
+    <section class="module" id="s2" aria-labelledby="h2">
+      <details open>
+        <summary>
+          <h2 id="h2"><span class="num">2</span>热力环流原理与局地实例</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag up">上升</span><span class="tag down">下沉</span><span class="tag high">高考高频</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <h3>因果链</h3>
+          <div class="flow">
+            <span class="node">地面冷热不均</span><span class="arrow">→</span>
+            <span class="node">空气垂直运动（热上升、冷下沉）</span><span class="arrow">→</span>
+            <span class="node">同一水平面产生气压差</span><span class="arrow">→</span>
+            <span class="node">空气水平运动（风）</span>
+          </div>
+          <h3>判读铁律</h3>
+          <ul>
+            <li>近地面：热处为低压，冷处为高压。</li>
+            <li>高空：气压性质与近地面相反，热处高空为高压，冷处高空为低压。</li>
+            <li>等压面凸向高处为高压，凸向低处为低压；近地面与高空的凸向相反。</li>
+            <li>水平方向上，风始终由高压吹向低压；垂直方向上，上升处近地面低压、下沉处近地面高压。</li>
+          </ul>
+
+          <figure class="fig">
+            <svg viewBox="0 0 720 360" role="img" aria-labelledby="tHeat dHeat">
+              <title id="tHeat">热力环流示意图</title>
+              <desc id="dHeat">地面冷热不均，热处空气上升、冷处空气下沉，近地面和高空形成相反的气压分布，空气由高压水平流向低压。</desc>
+              <defs>
+                <marker id="mHeatA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+                <marker id="mHeatB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/></marker>
+              </defs>
+              <rect x="30" y="25" width="660" height="275" fill="var(--primary-soft)" opacity=".5"/>
+              <rect x="30" y="300" width="660" height="20" fill="var(--line)"/>
+              <text x="360" y="342" text-anchor="middle" font-size="14" fill="var(--text)">地面：冷热不均</text>
+              <rect x="70" y="45" width="190" height="255" fill="var(--primary)" opacity=".1"/>
+              <rect x="460" y="45" width="190" height="255" fill="var(--accent)" opacity=".12"/>
+              <text x="165" y="72" text-anchor="middle" font-size="16" fill="var(--primary-dark)" font-weight="700">冷</text>
+              <text x="555" y="72" text-anchor="middle" font-size="16" fill="var(--accent)" font-weight="700">热</text>
+              <line x1="165" y1="215" x2="165" y2="120" stroke="var(--primary)" stroke-width="4" marker-end="url(#mHeatB)"/>
+              <line x1="555" y1="120" x2="555" y2="215" stroke="var(--accent)" stroke-width="4" marker-end="url(#mHeatA)"/>
+              <text x="180" y="170" font-size="13" fill="var(--text)">下沉</text>
+              <text x="570" y="170" font-size="13" fill="var(--text)">上升</text>
+              <text x="150" y="105" font-size="18" fill="var(--primary-dark)" font-weight="700">L</text>
+              <text x="540" y="105" font-size="18" fill="var(--accent)" font-weight="700">H</text>
+              <text x="150" y="252" font-size="18" fill="var(--primary-dark)" font-weight="700">H</text>
+              <text x="540" y="252" font-size="18" fill="var(--accent)" font-weight="700">L</text>
+              <line x1="220" y1="285" x2="470" y2="285" stroke="var(--primary)" stroke-width="4" marker-end="url(#mHeatB)"/>
+              <text x="345" y="278" text-anchor="middle" font-size="13" fill="var(--text)">近地面风：高压 → 低压</text>
+              <line x1="470" y1="88" x2="220" y2="88" stroke="var(--accent)" stroke-width="4" marker-end="url(#mHeatA)"/>
+              <text x="345" y="80" text-anchor="middle" font-size="13" fill="var(--text)">高空风：高压 → 低压</text>
+              <path d="M60,235 Q165,205 270,235 T480,235 Q555,265 660,235" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="6 5"/>
+              <text x="290" y="228" font-size="12" fill="var(--muted)">等压面</text>
+            </svg>
+            <figcaption>图1　热力环流示意：冷热不均 → 垂直运动 → 水平气压差 → 风</figcaption>
+            <div class="readpoints"><strong>读图要点：</strong>先找冷热源，再画垂直箭头；近地面“热低压、冷高压”，高空相反；最后沿水平方向由高压指向低压画风。等压面向上凸为高压，向下凹为低压。</div>
+          </figure>
+
+          <h3>局地热力环流实例</h3>
+          <div class="table-wrap">
+            <table>
+              <caption>常见局地热力环流的风向与成因</caption>
+              <thead><tr><th>现象</th><th>时间或条件</th><th>近地面风向</th><th>成因要点</th></tr></thead>
+              <tbody>
+                <tr><td class="hl">海陆风</td><td>白天</td><td>海洋 → 陆地（海风）</td><td>陆地升温快形成低压，海洋为高压</td></tr>
+                <tr><td class="hl">海陆风</td><td>夜晚</td><td>陆地 → 海洋（陆风）</td><td>陆地降温快形成高压，海洋为低压</td></tr>
+                <tr><td class="hl">山谷风</td><td>白天</td><td>谷底 → 山坡（谷风）</td><td>山坡升温快，气流沿坡上升</td></tr>
+                <tr><td class="hl">山谷风</td><td>夜晚</td><td>山坡 → 谷底（山风）</td><td>山坡冷却快，冷空气沿坡下沉</td></tr>
+                <tr><td class="hl">城市热岛环流</td><td>昼夜均可</td><td>郊区 → 城市</td><td>城市气温高、近地面为热低压，郊区为冷高压</td></tr>
+                <tr><td class="hl">湖陆风</td><td>白天与夜晚相反</td><td>白天湖面 → 陆地；夜晚陆地 → 湖面</td><td>水体与陆地比热容差异，湖面温度变化慢</td></tr>
+                <tr><td class="hl">绿洲—沙漠风</td><td>白天与夜晚相反</td><td>白天绿洲 → 沙漠；夜晚沙漠 → 绿洲</td><td>沙漠升温降温都快，绿洲热惯性大</td></tr>
+                <tr><td class="hl">冰川风</td><td>常出现在冰川表面</td><td>沿冰面由高处向低处下沉</td><td>冰川表面强烈冷却，冷空气密度大沿坡下沉</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout"><strong>与三圈环流的联系：</strong>热力环流是三圈环流的“语法基础”，但三圈环流还叠加了地转偏向力，因此不能把赤道上升、极地下沉的单圈模式直接当成真实环流。</div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 3 三圈环流 ========== -->
+    <section class="module" id="s3" aria-labelledby="h3">
+      <details open>
+        <summary>
+          <h2 id="h3"><span class="num">3</span>三圈环流：从单圈到三圈</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag up">上升</span><span class="tag down">下沉</span><span class="tag high">高考高频</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <h3>单圈环流：一个理想模型</h3>
+          <p>假设地表性质均一、地球不自转，赤道受热上升、极地冷却下沉，高空由赤道流向极地、近地面由极地流向赤道，形成南北向闭合的热力环流。单圈环流只解释了高低纬温差，没有考虑地转偏向力，因此与真实情况不符。</p>
+          <h3>三圈环流的形成条件</h3>
+          <ul>
+            <li>前提：地表性质均一，太阳直射赤道。</li>
+            <li>根本因素：高低纬受热不均。</li>
+            <li>重要因素：地转偏向力，使南北向气流发生偏转，单圈环流被“拆”成三圈。</li>
+          </ul>
+          <div class="grid3">
+            <div class="mini-card"><h4>哈德莱环流（0°—30°）</h4><p>热力驱动的正环流。赤道空气受热上升，高空向高纬流动并偏转，在30°附近堆积下沉，近地面返回赤道形成信风。</p></div>
+            <div class="mini-card"><h4>费雷尔环流（30°—60°）</h4><p>动力维持的逆环流。副高近地面气流流向高纬形成西风，与极地东风在60°附近交汇抬升，高空返回副高。</p></div>
+            <div class="mini-card"><h4>极地环流（60°—90°）</h4><p>热力驱动的正环流。极地冷却下沉，近地面流向低纬形成极地东风，在60°附近被迫抬升。</p></div>
+          </div>
+          <h3>极锋与副极地低压带</h3>
+          <p>60°附近，暖而轻的盛行西风与冷而重的极地东风相遇，形成极锋。暖空气沿锋面被迫抬升，近地面气压降低，形成副极地低压带。因此副极地低压带的本质是<strong>动力成因的锋面抬升</strong>，不是单纯受热上升。</p>
+          <div class="callout exam"><strong>核心判断：</strong>副热带高压带、副极地低压带为动力成因；赤道低压带、极地高压带为热力成因。这是选择题和综合题的高频陷阱。</div>
+          <div class="callout"><strong>记忆口诀：</strong>赤道升、三十沉、六十抬、极地沉。</div>
+
+          <figure class="fig">
+            <svg viewBox="0 0 760 400" role="img" aria-labelledby="tCell dCell">
+              <title id="tCell">三圈环流示意图</title>
+              <desc id="dCell">北半球从赤道到极地依次为哈德莱环流、费雷尔环流和极地环流，赤道与60度附近上升，30度与极地附近下沉。</desc>
+              <defs>
+                <marker id="mCell" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/></marker>
+                <marker id="mCell2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+              </defs>
+              <rect x="60" y="40" width="640" height="290" fill="var(--primary-soft)" opacity=".35"/>
+              <line x1="60" y1="330" x2="700" y2="330" stroke="var(--text)" stroke-width="2"/>
+              <line x1="250" y1="40" x2="250" y2="330" stroke="var(--muted)" stroke-dasharray="5 5"/>
+              <line x1="450" y1="40" x2="450" y2="330" stroke="var(--muted)" stroke-dasharray="5 5"/>
+              <line x1="650" y1="40" x2="650" y2="330" stroke="var(--muted)" stroke-dasharray="5 5"/>
+              <line x1="90" y1="285" x2="90" y2="130" stroke="var(--accent)" stroke-width="3" marker-end="url(#mCell2)"/>
+              <line x1="110" y1="115" x2="225" y2="115" stroke="var(--primary)" stroke-width="3" marker-end="url(#mCell)"/>
+              <line x1="250" y1="130" x2="250" y2="285" stroke="var(--primary)" stroke-width="3" marker-end="url(#mCell)"/>
+              <line x1="230" y1="300" x2="115" y2="300" stroke="var(--primary)" stroke-width="3" marker-end="url(#mCell)"/>
+              <line x1="450" y1="285" x2="450" y2="130" stroke="var(--accent)" stroke-width="3" marker-end="url(#mCell2)"/>
+              <line x1="430" y1="115" x2="275" y2="115" stroke="var(--primary)" stroke-width="3" marker-end="url(#mCell)"/>
+              <line x1="270" y1="300" x2="425" y2="300" stroke="var(--primary)" stroke-width="3" marker-end="url(#mCell)"/>
+              <line x1="470" y1="115" x2="625" y2="115" stroke="var(--primary)" stroke-width="3" marker-end="url(#mCell)"/>
+              <line x1="650" y1="130" x2="650" y2="285" stroke="var(--primary)" stroke-width="3" marker-end="url(#mCell)"/>
+              <line x1="630" y1="300" x2="475" y2="300" stroke="var(--primary)" stroke-width="3" marker-end="url(#mCell)"/>
+              <text x="170" y="95" text-anchor="middle" font-size="14" fill="var(--primary-dark)" font-weight="700">哈德莱环流</text>
+              <text x="350" y="95" text-anchor="middle" font-size="14" fill="var(--primary-dark)" font-weight="700">费雷尔环流</text>
+              <text x="550" y="95" text-anchor="middle" font-size="14" fill="var(--primary-dark)" font-weight="700">极地环流</text>
+              <text x="170" y="320" text-anchor="middle" font-size="12" fill="var(--text)">东北信风</text>
+              <text x="350" y="320" text-anchor="middle" font-size="12" fill="var(--text)">盛行西风</text>
+              <text x="550" y="320" text-anchor="middle" font-size="12" fill="var(--text)">极地东风</text>
+              <text x="90" y="352" text-anchor="middle" font-size="13" fill="var(--text)">0°</text>
+              <text x="250" y="352" text-anchor="middle" font-size="13" fill="var(--text)">30°N</text>
+              <text x="450" y="352" text-anchor="middle" font-size="13" fill="var(--text)">60°N</text>
+              <text x="650" y="352" text-anchor="middle" font-size="13" fill="var(--text)">90°N</text>
+              <text x="90" y="375" text-anchor="middle" font-size="12" fill="var(--muted)">赤道低压</text>
+              <text x="250" y="375" text-anchor="middle" font-size="12" fill="var(--muted)">副热带高压</text>
+              <text x="450" y="375" text-anchor="middle" font-size="12" fill="var(--muted)">副极地低压</text>
+              <text x="650" y="375" text-anchor="middle" font-size="12" fill="var(--muted)">极地高压</text>
+            </svg>
+            <figcaption>图2　北半球三圈环流与近地面风带示意（南半球对称）</figcaption>
+            <div class="readpoints"><strong>读图要点：</strong>看垂直箭头的上升与下沉位置——0°和60°上升，30°和90°下沉；再看近地面风向：0°—30°为信风，30°—60°为西风，60°—90°为极地东风。南半球风向左右相反。</div>
+          </figure>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 4 七气压带六风带 ========== -->
+    <section class="module" id="s4" aria-labelledby="h4">
+      <details open>
+        <summary>
+          <h2 id="h4"><span class="num">4</span>七个气压带与六个风带</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag up">多雨</span><span class="tag down">干燥</span><span class="tag high">高考高频</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <h3>七个气压带</h3>
+          <p>赤道低压带、北副热带高压带、南副热带高压带、北副极地低压带、南副极地低压带、北极地高压带、南极地高压带。</p>
+          <h3>六个风带</h3>
+          <p>北信风带、南信风带、北盛行西风带、南盛行西风带、北极地东风带、南极地东风带。</p>
+          <div class="grid2">
+            <div class="mini-card"><h4>北半球风向</h4><p>信风：东北风；盛行西风：西南风；极地东风：东北风。</p></div>
+            <div class="mini-card"><h4>南半球风向</h4><p>信风：东南风；盛行西风：西北风；极地东风：东南风。</p></div>
+          </div>
+          <h3>气压带与风带的降水属性</h3>
+          <ul>
+            <li>低压带气流上升，水汽冷却凝结，多雨；高压带气流下沉，增温不易凝结，干燥。</li>
+            <li>西风由较低纬吹向较高纬，温暖湿润；若来自海洋且遇迎风坡，降水丰富，背风侧则干旱。</li>
+            <li>信风一般由较高纬吹向较低纬，气温升高、不易凝结，通常干燥；但大陆东岸迎风坡、叠加暖流时可多雨。</li>
+            <li>极地东风寒冷干燥，降水少。</li>
+          </ul>
+          <div class="callout warn"><strong>干湿判读原则：</strong>不能只看名称，要看气流方向、水汽来源、地形迎风或背风、洋流暖或寒，四者联判。</div>
+
+          <div class="table-wrap">
+            <table>
+              <caption>表1　七个气压带与六个风带综合表</caption>
+              <thead><tr><th>气压带或风带</th><th>纬度</th><th>北半球风向</th><th>南半球风向</th><th>气流性质</th><th>成因类型</th><th>降水倾向</th><th>判读提示</th></tr></thead>
+              <tbody>
+                <tr><td class="hl">赤道低压带</td><td>0°附近</td><td>—</td><td>—</td><td>上升气流</td><td>热力</td><td>多雨</td><td>全年高温多雨，对流旺盛</td></tr>
+                <tr><td class="hl">副热带高压带</td><td>南北纬30°附近</td><td>—</td><td>—</td><td>下沉气流</td><td>动力</td><td>干燥</td><td>炎热少雨，控制区易旱</td></tr>
+                <tr><td class="hl">副极地低压带</td><td>南北纬60°附近</td><td>—</td><td>—</td><td>锋面抬升</td><td>动力</td><td>多雨</td><td>冷暖气流交汇，气旋活跃</td></tr>
+                <tr><td class="hl">极地高压带</td><td>南北纬90°附近</td><td>—</td><td>—</td><td>下沉气流</td><td>热力</td><td>干燥</td><td>终年寒冷，降水稀少</td></tr>
+                <tr><td class="hl">信风带</td><td>0°—30°</td><td>东北风</td><td>东南风</td><td>较高纬流向低纬，升温</td><td>动力（副高流出）</td><td>一般少雨，东岸迎风可多雨</td><td>看水汽来源、地形与洋流</td></tr>
+                <tr><td class="hl">盛行西风带</td><td>30°—60°</td><td>西南风</td><td>西北风</td><td>较低纬流向较高纬，温暖湿润</td><td>动力（副高流出）</td><td>大陆西岸多雨</td><td>西岸迎风多雨，背风少雨</td></tr>
+                <tr><td class="hl">极地东风带</td><td>60°—90°</td><td>东北风</td><td>东南风</td><td>高纬流向低纬，寒冷干燥</td><td>动力（极地高压流出）</td><td>少雨</td><td>寒冷干燥，降水少</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <caption>表2　气压带成因类型辨析表</caption>
+              <thead><tr><th>气压带</th><th>成因类型</th><th>成因解释</th><th>垂直运动</th><th>天气特征</th><th>易错提醒</th></tr></thead>
+              <tbody>
+                <tr><td>赤道低压带</td><td class="hl">热力</td><td>赤道受热多，空气膨胀上升</td><td>上升</td><td>湿热多雨</td><td>不是动力成因</td></tr>
+                <tr><td>副热带高压带</td><td class="hl">动力</td><td>高空气流堆积、下沉</td><td>下沉</td><td>炎热干燥</td><td>由动力下沉形成，不是热力</td></tr>
+                <tr><td>副极地低压带</td><td class="hl">动力</td><td>西风与极地东风交汇，暖空气被迫抬升</td><td>上升</td><td>多阴雨</td><td>极锋抬升，不是热力</td></tr>
+                <tr><td>极地高压带</td><td class="hl">热力</td><td>极地冷却，空气收缩下沉</td><td>下沉</td><td>寒冷干燥</td><td>热力成因，不是动力</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <figure class="fig">
+            <svg viewBox="0 0 760 640" role="img" aria-labelledby="tBelt dBelt">
+              <title id="tBelt">七个气压带与六个风带分布示意图</title>
+              <desc id="dBelt">从北极到南极依次分布极地高压、极地东风、副极地低压、盛行西风、副热带高压、信风、赤道低压，南半球对称分布且风向相反。</desc>
+              <defs>
+                <marker id="mBelt" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+              </defs>
+              <rect x="40" y="40" width="680" height="540" fill="var(--bg-soft)" stroke="var(--line)"/>
+              <rect x="40" y="40" width="680" height="90" fill="var(--primary)" opacity=".08"/>
+              <rect x="40" y="130" width="680" height="90" fill="var(--accent)" opacity=".08"/>
+              <rect x="40" y="220" width="680" height="90" fill="var(--primary)" opacity=".08"/>
+              <rect x="40" y="310" width="680" height="90" fill="var(--accent)" opacity=".12"/>
+              <rect x="40" y="400" width="680" height="90" fill="var(--primary)" opacity=".08"/>
+              <rect x="40" y="490" width="680" height="90" fill="var(--accent)" opacity=".08"/>
+              <line x1="40" y1="40" x2="720" y2="40" stroke="var(--line)"/>
+              <line x1="40" y1="130" x2="720" y2="130" stroke="var(--line)"/>
+              <line x1="40" y1="220" x2="720" y2="220" stroke="var(--line)"/>
+              <line x1="40" y1="310" x2="720" y2="310" stroke="var(--line)"/>
+              <line x1="40" y1="400" x2="720" y2="400" stroke="var(--line)"/>
+              <line x1="40" y1="490" x2="720" y2="490" stroke="var(--line)"/>
+              <line x1="40" y1="580" x2="720" y2="580" stroke="var(--line)"/>
+              <text x="52" y="58" font-size="12" fill="var(--text)">90°N</text>
+              <text x="52" y="148" font-size="12" fill="var(--text)">60°N</text>
+              <text x="52" y="238" font-size="12" fill="var(--text)">30°N</text>
+              <text x="58" y="328" font-size="12" fill="var(--text)">0°</text>
+              <text x="52" y="418" font-size="12" fill="var(--text)">30°S</text>
+              <text x="52" y="508" font-size="12" fill="var(--text)">60°S</text>
+              <text x="52" y="572" font-size="12" fill="var(--text)">90°S</text>
+              <text x="692" y="88" text-anchor="end" font-size="13" fill="var(--text)">极地高压带</text>
+              <text x="692" y="178" text-anchor="end" font-size="13" fill="var(--text)">副极地低压带</text>
+              <text x="692" y="268" text-anchor="end" font-size="13" fill="var(--text)">副热带高压带</text>
+              <text x="692" y="358" text-anchor="end" font-size="13" fill="var(--text)">赤道低压带</text>
+              <text x="692" y="448" text-anchor="end" font-size="13" fill="var(--text)">副热带高压带</text>
+              <text x="692" y="538" text-anchor="end" font-size="13" fill="var(--text)">副极地低压带</text>
+              <line x1="220" y1="70" x2="150" y2="112" stroke="var(--accent)" stroke-width="3" marker-end="url(#mBelt)"/>
+              <text x="250" y="90" font-size="13" fill="var(--text)">极地东风（东北风）</text>
+              <line x1="150" y1="155" x2="235" y2="200" stroke="var(--accent)" stroke-width="3" marker-end="url(#mBelt)"/>
+              <text x="250" y="182" font-size="13" fill="var(--text)">盛行西风（西南风）</text>
+              <line x1="235" y1="248" x2="150" y2="292" stroke="var(--accent)" stroke-width="3" marker-end="url(#mBelt)"/>
+              <text x="250" y="272" font-size="13" fill="var(--text)">东北信风</text>
+              <line x1="235" y1="335" x2="150" y2="390" stroke="var(--accent)" stroke-width="3" marker-end="url(#mBelt)"/>
+              <text x="250" y="368" font-size="13" fill="var(--text)">东南信风</text>
+              <line x1="150" y1="425" x2="235" y2="470" stroke="var(--accent)" stroke-width="3" marker-end="url(#mBelt)"/>
+              <text x="250" y="452" font-size="13" fill="var(--text)">盛行西风（西北风）</text>
+              <line x1="235" y1="515" x2="150" y2="560" stroke="var(--accent)" stroke-width="3" marker-end="url(#mBelt)"/>
+              <text x="250" y="542" font-size="13" fill="var(--text)">极地东风（东南风）</text>
+              <text x="600" y="620" text-anchor="middle" font-size="12" fill="var(--muted)">南半球风向与北半球左右对称</text>
+            </svg>
+            <figcaption>图3　七个气压带与六个风带的纬度分布及近地面风向</figcaption>
+            <div class="readpoints"><strong>读图要点：</strong>以赤道低压带为中心南北对称；低压带对应上升多雨，高压带对应下沉干燥；风带箭头由高压带指向低压带，北半球右偏、南半球左偏。</div>
+          </figure>
+        </div>
+      </details>
+    </section>
+    <!-- ========== 5 气压带风带的季节移动 ========== -->
+    <section class="module" id="s5" aria-labelledby="h5">
+      <details open>
+        <summary>
+          <h2 id="h5"><span class="num">5</span>气压带风带的季节移动</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag high">交替控制</span><span class="tag warn">易错</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <h3>移动原因</h3>
+          <p>太阳直射点在南北回归线之间做回归运动，全球热量分布随季节变化，气压带和风带随之整体移动。</p>
+          <h3>移动规律</h3>
+          <ul>
+            <li>北半球夏季，太阳直射点北移，气压带风带北移；北半球冬季南移。</li>
+            <li>南半球季节相反：1月南移，7月北移。</li>
+            <li>移动幅度约为 5°—10°，明显小于太阳直射点 23.5° 的移动幅度，因为下垫面热力惯性、海陆分布会削弱移动。</li>
+          </ul>
+          <h3>后果：交替控制</h3>
+          <p>同一地区不同季节受不同气压带或风带控制，形成干湿季交替。典型接口是<strong>热带草原气候</strong>（赤道低压带与信风带交替）和<strong>地中海气候</strong>（副热带高压带与西风带交替）。</p>
+          <div class="table-wrap">
+            <table>
+              <caption>气压带风带季节移动的典型表现</caption>
+              <thead><tr><th>时间</th><th>太阳直射点</th><th>气压带风带位置</th><th>典型现象</th></tr></thead>
+              <tbody>
+                <tr><td>1月</td><td>南半球</td><td>整体南移</td><td>地中海沿岸受西风带控制，温和多雨；南亚受东北季风控制</td></tr>
+                <tr><td>7月</td><td>北半球</td><td>整体北移</td><td>地中海沿岸受副高控制，炎热干燥；南亚受西南季风控制，高温多雨</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout warn"><strong>易错提醒：</strong>移动幅度不是 23.5°；交替控制不等于单一控制——热带草原气候是两种环流交替，热带雨林气候是赤道低压带单一控制。</div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 6 海陆分布与大气活动中心 ========== -->
+    <section class="module" id="s6" aria-labelledby="h6">
+      <details open>
+        <summary>
+          <h2 id="h6"><span class="num">6</span>海陆分布与大气活动中心</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag high">高考高频</span><span class="tag warn">切断</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <p>北半球陆地面积大，纬向气压带被海陆热力差异切断，形成随季节变化的大气活动中心；南半球海洋占绝对优势，气压带保存较完整。</p>
+          <h3>形成逻辑</h3>
+          <ul>
+            <li>陆地比热容小，升温快、降温也快；海洋比热容大，温度变化平缓。</li>
+            <li>夏季大陆强烈增温，近地面形成热低压，把副热带高压带“顶掉”；冬季大陆强烈冷却，形成冷高压，把副极地低压带“顶掉”。</li>
+            <li>海洋上的活动中心相对稳定，具有半永久性。</li>
+          </ul>
+          <div class="table-wrap">
+            <table>
+              <caption>表3　海陆气压活动中心对比表</caption>
+              <thead><tr><th>时间</th><th>被切断的气压带</th><th>亚欧大陆</th><th>北太平洋</th><th>北大西洋</th><th>成因</th><th>影响</th></tr></thead>
+              <tbody>
+                <tr><td class="hl">7月</td><td>副热带高压带</td><td>亚洲低压（印度低压）</td><td>夏威夷高压</td><td>亚速尔高压</td><td>大陆升温快形成热低压，海洋相对冷形成高压</td><td>东亚、南亚夏季风盛行；副高北跳影响我国雨带</td></tr>
+                <tr><td class="hl">1月</td><td>副极地低压带</td><td>亚洲高压（蒙古—西伯利亚高压）</td><td>阿留申低压</td><td>冰岛低压</td><td>大陆降温快形成冷高压，海洋相对暖形成低压</td><td>东亚冬季风强劲；我国寒冷干燥</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout exam"><strong>高考落点：</strong>海陆分布切断气压带，但气压带以海洋活动中心的形式保留；判读季节时，先看大陆是低压还是高压，再判断月份与季风方向。</div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 7 季风环流 ========== -->
+    <section class="module" id="s7" aria-labelledby="h7">
+      <details open>
+        <summary>
+          <h2 id="h7"><span class="num">7</span>季风环流</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag high">高考高频</span><span class="tag up">多雨</span><span class="tag down">干燥</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <blockquote><strong>季风定义：</strong>大范围地区盛行风向随季节显著改变的大气环流。</blockquote>
+          <div class="grid2">
+            <div class="mini-card">
+              <h4>东亚季风</h4>
+              <p>夏季东南风，温暖湿润；冬季西北风，寒冷干燥。主要成因是海陆热力性质差异；冬季风强于夏季风。典型区域为我国东部、朝鲜半岛、日本。</p>
+            </div>
+            <div class="mini-card">
+              <h4>南亚季风</h4>
+              <p>夏季西南风，高温多雨；冬季东北风，温暖干燥。成因是海陆热力差异叠加气压带风带季节移动；夏季风强于冬季风。典型区域为印度半岛、中南半岛。</p>
+            </div>
+          </div>
+          <h3>南亚夏季西南风的双重成因</h3>
+          <p>南半球东南信风随太阳直射点北移，越过赤道后受北半球地转偏向力作用向右偏转，形成西南风；同时，亚欧大陆夏季热低压与印度洋高压之间的海陆热力差异进一步加强了西南风。答题时必须写出“东南信风越赤道右偏”，不能只写海陆热力差异。</p>
+          <h3>东亚季风最典型的原因</h3>
+          <p>东亚背靠世界上最大的大陆——亚欧大陆，面向世界上最大的大洋——太平洋，海陆热力差异的振幅最大，因此季风最典型、冬夏季风方向最稳定。</p>
+          <h3>越赤道偏转拓展</h3>
+          <ul>
+            <li>澳大利亚西北部夏季的西北风，是北半球东北季风南移越过赤道后受南半球地转偏向力左偏形成。</li>
+            <li>非洲几内亚湾沿岸夏季也受越赤道偏转气流影响，形成湿润的西南风。</li>
+          </ul>
+          <div class="table-wrap">
+            <table>
+              <caption>表4　东亚季风与南亚季风对比表</caption>
+              <thead><tr><th>项目</th><th>东亚季风</th><th>南亚季风</th></tr></thead>
+              <tbody>
+                <tr><td>夏季风</td><td>东南风，温暖湿润</td><td>西南风，高温多雨</td></tr>
+                <tr><td>冬季风</td><td>西北风，寒冷干燥</td><td>东北风，温暖干燥</td></tr>
+                <tr><td>主要成因</td><td>海陆热力性质差异</td><td>海陆热力差异 + 气压带风带季节移动</td></tr>
+                <tr><td>季风强度</td><td class="hl">冬季风强于夏季风</td><td class="hl">夏季风强于冬季风</td></tr>
+                <tr><td>典型区域</td><td>我国东部、朝鲜半岛、日本</td><td>印度半岛、中南半岛</td></tr>
+                <tr><td>气候接口</td><td>温带季风、亚热带季风气候</td><td>热带季风气候</td></tr>
+                <tr><td>易错提示</td><td>冬季风来自内陆，寒冷干燥，不能写成冬季多雨</td><td>夏季西南风必须补出东南信风越赤道右偏</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <figure class="fig">
+            <svg viewBox="0 0 760 420" role="img" aria-labelledby="tMon dMon">
+              <title id="tMon">东亚与南亚季风示意图</title>
+              <desc id="dMon">东亚夏季盛行东南风、冬季盛行西北风；南亚夏季盛行西南风、冬季盛行东北风。</desc>
+              <defs>
+                <marker id="mSum" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+                <marker id="mWin" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/></marker>
+              </defs>
+              <rect x="20" y="20" width="350" height="380" rx="12" fill="var(--bg-soft)" stroke="var(--line)"/>
+              <rect x="390" y="20" width="350" height="380" rx="12" fill="var(--bg-soft)" stroke="var(--line)"/>
+              <text x="195" y="48" text-anchor="middle" font-size="15" fill="var(--text)" font-weight="700">东亚季风</text>
+              <text x="565" y="48" text-anchor="middle" font-size="15" fill="var(--text)" font-weight="700">南亚季风</text>
+
+              <path d="M40,60 L245,60 L245,190 L215,225 L245,260 L245,360 L40,360 Z" fill="var(--primary-soft)" stroke="var(--line)"/>
+              <rect x="245" y="60" width="105" height="300" fill="#0e7490" opacity=".12"/>
+              <text x="130" y="88" font-size="13" fill="var(--text)">亚欧大陆</text>
+              <text x="322" y="215" font-size="12" fill="var(--text)" transform="rotate(90 322 215)">太平洋</text>
+              <line x1="300" y1="330" x2="150" y2="220" stroke="var(--accent)" stroke-width="4" marker-end="url(#mSum)"/>
+              <text x="160" y="350" font-size="12" fill="var(--accent)">夏季：东南风（暖湿）</text>
+              <line x1="130" y1="105" x2="280" y2="205" stroke="var(--primary)" stroke-width="3" stroke-dasharray="8 5" marker-end="url(#mWin)"/>
+              <text x="70" y="130" font-size="12" fill="var(--primary-dark)">冬季：西北风（干冷）</text>
+
+              <rect x="410" y="60" width="310" height="160" fill="var(--primary-soft)" stroke="var(--line)"/>
+              <rect x="410" y="220" width="310" height="160" fill="#0e7490" opacity=".12"/>
+              <text x="520" y="88" font-size="13" fill="var(--text)">南亚大陆</text>
+              <text x="520" y="360" font-size="13" fill="var(--text)">印度洋</text>
+              <line x1="440" y1="350" x2="610" y2="215" stroke="var(--accent)" stroke-width="4" marker-end="url(#mSum)"/>
+              <text x="435" y="390" font-size="12" fill="var(--accent)">夏季：西南风（暖湿）</text>
+              <line x1="650" y1="105" x2="480" y2="220" stroke="var(--primary)" stroke-width="3" stroke-dasharray="8 5" marker-end="url(#mWin)"/>
+              <text x="560" y="130" font-size="12" fill="var(--primary-dark)">冬季：东北风（干冷）</text>
+            </svg>
+            <figcaption>图4　东亚季风与南亚季风的冬夏季风向对比</figcaption>
+            <div class="readpoints"><strong>读图要点：</strong>实线箭头表示夏季风，虚线箭头表示冬季风；夏季风由海洋吹向陆地，性质暖湿；冬季风由陆地吹向海洋，性质干冷。南亚夏季西南风还要联系东南信风越赤道右偏。</div>
+          </figure>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 8 副热带高压与我国雨带 ========== -->
+    <section class="module" id="s8" aria-labelledby="h8">
+      <details open>
+        <summary>
+          <h2 id="h8"><span class="num">8</span>副热带高压与我国雨带</h2>
+          <span class="tags"><span class="tag high">高考高频</span><span class="tag core">必考核心</span><span class="tag up">多雨</span><span class="tag down">晴热</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <p>西太平洋副热带高压是影响我国夏季旱涝的关键环流系统。副高脊线随季节北进，雨带随之由南向北推移；副高控制区与西北侧边缘的天气截然不同。</p>
+          <div class="table-wrap">
+            <table>
+              <caption>表5　副高脊线与我国雨带移动表</caption>
+              <thead><tr><th>时间</th><th>副高脊线位置</th><th>雨带位置</th><th>主要天气</th><th>高考提示</th></tr></thead>
+              <tbody>
+                <tr><td class="hl">5月上旬—6月下旬</td><td>15°N—20°N</td><td>华南</td><td>华南前汛期，降水增多</td><td>副高北跳偏早，华南雨期可能提前</td></tr>
+                <tr><td class="hl">6月中旬—7月下旬</td><td>20°N—25°N</td><td>江淮</td><td>梅雨期，阴雨连绵</td><td>梅雨长短取决于副高位置是否稳定</td></tr>
+                <tr><td class="hl">7月—8月</td><td>25°N—30°N</td><td>华北、东北</td><td>北方雨季；长江中下游伏旱</td><td>副高控制区晴热少雨，西北侧边缘多雨</td></tr>
+                <tr><td class="hl">9月—10月</td><td>逐步南退</td><td>雨带南撤</td><td>秋高气爽，华西秋雨</td><td>副高南退快慢影响秋季降水分布</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>旱涝逻辑</h3>
+          <ul>
+            <li>副高控制区盛行下沉气流，天空晴朗、气温高、降水少，易形成伏旱。</li>
+            <li>副高西北侧是暖湿气流辐合上升区，多对流雨和锋面雨，易发生洪涝。</li>
+            <li>副高偏强、位置偏北，雨带北移快，可能出现“南旱北涝”；副高偏弱、位置偏南，雨带滞留南方，可能出现“南涝北旱”。</li>
+            <li>判断旱涝时必须区分“控制区”和“西北侧边缘”，不能笼统写“受副高影响”。</li>
+          </ul>
+          <div class="callout exam"><strong>高考设问落点：</strong>副高偏强或偏弱、北跳偏早或偏晚，会导致某地旱还是涝；答题要落到副高位置、气流方向、雨带位置三个变量。</div>
+
+          <figure class="fig">
+            <svg viewBox="0 0 760 480" role="img" aria-labelledby="tRain dRain">
+              <title id="tRain">副高脊线与我国雨带移动示意图</title>
+              <desc id="dRain">雨带随副高脊线自南向北推进，5月至6月位于华南，6月中旬至7月位于江淮，7月至8月推进到华北和东北。</desc>
+              <rect x="20" y="20" width="720" height="440" rx="12" fill="var(--bg-soft)" stroke="var(--line)"/>
+              <line x1="70" y1="50" x2="70" y2="410" stroke="var(--text)" stroke-width="2"/>
+              <line x1="70" y1="410" x2="720" y2="410" stroke="var(--text)" stroke-width="2"/>
+              <line x1="70" y1="70" x2="720" y2="70" stroke="var(--line)" stroke-dasharray="5 5"/>
+              <line x1="70" y1="140" x2="720" y2="140" stroke="var(--line)" stroke-dasharray="5 5"/>
+              <line x1="70" y1="210" x2="720" y2="210" stroke="var(--line)" stroke-dasharray="5 5"/>
+              <line x1="70" y1="280" x2="720" y2="280" stroke="var(--line)" stroke-dasharray="5 5"/>
+              <line x1="70" y1="350" x2="720" y2="350" stroke="var(--line)" stroke-dasharray="5 5"/>
+              <text x="52" y="75" font-size="12" fill="var(--text)">40°N</text>
+              <text x="52" y="145" font-size="12" fill="var(--text)">35°N</text>
+              <text x="52" y="215" font-size="12" fill="var(--text)">30°N</text>
+              <text x="52" y="285" font-size="12" fill="var(--text)">25°N</text>
+              <text x="52" y="355" font-size="12" fill="var(--text)">20°N</text>
+
+              <rect x="85" y="300" width="170" height="55" rx="8" fill="var(--accent)" opacity=".12"/>
+              <rect x="265" y="200" width="165" height="60" rx="8" fill="var(--accent)" opacity=".18"/>
+              <rect x="440" y="80" width="200" height="60" rx="8" fill="var(--accent)" opacity=".24"/>
+
+              <path d="M110,325 L240,315 L285,250 L405,235 L455,140 L625,110" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="110" cy="325" r="7" fill="var(--accent)"/>
+              <circle cx="345" cy="242" r="7" fill="var(--accent)"/>
+              <circle cx="540" cy="125" r="7" fill="var(--accent)"/>
+              <text x="100" y="385" font-size="13" fill="var(--text)">华南雨带</text>
+              <text x="100" y="402" font-size="11" fill="var(--muted)">5月上旬—6月下旬</text>
+              <text x="275" y="290" font-size="13" fill="var(--text)">江淮梅雨</text>
+              <text x="275" y="307" font-size="11" fill="var(--muted)">6月中旬—7月下旬</text>
+              <text x="455" y="175" font-size="13" fill="var(--text)">华北、东北雨季</text>
+              <text x="455" y="192" font-size="11" fill="var(--muted)">7月—8月</text>
+              <text x="660" y="250" font-size="12" fill="var(--accent)" transform="rotate(-90 660 250)">副高脊线北移</text>
+              <text x="110" y="438" font-size="12" fill="var(--muted)">5月</text>
+              <text x="250" y="438" font-size="12" fill="var(--muted)">6月</text>
+              <text x="390" y="438" font-size="12" fill="var(--muted)">7月</text>
+              <text x="530" y="438" font-size="12" fill="var(--muted)">8月</text>
+              <text x="660" y="438" font-size="12" fill="var(--muted)">9月</text>
+            </svg>
+            <figcaption>图5　副高脊线北移与我国雨带推进示意</figcaption>
+            <div class="readpoints"><strong>读图要点：</strong>横轴为时间、纵轴为纬度；橙色折线表示雨带位置，整体由南向北推进。华南、江淮、华北东北三个雨带阶段与副高脊线纬度一一对应，长江中下游在副高控制下出现伏旱。</div>
+          </figure>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 9 大气环流对降水的控制 ========== -->
+    <section class="module" id="s9" aria-labelledby="h9">
+      <details open>
+        <summary>
+          <h2 id="h9"><span class="num">9</span>大气环流对降水的控制</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag high">综合题</span><span class="tag up">上升</span><span class="tag down">下沉</span><span class="tag tpl">答题模板</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <h3>降水的三个基本条件</h3>
+          <ol>
+            <li>充足的水汽供应。</li>
+            <li>气流上升、冷却降温，水汽达到过饱和并凝结。</li>
+            <li>有足够的凝结核。</li>
+          </ol>
+          <h3>环流对降水的控制逻辑</h3>
+          <ul>
+            <li>低压带气流上升，多雨；高压带气流下沉，少雨。</li>
+            <li>西风来自海洋时温暖湿润，遇迎风坡多雨；背风侧雨影区干旱。</li>
+            <li>信风在大陆西岸和内陆一般干燥，但在大陆东岸迎风坡叠加暖流时可多雨。</li>
+            <li>夏季风来自海洋，湿润多雨；冬季风来自陆地，干燥少雨。</li>
+            <li>同一环流背景下，地形与洋流会改变降水结果，因此必须综合判断。</li>
+          </ul>
+          <div class="callout tpl">
+            <strong>降水成因答题模板：</strong>
+            <div class="flow">
+              <span class="node">大气环流（气压带、风带、季风）</span><span class="arrow">+</span>
+              <span class="node">地形（迎风坡或背风坡）</span><span class="arrow">+</span>
+              <span class="node">洋流（暖流增湿、寒流减湿）</span><span class="arrow">+</span>
+              <span class="node">海陆位置</span><span class="arrow">→</span>
+              <span class="node">水汽来源</span><span class="arrow">→</span>
+              <span class="node">抬升机制</span><span class="arrow">→</span>
+              <span class="node">降水结果</span>
+            </div>
+            <p>不能只写“受西风影响”，必须落实到水汽从哪里来、靠什么抬升、最终降水多还是少。</p>
+          </div>
+          <h3>常见抬升机制</h3>
+          <div class="grid2">
+            <div class="mini-card"><h4>对流抬升</h4><p>地面受热强烈，空气上升冷却，多形成对流雨，常见于赤道低压带和夏季午后。</p></div>
+            <div class="mini-card"><h4>锋面抬升</h4><p>冷暖空气交汇，暖空气沿锋面爬升，多形成锋面雨，常见于副极地低压带和季风区。</p></div>
+            <div class="mini-card"><h4>地形抬升</h4><p>湿润气流遇山地被迫抬升，迎风坡多雨，背风坡形成雨影。</p></div>
+            <div class="mini-card"><h4>气旋辐合抬升</h4><p>低压中心四周气流辐合上升，多阴雨天气，台风和温带气旋均属此类。</p></div>
+          </div>
+          <div class="callout exam"><strong>综合题提醒：</strong>分析某地降水成因时，先定位其所处气压带或风带，再判断气流上升或下沉，最后叠加地形、洋流和海陆位置，形成完整因果链。</div>
+        </div>
+      </details>
+    </section>
+    <!-- ========== 10 气候类型全表 ========== -->
+    <section class="module" id="s10" aria-labelledby="h10">
+      <details open>
+        <summary>
+          <h2 id="h10"><span class="num">10</span>大气环流的输出：气候类型全表</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag high">高考高频</span><span class="tag tpl">判读模板</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <p>气候是大气环流长期作用的结果。纬度决定热量基础，大气环流决定水汽输送与升降运动，海陆位置、洋流、地形作进一步修正，最终形成不同类型的气候。</p>
+          <h3>气候形成的五大因子</h3>
+          <div class="grid3">
+            <div class="mini-card"><h4>纬度</h4><p>决定太阳辐射和热量带，是气候差异的基础。</p></div>
+            <div class="mini-card"><h4>大气环流</h4><p>决定水汽来源、气流升降与季节变化。</p></div>
+            <div class="mini-card"><h4>海陆位置</h4><p>影响海洋性、大陆性程度和季风强弱。</p></div>
+            <div class="mini-card"><h4>洋流</h4><p>暖流增温增湿，寒流降温减湿。</p></div>
+            <div class="mini-card"><h4>地形</h4><p>海拔影响气温，坡向影响降水，形成垂直差异。</p></div>
+            <div class="mini-card"><h4>下垫面性质</h4><p>植被、冰雪、湖泊等改变局部热量与水分条件。</p></div>
+          </div>
+          <h3>气候判读三步</h3>
+          <ol>
+            <li><strong>以温定带：</strong>看最冷月均温判断热量带。最冷月大于15℃为热带；0—15℃为亚热带或温带海洋性；小于0℃为温带；最热月小于10℃为亚寒带或寒带。</li>
+            <li><strong>以水定型：</strong>看年降水总量与季节分配。全年多雨、夏雨集中、冬雨为主、全年少雨分别对应不同气候。</li>
+            <li><strong>海陆位置验证：</strong>结合大陆东岸、西岸、内部，判断季风、西风、大陆性等成因是否吻合。</li>
+          </ol>
+          <h3>三种成因模型</h3>
+          <div class="grid3">
+            <div class="mini-card"><h4>单一气压带或风带控制</h4><p>终年受赤道低压带控制形成热带雨林；终年受西风带控制形成温带海洋性；终年受副高或信风控制形成热带沙漠。</p></div>
+            <div class="mini-card"><h4>交替控制</h4><p>赤道低压带与信风带交替形成热带草原；副热带高压带与西风带交替形成地中海气候。</p></div>
+            <div class="mini-card"><h4>季风控制</h4><p>海陆热力差异导致冬夏季风交替，形成热带季风、亚热带季风和温带季风气候。</p></div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <caption>表6　世界主要气候类型全表</caption>
+              <thead><tr><th>气候类型</th><th>分布</th><th>成因</th><th>特点</th><th>典型地区</th><th>植被</th><th>判读要点</th><th>高考提示</th></tr></thead>
+              <tbody>
+                <tr><td class="hl">热带雨林气候</td><td>赤道附近，约南北纬10°内</td><td>终年受赤道低压带控制，盛行上升气流</td><td>全年高温多雨，年降水2000mm以上</td><td>亚马孙平原、刚果盆地、马来群岛</td><td>热带雨林</td><td>各月均温25℃以上，各月降水都多</td><td>地形迎风坡加暖流可形成非地带性热带雨林</td></tr>
+                <tr><td class="hl">热带草原气候</td><td>南北纬10°—20°</td><td>赤道低压带与信风带交替控制</td><td>全年高温，干湿季分明</td><td>非洲中南部、巴西高原、澳大利亚北部</td><td>热带草原</td><td>湿季多雨、干季少雨，年降水约750—1000mm</td><td>与热带季风区分：后者雨季更集中、降水量更大</td></tr>
+                <tr><td class="hl">热带季风气候</td><td>北纬10°—25°大陆东岸</td><td>海陆热力差异叠加气压带风带季节移动</td><td>全年高温，旱雨两季分明</td><td>印度半岛、中南半岛、海南岛</td><td>热带季雨林</td><td>雨季6—9月，年降水1500—2000mm</td><td>夏季西南风必须写出东南信风越赤道右偏</td></tr>
+                <tr><td class="hl">热带沙漠气候</td><td>南北回归线附近大陆内部及西岸</td><td>副热带高压带或信风带控制，盛行下沉气流</td><td>终年炎热干燥，气温日较差大</td><td>撒哈拉、阿拉伯半岛、澳大利亚中西部</td><td>热带荒漠</td><td>全年少雨，最冷月也在15℃以上</td><td>大陆西岸可受寒流影响向赤道方向延伸</td></tr>
+                <tr><td class="hl">亚热带季风气候</td><td>南北纬25°—35°大陆东岸</td><td>海陆热力差异，冬夏季风交替控制</td><td>夏季高温多雨，冬季温和少雨</td><td>我国秦岭—淮河以南、日本南部、朝鲜半岛南部</td><td>亚热带常绿阔叶林</td><td>最冷月0—15℃，降水集中在夏季</td><td>与亚热带季风性湿润气候相比季风性更强</td></tr>
+                <tr><td class="hl">亚热带季风性湿润气候</td><td>南北纬25°—35°大陆东岸</td><td>海陆热力差异较弱，季风性不显著</td><td>夏季高温多雨，冬季温和少雨</td><td>美国东南部、巴西东南部、澳大利亚东南部</td><td>亚热带常绿阔叶林</td><td>与亚热带季风气候相似，冬雨比例略高</td><td>常作“成因相似、强度不同”的对比</td></tr>
+                <tr><td class="hl">地中海气候</td><td>南北纬30°—40°大陆西岸</td><td>副热带高压带与西风带交替控制</td><td>夏季炎热干燥，冬季温和多雨，雨热不同期</td><td>地中海沿岸、美国加州、智利中部、南非西南部、澳大利亚西南部</td><td>亚热带常绿硬叶林</td><td>最冷月大于0℃，冬雨为主</td><td>高中唯一雨热不同期的气候，注意南北半球季节相反</td></tr>
+                <tr><td class="hl">温带季风气候</td><td>北纬35°—55°大陆东岸</td><td>海陆热力差异，冬夏季风交替控制</td><td>夏季高温多雨，冬季寒冷干燥</td><td>我国华北和东北、朝鲜半岛北部、日本北部</td><td>温带落叶阔叶林</td><td>最冷月小于0℃，年降水500—800mm，集中于夏季</td><td>与温带大陆性气候相比降水更多、更集中</td></tr>
+                <tr><td class="hl">温带海洋性气候</td><td>南北纬40°—60°大陆西岸</td><td>终年受西风带控制，叠加暖流增温增湿</td><td>全年温和湿润，降水均匀</td><td>西欧、北美西海岸、新西兰、智利南部</td><td>温带落叶阔叶林</td><td>最冷月大于0℃、最热月小于20℃，年降水700—1000mm</td><td>斯堪的纳维亚半岛西侧因北大西洋暖流而北伸</td></tr>
+                <tr><td class="hl">温带大陆性气候</td><td>南北纬40°—60°大陆内部</td><td>深居内陆，海洋水汽难以到达，受大陆气团控制</td><td>冬冷夏热，气温年较差大，降水少且集中夏季</td><td>亚欧大陆内部、北美中部</td><td>温带草原或温带荒漠</td><td>年降水小于400mm，气温年较差大</td><td>与温带季风气候相比降水更少、大陆性更强</td></tr>
+                <tr><td class="hl">亚寒带针叶林气候</td><td>北纬50°—70°</td><td>纬度高，受极地大陆气团控制</td><td>冬季严寒漫长，夏季短促温暖，降水较少</td><td>俄罗斯西伯利亚、加拿大北部</td><td>亚寒带针叶林</td><td>最热月10—20℃，年降水300—600mm</td><td>南半球同纬度以海洋为主，缺失该气候</td></tr>
+                <tr><td class="hl">苔原气候</td><td>北半球极圈附近</td><td>纬度高，受极地气团控制</td><td>全年严寒，降水少，夏季短暂</td><td>北冰洋沿岸、格陵兰沿海</td><td>苔原</td><td>最热月0—10℃</td><td>南半球缺失大面积苔原气候</td></tr>
+                <tr><td class="hl">冰原气候</td><td>南北极圈以内</td><td>终年受极地高压控制</td><td>全年酷寒，降水极少</td><td>南极大陆、格陵兰内陆</td><td>冰雪覆盖</td><td>最热月小于0℃</td><td>南极是地球“寒极”，注意与苔原区分</td></tr>
+                <tr><td class="hl">高原山地气候</td><td>青藏高原、安第斯山、落基山等</td><td>海拔高，气温低，空气稀薄</td><td>气温随海拔升高而降低，降水随坡向变化</td><td>青藏高原、南美安第斯山</td><td>高寒草甸、灌丛</td><td>垂直地带性明显，气温低于同纬度平原</td><td>属于非地带性表现，注意地形修正</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>高频气候区分</h3>
+          <ul>
+            <li><strong>热带草原与热带季风：</strong>热带草原为干湿季交替，年降水约750—1000mm；热带季风雨季更集中、降水量更大，成因含海陆热力差异与越赤道气流。</li>
+            <li><strong>温带季风与温带大陆性：</strong>温带季风降水较多且集中夏季，气温年较差相对较小；温带大陆性降水少、气温年较差大。</li>
+            <li><strong>地中海气候：</strong>雨热不同期，冬季受西风控制多雨，夏季受副高控制干燥。</li>
+            <li><strong>温带海洋性与温带大陆性：</strong>前者降水最均匀、气温年较差小；后者温差最大、降水最少。</li>
+          </ul>
+          <div class="callout tpl"><strong>气候特点描述模板：</strong>气温方面写最冷月均温、最热月均温、气温年较差；降水方面写年降水总量、季节分配、雨热配合情况。例如“夏季高温多雨，冬季温和少雨，雨热同期”。</div>
+          <div class="callout tpl"><strong>气候成因分析模板：</strong>纬度位置定热量带 + 大气环流定水汽与升降 + 海陆位置定海洋性或大陆性 + 地形定迎风背风与垂直差异 + 洋流定增温增湿或降温减湿。</div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 11 非地带性特殊情况 ========== -->
+    <section class="module" id="s11" aria-labelledby="h11">
+      <details open>
+        <summary>
+          <h2 id="h11"><span class="num">11</span>非地带性特殊情况</h2>
+          <span class="tags"><span class="tag high">高考高频</span><span class="tag core">必考核心</span><span class="tag warn">局部修正</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <div class="callout"><strong>答题原则：</strong>非地带性 = 地带性理想模型 + 局部修正因子。先定位“本应是什么气候”，再找“什么因素打破了它”，最后写出完整因果链。</div>
+          <div class="table-wrap">
+            <table>
+              <caption>表7　非地带性特殊情况表</caption>
+              <thead><tr><th>特殊现象</th><th>关键修正因子</th><th>因果链</th><th>高考提示</th></tr></thead>
+              <tbody>
+                <tr><td class="hl">马达加斯加岛东部热带雨林</td><td>东南信风迎风坡 + 暖流</td><td>低纬热量充足 → 东南信风带来海洋水汽 → 东部迎风坡抬升多雨 → 形成热带雨林</td><td>不能只写“地处热带”，必须写出迎风坡与暖流</td></tr>
+                <tr><td class="hl">东非高原热带草原</td><td>地势高</td><td>赤道附近本应形成热带雨林 → 地势高、气温低 → 对流减弱、降水不足 → 形成热带草原</td><td>地形通过降低气温削弱对流，是典型地形修正</td></tr>
+                <tr><td class="hl">巴塔哥尼亚温带荒漠</td><td>西风带背风坡</td><td>西风携带太平洋水汽 → 越安第斯山后下沉增温 → 水汽被拦截 → 背风侧干旱形成温带荒漠</td><td>注意“越山下沉”与雨影效应</td></tr>
+                <tr><td class="hl">斯堪的纳维亚半岛西侧温带海洋性气候北伸</td><td>北大西洋暖流</td><td>西风加暖流增温增湿 → 高纬西岸仍温和湿润 → 温带海洋性气候向北极圈方向延伸</td><td>暖流使气候分布范围向北扩展</td></tr>
+                <tr><td class="hl">南美西岸热带沙漠向赤道延伸</td><td>秘鲁寒流 + 信风越山下沉</td><td>寒流降温减湿 → 近地面空气稳定不易上升 → 沙漠沿海岸向低纬延伸</td><td>寒流减湿与离岸风共同作用</td></tr>
+                <tr><td class="hl">索马里半岛沿岸干旱</td><td>冬季东北信风 + 夏季离岸寒流</td><td>冬季受来自陆地的东北信风控制 → 夏季沿岸寒流降温减湿 → 降水稀少</td><td>注意季风方向与洋流性质的季节差异</td></tr>
+                <tr><td class="hl">南半球缺失亚寒带针叶林和苔原气候</td><td>海陆分布</td><td>南半球同纬度以海洋为主 → 缺乏大面积大陆 → 缺少形成该气候的下垫面条件</td><td>气候缺失类问题先看海陆分布</td></tr>
+                <tr><td class="hl">非洲缺失温带海洋性气候</td><td>海陆分布</td><td>非洲同纬度西岸为海洋 → 没有相应大陆西岸 → 温带海洋性气候缺失</td><td>与南半球缺失针叶林气候同理</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout exam"><strong>高考落点：</strong>非地带性题通常给出一个“反常”的分布现象，要求解释成因。答题时先写出地带性规律，再写出修正因子，最后落到气温或降水的改变。</div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 12 局地环流与背景环流修正 ========== -->
+    <section class="module" id="s12" aria-labelledby="h12">
+      <details open>
+        <summary>
+          <h2 id="h12"><span class="num">12</span>局地环流与背景环流修正</h2>
+          <span class="tags"><span class="tag high">高考高频</span><span class="tag ext">拓展</span><span class="tag warn">风向反转</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <h3>五类局地环流</h3>
+          <ul>
+            <li><strong>海陆风与湖陆风：</strong>水陆比热容差异导致昼夜风向反转。</li>
+            <li><strong>山谷风：</strong>白天谷风沿坡上升，夜晚山风沿坡下沉。</li>
+            <li><strong>城市热岛环流：</strong>城市热低压，近地面风由郊区吹向城市。</li>
+            <li><strong>绿洲—沙漠风：</strong>绿洲与沙漠热力差异形成局地闭合环流。</li>
+            <li><strong>冰川风：</strong>冰川表面强烈冷却，冷空气沿冰面下沉，与山谷风同属热力环流的局地表现。</li>
+          </ul>
+          <h3>核心逻辑</h3>
+          <p>大尺度背景环流提供“基态”，局地下垫面热力差异在其上叠加“修正”。当局地热力差异足够强时，近地面可能出现与背景环流方向相反的风。</p>
+          <div class="callout exam"><strong>高考设问落点：</strong>解释某时某地为何出现与背景环流相反的风，答题要落到局地下垫面热力差异的强度、昼夜变化和地形条件。</div>
+
+          <figure class="fig">
+            <svg viewBox="0 0 720 360" role="img" aria-labelledby="tLocal dLocal">
+              <title id="tLocal">背景环流与局地环流修正示意图</title>
+              <desc id="dLocal">高空盛行西风自西向东，冰川表面冷却形成沿坡下沉的冰川风，近地面风向可与背景环流相反。</desc>
+              <defs>
+                <marker id="mBG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/></marker>
+                <marker id="mLoc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+              </defs>
+              <rect x="20" y="20" width="680" height="300" rx="12" fill="var(--bg-soft)" stroke="var(--line)"/>
+              <polygon points="60,300 330,90 620,300" fill="var(--primary-soft)" stroke="var(--line)"/>
+              <polygon points="250,155 330,90 405,155 365,175 330,150 290,178" fill="#ffffff" opacity=".85" stroke="var(--line)"/>
+              <line x1="80" y1="65" x2="620" y2="65" stroke="var(--primary)" stroke-width="4" marker-end="url(#mBG)"/>
+              <text x="350" y="52" text-anchor="middle" font-size="13" fill="var(--primary-dark)">背景环流：盛行西风自西向东</text>
+              <line x1="400" y1="180" x2="250" y2="268" stroke="var(--accent)" stroke-width="4" marker-end="url(#mLoc)"/>
+              <text x="300" y="230" font-size="13" fill="var(--accent)">冰川风：冷空气沿冰面下沉</text>
+              <text x="360" y="335" text-anchor="middle" font-size="13" fill="var(--text)">局地热力差异足够强时，近地面风可与背景环流方向相反</text>
+            </svg>
+            <figcaption>图6　背景环流提供基态，局地下垫面热力差异叠加修正</figcaption>
+            <div class="readpoints"><strong>读图要点：</strong>先看高空的背景环流方向，再看近地面局地环流方向；两者相反说明局地热力差异强于背景环流。冰川风、山谷风、海陆风都可能出现这种“逆背景”现象。</div>
+          </figure>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 13 沃克环流与 ENSO ========== -->
+    <section class="module" id="s13" aria-labelledby="h13">
+      <details open>
+        <summary>
+          <h2 id="h13"><span class="num">13</span>沃克环流与 ENSO</h2>
+          <span class="tags"><span class="tag high">高考高频</span><span class="tag ext">拓展</span><span class="tag up">上升</span><span class="tag down">下沉</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <h3>正常年份的沃克环流</h3>
+          <p>赤道太平洋西侧（印尼、澳大利亚附近）海水暖，东侧（南美西岸）海水冷。西侧空气受热上升，东侧空气下沉；低层气流由东向西，高层由西向东，形成东西向闭合热力环流，即沃克环流。</p>
+          <h3>厄尔尼诺</h3>
+          <ul>
+            <li>赤道东太平洋海水异常增温，东西温差减小。</li>
+            <li>沃克环流减弱，甚至反向。</li>
+            <li>南美西岸降水异常增多，易发生洪涝；澳大利亚、印度尼西亚一带降水减少，易发生干旱。</li>
+          </ul>
+          <h3>拉尼娜</h3>
+          <ul>
+            <li>赤道东太平洋海水异常偏冷，东西温差增大。</li>
+            <li>沃克环流加强，方向不变。</li>
+            <li>澳大利亚、印度尼西亚降水偏多；南美西岸降水偏少。</li>
+          </ul>
+          <div class="table-wrap">
+            <table>
+              <caption>表8　正常年份、厄尔尼诺与拉尼娜对比表</caption>
+              <thead><tr><th>项目</th><th>正常年份</th><th>厄尔尼诺</th><th>拉尼娜</th></tr></thead>
+              <tbody>
+                <tr><td>赤道太平洋海温</td><td>西暖东冷</td><td class="hl">东太平洋异常增温</td><td class="hl">东太平洋异常偏冷</td></tr>
+                <tr><td>东西温差</td><td>较大</td><td>减小</td><td>增大</td></tr>
+                <tr><td>沃克环流</td><td>正常</td><td>减弱或反向</td><td>加强</td></tr>
+                <tr><td>西侧天气</td><td>印尼、澳大利亚多雨</td><td>降水减少，干旱</td><td>降水偏多</td></tr>
+                <tr><td>东侧天气</td><td>南美西岸干燥</td><td>降水异常增多，洪涝</td><td>降水偏少</td></tr>
+                <tr><td>对我国影响</td><td>作为气候背景</td><td>通过海气相互作用影响副高与季风，进而影响旱涝</td><td>通过海气相互作用影响冬季风与降水</td></tr>
+                <tr><td>高中要求</td><td>理解东西向热力环流</td><td>理解环流异常及区域响应</td><td>理解环流加强与区域响应</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <figure class="fig">
+            <svg viewBox="0 0 780 430" role="img" aria-labelledby="tWalker dWalker">
+              <title id="tWalker">正常年份、厄尔尼诺与拉尼娜的沃克环流对比</title>
+              <desc id="dWalker">正常年份西太平洋上升、东太平洋下沉；厄尔尼诺时东侧上升、西侧下沉；拉尼娜时正常环流加强。</desc>
+              <defs>
+                <marker id="mW1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/></marker>
+                <marker id="mW2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+              </defs>
+              <rect x="15" y="20" width="240" height="360" rx="10" fill="var(--bg-soft)" stroke="var(--line)"/>
+              <rect x="270" y="20" width="240" height="360" rx="10" fill="var(--bg-soft)" stroke="var(--line)"/>
+              <rect x="525" y="20" width="240" height="360" rx="10" fill="var(--bg-soft)" stroke="var(--line)"/>
+              <text x="135" y="45" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">正常年份</text>
+              <text x="390" y="45" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">厄尔尼诺</text>
+              <text x="645" y="45" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">拉尼娜</text>
+
+              <rect x="30" y="280" width="100" height="70" fill="var(--accent)" opacity=".28"/>
+              <rect x="130" y="280" width="110" height="70" fill="var(--primary)" opacity=".18"/>
+              <text x="60" y="370" font-size="11" fill="var(--text)">西暖</text>
+              <text x="180" y="370" font-size="11" fill="var(--text)">东冷</text>
+              <line x1="65" y1="270" x2="65" y2="110" stroke="var(--accent)" stroke-width="3" marker-end="url(#mW2)"/>
+              <line x1="80" y1="95" x2="205" y2="95" stroke="var(--primary)" stroke-width="3" marker-end="url(#mW1)"/>
+              <line x1="220" y1="110" x2="220" y2="270" stroke="var(--primary)" stroke-width="3" marker-end="url(#mW1)"/>
+              <line x1="205" y1="292" x2="80" y2="292" stroke="var(--primary)" stroke-width="3" marker-end="url(#mW1)"/>
+
+              <rect x="285" y="280" width="100" height="70" fill="var(--primary)" opacity=".18"/>
+              <rect x="385" y="280" width="110" height="70" fill="var(--accent)" opacity=".32"/>
+              <text x="315" y="370" font-size="11" fill="var(--text)">西冷</text>
+              <text x="435" y="370" font-size="11" fill="var(--text)">东暖</text>
+              <line x1="320" y1="270" x2="320" y2="110" stroke="var(--primary)" stroke-width="3" marker-end="url(#mW1)"/>
+              <line x1="335" y1="95" x2="460" y2="95" stroke="var(--primary)" stroke-width="3" marker-end="url(#mW1)"/>
+              <line x1="475" y1="110" x2="475" y2="270" stroke="var(--accent)" stroke-width="3" marker-end="url(#mW2)"/>
+              <line x1="460" y1="292" x2="335" y2="292" stroke="var(--accent)" stroke-width="3" marker-end="url(#mW2)"/>
+
+              <rect x="540" y="280" width="100" height="70" fill="var(--accent)" opacity=".38"/>
+              <rect x="640" y="280" width="110" height="70" fill="var(--primary)" opacity=".24"/>
+              <text x="570" y="370" font-size="11" fill="var(--text)">西更暖</text>
+              <text x="690" y="370" font-size="11" fill="var(--text)">东更冷</text>
+              <line x1="575" y1="270" x2="575" y2="105" stroke="var(--accent)" stroke-width="5" marker-end="url(#mW2)"/>
+              <line x1="590" y1="90" x2="720" y2="90" stroke="var(--primary)" stroke-width="5" marker-end="url(#mW1)"/>
+              <line x1="735" y1="105" x2="735" y2="270" stroke="var(--primary)" stroke-width="5" marker-end="url(#mW1)"/>
+              <line x1="720" y1="292" x2="590" y2="292" stroke="var(--primary)" stroke-width="5" marker-end="url(#mW1)"/>
+              <text x="390" y="408" text-anchor="middle" font-size="12" fill="var(--muted)">西侧指印尼、澳大利亚一带，东侧指南美西岸</text>
+            </svg>
+            <figcaption>图7　正常年份、厄尔尼诺与拉尼娜的沃克环流三态对比</figcaption>
+            <div class="readpoints"><strong>读图要点：</strong>先看海温分布（暖色为暖水、冷色为冷水），再看垂直气流方向；正常年份西升东沉，厄尔尼诺东升西沉，拉尼娜维持西升东沉但环流更强。</div>
+          </figure>
+          <div class="callout"><strong>高中要求：</strong>理解沃克环流作为大气环流异常的背景即可，不深究海洋动力学。高考常以“海气相互作用 + 环流异常 + 区域气候响应”的组合出现。</div>
+        </div>
+      </details>
+    </section>
+    <!-- ========== 14 判读方法与答题模板 ========== -->
+    <section class="module" id="s14" aria-labelledby="h14">
+      <details open>
+        <summary>
+          <h2 id="h14"><span class="num">14</span>判读方法、答题模板与高考考法</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag high">高考高频</span><span class="tag tpl">综合题模板</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <h3>判读方法</h3>
+          <ul>
+            <li><strong>判读气压带风带示意图：</strong>先看纬度位置，再看气流垂直方向，最后看风向偏转。</li>
+            <li><strong>判读风向：</strong>近地面风由高压吹向低压，北半球右偏、南半球左偏；高空风与等压线平行。</li>
+            <li><strong>判读干湿：</strong>上升或下沉 + 水汽来源 + 地形迎风或背风 + 洋流暖或寒，四者联判。</li>
+            <li><strong>判读季节：</strong>看大陆气压性质，大陆低压为夏季，大陆高压为冬季；再看气压带风带整体位置。</li>
+          </ul>
+          <h3>综合题模板</h3>
+          <div class="grid2">
+            <div class="mini-card"><h4>成因类</h4><p>按“太阳辐射—大气环流—海陆位置—地形—洋流”逐项排查，先定热量带，再定水汽与升降，最后写局部修正。</p></div>
+            <div class="mini-card"><h4>影响类</h4><p>按“热量—水分—天气—气候—农业与生态”展开，注意区分有利影响与不利影响。</p></div>
+          </div>
+          <h3>高考新情境</h3>
+          <p>新高考往往不直接问“这是什么风”，而是给出气压、气温、降水或等压线分布，要求反推气流结构，并补出垂直运动和天气效应。复习时把每个风带、气压带都翻译成“上升还是下沉 → 多雨还是少雨 → 对区域意味着什么”。</p>
+          <h3>大气环流综合题答题链</h3>
+          <div class="flow">
+            <span class="node">审题定位</span><span class="arrow">→</span>
+            <span class="node">判断所在气压带或风带</span><span class="arrow">→</span>
+            <span class="node">判断气流上升或下沉</span><span class="arrow">→</span>
+            <span class="node">判断水汽来源</span><span class="arrow">→</span>
+            <span class="node">叠加地形与洋流</span><span class="arrow">→</span>
+            <span class="node">得出气温降水特征</span><span class="arrow">→</span>
+            <span class="node">落到农业生态影响</span>
+          </div>
+          <div class="callout tpl"><strong>表述模板：</strong>该地地处某纬度、受某气压带或风带控制，气流以上升或下沉为主，水汽主要来自某海洋或内陆，叠加迎风坡与暖流或背风坡与寒流，因此形成某气候，具有某气温与降水特征，进而影响当地农业类型与生态景观。</div>
+          <div class="callout exam"><strong>高考提醒：</strong>综合题中“成因”和“影响”要分开写；成因写环流与下垫面，影响写对气温、降水、农业、生态、灾害的具体作用，避免把成因和影响混在一句话里。</div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 15 高频易错清单 ========== -->
+    <section class="module" id="s15" aria-labelledby="h15">
+      <details open>
+        <summary>
+          <h2 id="h15"><span class="num">15</span>高频易错清单</h2>
+          <span class="tags"><span class="tag warn">易错</span><span class="tag high">考前必看</span><span class="tag core">必考核心</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <div class="table-wrap">
+            <table>
+              <caption>表9　大气环流高频易错清单</caption>
+              <thead><tr><th>序号</th><th>易错点</th><th>正确认识</th><th>高考提醒</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td class="hl">把副热带高压、副极地低压说成热力成因</td><td>副热带高压、副极地低压是动力成因；赤道低压、极地高压是热力成因</td><td>选择题常以成因类型设陷阱，先判断气流是堆积下沉还是冷却下沉</td></tr>
+                <tr><td>2</td><td class="hl">南亚夏季西南风只写海陆热力差异</td><td>还要写东南信风北移越过赤道、受北半球地转偏向力右偏</td><td>综合题按点给分，缺“越赤道右偏”会丢关键分</td></tr>
+                <tr><td>3</td><td class="hl">气压带风带移动幅度写成23.5°</td><td>移动幅度约5°—10°，小于太阳直射点移动幅度</td><td>注意区分“直射点移动”与“气压带风带移动”</td></tr>
+                <tr><td>4</td><td class="hl">认为信风一定干燥、西风一定湿润</td><td>要看水汽来源、地形迎风或背风、洋流性质</td><td>大陆东岸信风迎风坡可多雨，西风背风侧可干旱</td></tr>
+                <tr><td>5</td><td class="hl">把副高控制区与副高西北侧混为一谈</td><td>副高控制区晴热少雨，西北侧边缘多雨</td><td>旱涝判断先看某地处在控制区还是边缘</td></tr>
+                <tr><td>6</td><td class="hl">非地带性只写现象不写修正因子</td><td>非地带性本质是“地带性模型 + 局部修正”</td><td>答题要写出修正因子和完整因果链</td></tr>
+                <tr><td>7</td><td class="hl">认为海陆分布使气压带完全消失</td><td>气压带被切断，但以海洋活动中心形式保留</td><td>冬夏活动中心名称与位置要能对应</td></tr>
+                <tr><td>8</td><td class="hl">只写背景环流，忽略局地环流</td><td>局地环流可能“顶住”背景环流，出现相反风向</td><td>遇到风向反常先想局地下垫面热力差异</td></tr>
+                <tr><td>9</td><td class="hl">把地中海气候与亚热带季风气候混淆</td><td>地中海气候是高中唯一雨热不同期的气候</td><td>看最冷月气温与降水季节分配即可区分</td></tr>
+                <tr><td>10</td><td class="hl">认为温带海洋性气候降水最多</td><td>温带海洋性气候降水最均匀；温带大陆性气候温差最大、最干旱</td><td>注意“均匀”与“最多”不是同一概念</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout warn"><strong>使用方式：</strong>考前逐条对照，把每条易错点改写成一句正确的因果表述，比单纯背诵结论更有效。</div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ========== 16 知识网络与因果链 ========== -->
+    <section class="module" id="s16" aria-labelledby="h16">
+      <details open>
+        <summary>
+          <h2 id="h16"><span class="num">16</span>知识网络与因果链</h2>
+          <span class="tags"><span class="tag core">必考核心</span><span class="tag high">框架复习</span><span class="tag ext">可点击跳转</span></span>
+          <span class="chev" aria-hidden="true">▸</span>
+        </summary>
+        <div class="body">
+          <p>下图把本专题的全部内容串成一条纵向因果链。每个节点都可以点击，跳转到对应章节复习。</p>
+          <figure class="fig">
+            <svg viewBox="0 0 780 780" role="group" aria-labelledby="tNet dNet">
+              <title id="tNet">大气环流知识网络因果链</title>
+              <desc id="dNet">从太阳辐射纬度差异与地转偏向力出发，依次经过单圈环流失效、三圈环流、气压带风带、季节移动、季风、副高雨带、非地带性、局地环流、沃克环流，最终输出气候类型。</desc>
+              <defs>
+                <marker id="mNet" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+              </defs>
+              <a href="#s1" aria-label="跳转到第1章 概念、尺度与意义">
+                <rect x="120" y="30" width="540" height="42" rx="10" fill="var(--card)" stroke="var(--primary)"/>
+                <text x="390" y="56" text-anchor="middle" font-size="14" fill="var(--text)">太阳辐射纬度差异 + 地转偏向力</text>
+              </a>
+              <line x1="390" y1="74" x2="390" y2="94" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#mNet)"/>
+              <a href="#s3" aria-label="跳转到第3章 三圈环流">
+                <rect x="120" y="98" width="540" height="42" rx="10" fill="var(--card)" stroke="var(--primary)"/>
+                <text x="390" y="124" text-anchor="middle" font-size="14" fill="var(--text)">单圈环流失效</text>
+              </a>
+              <line x1="390" y1="142" x2="390" y2="162" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#mNet)"/>
+              <a href="#s3" aria-label="跳转到第3章 三圈环流">
+                <rect x="120" y="166" width="540" height="42" rx="10" fill="var(--card)" stroke="var(--primary)"/>
+                <text x="390" y="192" text-anchor="middle" font-size="14" fill="var(--text)">三圈环流</text>
+              </a>
+              <line x1="390" y1="210" x2="390" y2="230" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#mNet)"/>
+              <a href="#s4" aria-label="跳转到第4章 七个气压带与六个风带">
+                <rect x="120" y="234" width="540" height="42" rx="10" fill="var(--card)" stroke="var(--primary)"/>
+                <text x="390" y="260" text-anchor="middle" font-size="14" fill="var(--text)">七个气压带、六个风带</text>
+              </a>
+              <line x1="390" y1="278" x2="390" y2="298" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#mNet)"/>
+              <a href="#s5" aria-label="跳转到第5章 气压带风带季节移动">
+                <rect x="120" y="302" width="540" height="42" rx="10" fill="var(--card)" stroke="var(--primary)"/>
+                <text x="390" y="328" text-anchor="middle" font-size="14" fill="var(--text)">气压带风带季节移动</text>
+              </a>
+              <line x1="390" y1="346" x2="390" y2="366" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#mNet)"/>
+              <a href="#s7" aria-label="跳转到第7章 季风环流">
+                <rect x="120" y="370" width="540" height="42" rx="10" fill="var(--card)" stroke="var(--primary)"/>
+                <text x="390" y="396" text-anchor="middle" font-size="14" fill="var(--text)">海陆热力差异 → 大气活动中心与季风</text>
+              </a>
+              <line x1="390" y1="414" x2="390" y2="434" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#mNet)"/>
+              <a href="#s8" aria-label="跳转到第8章 副热带高压与我国雨带">
+                <rect x="120" y="438" width="540" height="42" rx="10" fill="var(--card)" stroke="var(--primary)"/>
+                <text x="390" y="464" text-anchor="middle" font-size="14" fill="var(--text)">副高北跳 → 我国雨带与旱涝</text>
+              </a>
+              <line x1="390" y1="482" x2="390" y2="502" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#mNet)"/>
+              <a href="#s11" aria-label="跳转到第11章 非地带性特殊情况">
+                <rect x="120" y="506" width="540" height="42" rx="10" fill="var(--card)" stroke="var(--primary)"/>
+                <text x="390" y="532" text-anchor="middle" font-size="14" fill="var(--text)">地形、洋流 → 非地带性</text>
+              </a>
+              <line x1="390" y1="550" x2="390" y2="570" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#mNet)"/>
+              <a href="#s12" aria-label="跳转到第12章 局地环流与背景环流修正">
+                <rect x="120" y="574" width="540" height="42" rx="10" fill="var(--card)" stroke="var(--primary)"/>
+                <text x="390" y="600" text-anchor="middle" font-size="14" fill="var(--text)">局地下垫面 → 局地环流</text>
+              </a>
+              <line x1="390" y1="618" x2="390" y2="638" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#mNet)"/>
+              <a href="#s13" aria-label="跳转到第13章 沃克环流与 ENSO">
+                <rect x="120" y="642" width="540" height="42" rx="10" fill="var(--card)" stroke="var(--primary)"/>
+                <text x="390" y="668" text-anchor="middle" font-size="14" fill="var(--text)">海气相互作用 → 沃克环流与 ENSO</text>
+              </a>
+              <line x1="390" y1="686" x2="390" y2="706" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#mNet)"/>
+              <a href="#s10" aria-label="跳转到第10章 气候类型全表">
+                <rect x="120" y="710" width="540" height="42" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+                <text x="390" y="736" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">气候类型输出</text>
+              </a>
+            </svg>
+            <figcaption>图8　大气环流知识网络纵向因果链（节点可点击跳转）</figcaption>
+            <div class="readpoints"><strong>读图要点：</strong>从上到下按“能量来源—环流形成—季节变化—海陆修正—天气表现—局地与非地带性修正—海气异常—气候输出”的顺序理解，每一层都在前一层基础上叠加新因素。</div>
+          </figure>
+          <h3>一句话总纲</h3>
+          <p>太阳辐射造成高低纬受热不均，地转偏向力把单圈环流拆成三圈，形成七气压带六风带；直射点移动使气压带风带季节移动，海陆差异切断气压带并形成季风；副高北跳决定我国雨带，地形洋流造成非地带性，局地下垫面修正背景环流，海气相互作用引发沃克环流异常，最终输出复杂多样的气候类型。</p>
+        </div>
+      </details>
+    </section>
+  </main>
+</div>
+
+<!-- ========== 页脚 ========== -->
+<footer class="site-footer">
+  <p>高中地理·大气环流高考完整版</p>
+  <p>本页为纯知识讲解页，用于课堂演示、复习与打印。</p>
+</footer>
+
+<button class="backtop" id="backTop" type="button" aria-label="回到页面顶部">↑</button>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ========== 主题切换：CSS 变量 + 本地存储 ========== */
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('themeBtn');
+  function applyTheme(t){
+    root.setAttribute('data-theme', t);
+    var dark = (t === 'dark');
+    themeBtn.setAttribute('aria-pressed', String(dark));
+    themeBtn.textContent = dark ? '☀ 浅色' : '🌙 深色';
+    try { localStorage.setItem('acc-theme', t); } catch (e) {}
+  }
+  var savedTheme = null;
+  try { savedTheme = localStorage.getItem('acc-theme'); } catch (e) {}
+  applyTheme(savedTheme === 'dark' ? 'dark' : 'light');
+  themeBtn.addEventListener('click', function(){
+    applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ========== 搜索：过滤知识模块并高亮命中词 ========== */
+  var input = document.getElementById('search');
+  var count = document.getElementById('searchCount');
+  var modules = Array.prototype.slice.call(document.querySelectorAll('section.module'));
+
+  function clearMarks(scope){
+    var marks = scope.querySelectorAll('mark.hit');
+    for (var i = 0; i < marks.length; i++){
+      var m = marks[i];
+      m.parentNode.replaceChild(document.createTextNode(m.textContent), m);
+    }
+    scope.normalize();
+  }
+
+  function highlight(scope, q){
+    var walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(n){
+        if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        var p = n.parentElement;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        if (p.closest('script,style,mark.hit,svg')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var nodes = [], n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    var lower = q.toLowerCase();
+    nodes.forEach(function(node){
+      var text = node.nodeValue;
+      var idx = text.toLowerCase().indexOf(lower);
+      if (idx < 0) return;
+      var frag = document.createDocumentFragment();
+      var i = 0;
+      while (idx > -1){
+        frag.appendChild(document.createTextNode(text.slice(i, idx)));
+        var mark = document.createElement('mark');
+        mark.className = 'hit';
+        mark.textContent = text.slice(idx, idx + q.length);
+        frag.appendChild(mark);
+        i = idx + q.length;
+        idx = text.toLowerCase().indexOf(lower, i);
+      }
+      frag.appendChild(document.createTextNode(text.slice(i)));
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+
+  function runSearch(){
+    var q = input.value.trim();
+    var visible = 0;
+    modules.forEach(function(sec){
+      clearMarks(sec);
+      if (!q){
+        sec.hidden = false;
+        visible++;
+        return;
+      }
+      var hit = sec.textContent.toLowerCase().indexOf(q.toLowerCase()) > -1;
+      sec.hidden = !hit;
+      if (hit){
+        visible++;
+        var d = sec.querySelector('details');
+        if (d) d.open = true;
+        highlight(sec, q);
+      }
+    });
+    count.textContent = q ? ('匹配 ' + visible + ' 个知识模块') : '';
+  }
+
+  var timer = null;
+  input.addEventListener('input', function(){
+    clearTimeout(timer);
+    timer = setTimeout(runSearch, 120);
+  });
+
+  /* ========== 展开全部 / 收起全部 ========== */
+  document.getElementById('expandBtn').addEventListener('click', function(){
+    var all = document.querySelectorAll('details');
+    for (var i = 0; i < all.length; i++) all[i].open = true;
+  });
+  document.getElementById('collapseBtn').addEventListener('click', function(){
+    var all = document.querySelectorAll('details');
+    for (var i = 0; i < all.length; i++) all[i].open = false;
+  });
+
+  /* ========== 打印 ========== */
+  document.getElementById('printBtn').addEventListener('click', function(){
+    window.print();
+  });
+
+  /* ========== 手机端目录折叠 ========== */
+  var tocToggle = document.getElementById('tocToggle');
+  var tocList = document.getElementById('tocList');
+  tocToggle.addEventListener('click', function(){
+    var open = tocList.classList.toggle('open');
+    tocToggle.setAttribute('aria-expanded', String(open));
+  });
+  tocList.addEventListener('click', function(e){
+    if (e.target.tagName === 'A' && window.innerWidth <= 900){
+      tocList.classList.remove('open');
+      tocToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  /* ========== 目录滚动高亮 ========== */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var pairs = [];
+  links.forEach(function(a){
+    var id = a.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) pairs.push({ el: el, a: a });
+  });
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          links.forEach(function(a){
+            a.classList.remove('active');
+            a.removeAttribute('aria-current');
+          });
+          for (var i = 0; i < pairs.length; i++){
+            if (pairs[i].el === en.target){
+              pairs[i].a.classList.add('active');
+              pairs[i].a.setAttribute('aria-current', 'true');
+              break;
+            }
+          }
+        }
+      });
+    }, { rootMargin: '-15% 0px -75% 0px', threshold: 0 });
+    pairs.forEach(function(p){ io.observe(p.el); });
+  }
+
+  /* ========== 回到顶部 ========== */
+  var backTop = document.getElementById('backTop');
+  var topBtn = document.getElementById('topBtn');
+  function toTop(){
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  backTop.addEventListener('click', toTop);
+  topBtn.addEventListener('click', toTop);
+  window.addEventListener('scroll', function(){
+    backTop.classList.toggle('show', window.scrollY > 400);
+  }, { passive: true });
+
+  /* ========== 打印前展开全部折叠内容，打印后恢复 ========== */
+  var closedBeforePrint = [];
+  window.addEventListener('beforeprint', function(){
+    closedBeforePrint = Array.prototype.slice.call(document.querySelectorAll('details:not([open])'));
+    closedBeforePrint.forEach(function(d){ d.open = true; });
+  });
+  window.addEventListener('afterprint', function(){
+    closedBeforePrint.forEach(function(d){ d.open = false; });
+    closedBeforePrint = [];
+  });
+
+})();
+</script>
+</body>
+</html>
