@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>全球洋流分布动态示意图——高考考点与易错点</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:#05121d;color:#d9eaf6;font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,-apple-system,sans-serif;font-size:14px}
+.app{display:flex;flex-direction:column;min-height:100vh}
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 16px;background:linear-gradient(90deg,#081a2b,#0d2b46,#081a2b);border-bottom:1px solid #17405f}
+.hdr h1{margin:0;font-size:19px;color:#eaf7ff;letter-spacing:.5px}
+.hdr h1 span{font-size:13px;font-weight:400;color:#88b9d6;margin-left:8px}
+.hdr-tools{display:flex;gap:8px;flex-wrap:wrap}
+.pill{font-size:12px;padding:3px 10px;border-radius:20px;background:#0f2c44;border:1px solid #21506f;color:#a6d0e8;white-space:nowrap}
+.main{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:12px;padding:12px;align-items:start}
+.stage{position:relative;background:#04121d;border:1px solid #1b4260;border-radius:10px;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.4)}
+#cv{display:block;width:100%;height:auto;cursor:crosshair;touch-action:manipulation}
+.tips{position:absolute;left:10px;bottom:8px;font-size:12px;color:#7aa6c2;background:rgba(4,18,29,.75);border:1px solid #123a56;padding:4px 10px;border-radius:6px;pointer-events:none;max-width:calc(100% - 20px);line-height:1.5}
+.tip{position:absolute;display:none;pointer-events:none;background:rgba(7,26,42,.96);border:1px solid #2f7fb0;color:#e6f4ff;font-size:12.5px;padding:4px 8px;border-radius:6px;white-space:nowrap;z-index:5;transform:translate(-50%,-135%)}
+.panel{background:#0a1e2f;border:1px solid #1b4260;border-radius:10px;padding:10px 12px;max-height:calc(100vh - 96px);overflow:auto}
+.pgroup{padding:8px 0 10px;border-bottom:1px dashed #1b3f5a}
+.pgroup:last-child{border-bottom:0}
+.pgroup h3{margin:2px 0 8px;font-size:13px;color:#86bcd9;font-weight:600;letter-spacing:.6px}
+.prow{display:flex;gap:8px;align-items:center}
+.prow .btn{flex:1}
+.lbl{font-size:12.5px;color:#8fb8d2;white-space:nowrap}
+.btn{font-family:inherit;font-size:13px;padding:7px 10px;border-radius:8px;border:1px solid #2a5c80;background:#143349;color:#d6ecfa;cursor:pointer;transition:.15s}
+.btn:hover{background:#1c4a6b;border-color:#3a7ba6}
+.btn.primary{background:#1a5a86;border-color:#2f86bb}
+.btn.sm{width:100%;margin-bottom:6px;font-size:12.5px;padding:6px 8px;text-align:left}
+.seg{display:flex;border:1px solid #2a5c80;border-radius:8px;overflow:hidden}
+.segbtn{font-family:inherit;font-size:12.5px;padding:6px 14px;background:#0f2b41;color:#a8cde3;border:0;cursor:pointer}
+.segbtn.on{background:#1a5a86;color:#fff}
+.hintline{margin-top:8px;font-size:12px;line-height:1.6;color:#ffd166;background:rgba(255,209,102,.08);border-left:3px solid #ffd166;padding:5px 8px;border-radius:0 6px 6px 0}
+.layers{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.layers label{display:flex;align-items:center;gap:5px;font-size:12.5px;background:#0d2740;border:1px solid #1c4666;border-radius:6px;padding:5px 6px;cursor:pointer;color:#c7e0f0}
+.layers input{accent-color:#3f9fd0;width:13px;height:13px;margin:0}
+.layers i{font-style:normal;font-size:11px;width:12px;text-align:center}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.dot.warm{background:#ff5a3c}.dot.cold{background:#3ca7ff}.dot.sp{background:#ffd166}.dot.fish{background:#5ff0d0}
+.legend{font-size:12.5px;line-height:1.85;color:#b8d6e8}
+.legend div{display:flex;align-items:center;gap:7px}
+.legend i{display:inline-block;width:24px;border-top:3px solid #888;border-radius:2px;flex:0 0 auto}
+.st{font-size:14px}.st.gold{color:#ffd166}.st.cyan{color:#5ff0d0}
+.ar{color:#5ff0d0;font-weight:700}.wnd{color:rgba(255,255,255,.8)}
+.modal{position:fixed;inset:0;background:rgba(2,8,14,.78);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal.on{display:flex}
+.mbox{background:#0b2033;border:1px solid #2b5f86;border-radius:14px;max-width:860px;width:100%;max-height:88vh;overflow:auto;padding:18px 20px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mclose{position:absolute;right:12px;top:8px;background:none;border:0;color:#8fbdd9;font-size:26px;cursor:pointer;line-height:1}
+.ch{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-left:5px solid var(--c,#3ca7ff);padding-left:10px;margin:0 26px 14px 0}
+.ch h2{margin:0;font-size:20px;color:#eaf7ff}
+.tag{font-size:12px;padding:2px 9px;border-radius:999px;background:#14374f;border:1px solid #2a5f80;color:#a9d3ea;white-space:nowrap}
+.tag.w{background:rgba(255,90,60,.16);border-color:#ff5a3c;color:#ff9a86}
+.tag.c{background:rgba(60,167,255,.16);border-color:#3ca7ff;color:#86c9ff}
+.tag.y{background:rgba(255,209,102,.14);border-color:#ffd166;color:#ffd166}
+.kv{margin:8px 0;padding:8px 10px;background:#0e2740;border-radius:8px;border:1px solid #1a3f5c}
+.kv b{display:block;font-size:12.5px;color:#79b3d4;margin-bottom:3px;letter-spacing:.5px}
+.kv p{margin:0;font-size:14px;line-height:1.65;color:#d7e9f5}
+.kv.hl{background:rgba(255,209,102,.08);border-color:#8a6d24}
+.kv.hl b{color:#ffd166}
+.chain{font-size:13.5px;line-height:1.8;color:#c9e7ff}
+.chain em{color:#5ff0d0;font-style:normal}
+.q{margin:10px 0;padding:10px;border:1px solid #1d4767;border-radius:10px;background:#0c2539}
+.q p{margin:0 0 8px;font-size:14px;color:#e2f1fb}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{font-family:inherit;font-size:13px;padding:6px 14px;border-radius:8px;border:1px solid #2a5c80;background:#12314a;color:#d6ecfa;cursor:pointer}
+.opt.ok{background:#14563c;border-color:#2fbb7d;color:#8ff0c2}
+.opt.no{background:#5a1f21;border-color:#e05c5c;color:#ffb3b3}
+.fb{margin-top:8px;font-size:13px;line-height:1.7;color:#ffd166;display:none}
+.cmpwrap{margin-top:10px}
+.cmpwrap canvas{width:100%;height:auto;border-radius:10px;border:1px solid #1d4767;background:#081c2c;display:block}
+.cmpnote{margin-top:8px;font-size:13px;line-height:1.7;color:#bcd9ec}
+@media(max-width:900px){
+ .main{grid-template-columns:1fr;padding:8px;gap:8px}
+ .panel{max-height:none}
+ .hdr h1{font-size:16px}
+ .hdr h1 span{font-size:12px;display:block;margin:2px 0 0}
+ .tips{font-size:11px}
+ .mbox{padding:14px;max-height:92vh}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hdr">
+    <h1>全球洋流分布动态示意图<span>——高考考点与易错点</span></h1>
+    <div class="hdr-tools">
+      <span class="pill" id="seasonPill">当前季节：夏季</span>
+      <span class="pill">红橙=暖流 · 蓝青=寒流</span>
+    </div>
+  </header>
+  <main class="main">
+    <section class="stage" id="stage">
+      <canvas id="cv" width="1200" height="600"></canvas>
+      <div class="tips">点击洋流流线看知识卡片 · 点击★看渔场成因链 · 点击黄色「例外」角标看特殊机制</div>
+      <div class="tip" id="tip"></div>
+    </section>
+    <aside class="panel">
+      <div class="pgroup">
+        <div class="prow">
+          <button class="btn primary" id="btnPlay">⏸ 暂停</button>
+          <button class="btn" id="btnReset">↺ 重置视图</button>
+        </div>
+        <div class="prow" style="margin-top:8px">
+          <span class="lbl">季节</span>
+          <div class="seg">
+            <button class="segbtn on" data-season="summer">夏季</button>
+            <button class="segbtn" data-season="winter">冬季</button>
+          </div>
+        </div>
+        <div class="hintline" id="seasonHint"></div>
+      </div>
+      <div class="pgroup">
+        <h3>图层开关</h3>
+        <div class="layers" id="layers">
+          <label><input type="checkbox" data-layer="warm" checked><i class="dot warm"></i>暖流层</label>
+          <label><input type="checkbox" data-layer="cold" checked><i class="dot cold"></i>寒流层</label>
+          <label><input type="checkbox" data-layer="special" checked><i class="dot sp"></i>特殊洋流层</label>
+          <label><input type="checkbox" data-layer="fish" checked><i class="dot fish"></i>渔场层</label>
+          <label><input type="checkbox" data-layer="wind" checked><i>风</i>风带层</label>
+          <label><input type="checkbox" data-layer="exam" checked><i>考</i>考点标注</label>
+          <label><input type="checkbox" data-layer="climate"><i>温</i>气候影响</label>
+          <label><input type="checkbox" data-layer="sail"><i>航</i>航行影响</label>
+          <label><input type="checkbox" data-layer="poll"><i>污</i>污染扩散</label>
+        </div>
+      </div>
+      <div class="pgroup">
+        <h3>对比模式</h3>
+        <div class="cmps">
+          <button class="btn sm" data-cmp="1">副热带环流 vs 北印度洋季风环流</button>
+          <button class="btn sm" data-cmp="2">寒暖流交汇渔场 vs 上升流渔场</button>
+          <button class="btn sm" data-cmp="3">一般寒暖流判定 vs 索马里例外</button>
+          <button class="btn sm" data-cmp="4">南极环流 vs 西风漂流</button>
+        </div>
+        <button class="btn sm" id="btnQuiz">🎯 测验模式（随机抽题）</button>
+      </div>
+      <div class="pgroup">
+        <h3>图例</h3>
+        <div class="legend">
+          <div><i style="border-color:#ff5a3c"></i>暖流（红橙）</div>
+          <div><i style="border-color:#3ca7ff"></i>寒流（蓝青）</div>
+          <div><i style="border-color:#ffd166;border-top-style:dashed"></i>特殊洋流（黄虚线框＋「例外」角标）</div>
+          <div><span class="st gold">★</span>寒暖流交汇渔场</div>
+          <div><span class="st cyan">★</span>上升流渔场</div>
+          <div><span class="ar">↑</span>上升流／上升补偿流</div>
+          <div><span class="wnd">➤</span>风带（半透明白箭头）</div>
+          <div><i style="border-color:#c08bff"></i>密度流（表层实线／深层虚线）</div>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+<div class="modal" id="modal"><div class="mbox"><button class="mclose" id="mclose">×</button><div id="mbody"></div></div></div>
+<script>
+(function(){
+'use strict';
+/* =====================================================================
+   1. 常量与数据区
+   ===================================================================== */
+var VW=1200, VH=600;
+var COL={warm:'#ff5a3c',cold:'#3ca7ff',dens:'#c08bff',sp:'#ffd166',fishC:'#ffd166',fishU:'#5ff0d0'};
+var FONT='"Microsoft YaHei","PingFang SC",system-ui,sans-serif';
+
+/* ---- 简化大陆轮廓（经纬度） ---- */
+var LAND=[
+ [[-168,65],[-158,71],[-145,70],[-130,70],[-115,69],[-100,69],[-85,70],[-75,68],[-62,58],[-55,50],[-66,44],[-70,41],[-75,35],[-81,25],[-84,30],[-90,29],[-97,26],[-105,22],[-112,30],[-124,40],[-124,48],[-135,58],[-150,60],[-165,54]],
+ [[-45,60],[-30,68],[-22,70],[-18,76],[-25,82],[-40,83],[-55,82],[-62,76],[-52,68]],
+ [[-79,9],[-70,12],[-60,10],[-50,5],[-35,-5],[-38,-13],[-48,-25],[-56,-35],[-62,-40],[-68,-50],[-68,-55],[-73,-52],[-75,-45],[-73,-38],[-71,-30],[-70,-20],[-76,-14],[-81,-6],[-80,0]],
+ [[-17,15],[-10,5],[8,4],[10,-1],[12,-6],[12,-17],[15,-22],[18,-29],[20,-35],[26,-34],[32,-26],[35,-22],[40,-15],[40,-5],[43,2],[51,12],[43,12],[37,22],[32,31],[25,32],[10,37],[0,35],[-10,30],[-17,21]],
+ [[-10,36],[0,44],[3,43],[10,44],[15,40],[24,41],[27,36],[36,36],[36,30],[43,30],[48,30],[56,26],[62,25],[68,23],[72,20],[80,15],[80,8],[90,22],[97,17],[105,10],[110,20],[117,24],[122,31],[122,40],[127,40],[130,43],[135,47],[142,45],[143,53],[155,58],[162,60],[170,62],[180,66],[180,70],[160,70],[140,73],[120,74],[100,76],[80,73],[68,73],[55,70],[40,70],[30,70],[20,70],[10,63],[5,58],[8,55],[4,52],[0,49],[-5,44],[-10,40]],
+ [[113,-22],[114,-30],[118,-35],[129,-32],[137,-35],[145,-38],[150,-37],[153,-28],[145,-15],[135,-12],[130,-11],[125,-14],[118,-18]],
+ [[-180,-70],[-150,-72],[-120,-74],[-90,-72],[-60,-63],[-30,-70],[0,-70],[30,-68],[60,-66],[90,-66],[120,-66],[150,-70],[180,-72],[180,-90],[-180,-90]],
+ [[130,32],[136,35],[141,40],[145,44],[142,45],[138,37],[132,33]],
+ [[43,-12],[50,-15],[50,-25],[45,-25],[43,-18]],
+ [[173,-35],[178,-38],[176,-44],[170,-46],[167,-44],[172,-38]],
+ [[-6,50],[-2,53],[0,58],[-5,58],[-8,54]],
+ [[95,5],[105,-5],[115,-8],[130,-8],[140,-8],[140,-2],[130,0],[120,2],[110,5],[100,6]]
+];
+
+/* ---- 洋流数据 ---- */
+var CURRENTS=[];
+
+CURRENTS.push(
+/* ================= 太平洋 ================= */
+{id:'npec',n:'北赤道暖流',t:'暖流',ca:'风海流',spd:.9,w:2.4,p:[[-95,10],[-120,10],[-150,9],[-176,9]],
+ d:'太平洋北部约10°N附近，自东向西横穿大洋。',
+ e:'使流经海区增温增湿；是黑潮的源头，与北太平洋暖流、加利福尼亚寒流共同构成北太平洋副热带顺时针环流。',
+ x:'东北信风驱动，属风海流；北半球中低纬大洋环流顺时针，北赤道暖流位于其南缘，自东向西。',
+ r:'不能因为“自东向西”就判成寒流：暖流寒流看相对流经海区的水温，不看流向的东西南北。'},
+
+{id:'spec',n:'南赤道暖流',t:'暖流',ca:'风海流',spd:.9,w:2.4,p:[[-85,-3],[-120,-3],[-150,-4],[-176,-4]],
+ d:'赤道以南约0°—10°S，自东向西横穿太平洋。',
+ e:'增温增湿；是东澳大利亚暖流的源头，与西风漂流共同构成南半球副热带逆时针环流。',
+ x:'东南信风驱动；南半球中低纬环流逆时针，赤道流位于其北缘，自东向西。',
+ r:'南半球中低纬是逆时针，不要与北半球顺时针记混。'},
+
+{id:'ecc',n:'赤道逆流',t:'暖流',ca:'补偿流',s:1,spd:.8,w:2.2,p:[[-176,5],[-140,5],[-105,6],[-88,6]],
+ d:'夹在南、北赤道暖流之间，约5°N附近，自西向东。',
+ e:'属水平补偿流，促进赤道海区热量交换；是几内亚暖流的来源之一。',
+ x:'赤道逆流＝补偿流＋暖流，自西向东，与信风驱动方向相反。',
+ r:'不能因为名字带“逆”就判为寒流，它是暖流，成因是补偿流不是风海流。',
+ sp:'特殊在哪里：全球赤道逆流都自西向东，与东北信风、东南信风方向相反，是在赤道无风带附近由海水堆积回流形成的水平补偿流。'},
+
+{id:'kuro',n:'日本暖流（黑潮）',t:'暖流',ca:'风海流',spd:1.9,w:2.8,p:[[124,18],[130,25],[136,31],[141,35]],
+ d:'菲律宾以东经台湾岛东侧、日本以东，自西南流向东北。',
+ e:'增温增湿，日本南部沿海冬季较温和；与千岛寒流交汇形成北海道渔场。',
+ x:'西边界流，流速快、水温高、盐度高；北海道渔场＝日本暖流＋千岛寒流交汇。',
+ r:'黑潮是暖流，成因是风海流（北赤道暖流延续＋地转偏向力＋陆地形状），不是密度流。'},
+
+{id:'npc',n:'北太平洋暖流',t:'暖流',ca:'风海流',spd:1.3,w:2.5,p:[[144,38],[158,41],[176,43]],
+ d:'约40°N附近，自西向东横渡太平洋。',
+ e:'受西风驱动，抵达北美西岸后分为阿拉斯加暖流与加利福尼亚寒流。',
+ x:'北半球西风漂流表现为暖流（北太平洋暖流、北大西洋暖流），与南半球西风漂流（寒流）性质不同。',
+ r:'“南北同风不同性”：同受西风驱动，北半球为暖流，南半球西风漂流为寒流。'},
+
+{id:'cali',n:'加利福尼亚寒流',t:'寒流',ca:'补偿流',upd:1,spd:.7,w:2.3,p:[[-128,45],[-124,37],[-119,29],[-113,23]],
+ d:'北美西岸（大洋东岸），自北向南。',
+ e:'降温减湿，与南加州沿海夏季多雾、干旱有关；带有上升流性质。',
+ x:'东边界流、补偿流；与秘鲁寒流、本格拉寒流、西澳大利亚寒流同属上升流性质。',
+ r:'大陆西岸＝大洋东岸，为寒流；不要把“东暖西寒”记反。'},
+
+{id:'oyashio',n:'千岛寒流（亲潮）',t:'寒流',ca:'风海流',spd:1.0,w:2.3,p:[[162,56],[154,49],[147,43],[143,39]],
+ d:'自白令海南下，沿千岛群岛东侧流向日本东北海域。',
+ e:'与日本暖流交汇形成北海道渔场；使沿岸降温减湿。',
+ x:'北海道渔场成因链：寒暖流交汇→海水扰动→营养盐上泛→浮游生物繁盛→鱼类集聚。',
+ r:'千岛寒流自北向南，是高纬流向低纬的寒流，判断正确；但北海道渔场是“交汇”成因，不是上升流。'},
+
+{id:'peru',n:'秘鲁寒流',t:'寒流',ca:'上升补偿流',s:1,upd:1,spd:.8,w:2.6,p:[[-75,-38],[-76,-30],[-79,-20],[-82,-12],[-84,-6]],
+ d:'南美西岸（大洋东岸），自南向北。',
+ e:'降温减湿，使南美西岸热带荒漠（阿塔卡马沙漠）南北延伸；上升流带来营养盐，形成世界著名渔场。',
+ x:'秘鲁渔场＝离岸风（东南信风）→表层海水离岸→深层冷海水上涌→营养盐上涌→浮游生物繁盛→渔场。',
+ r:'秘鲁渔场是上升补偿流成因，四大渔场中成因独树一帜，绝不能写成寒暖流交汇；厄尔尼诺年上升流减弱、渔场减产。',
+ sp:'特殊在哪里：它是四大渔场中唯一的“上升流渔场”，成因不是寒暖流交汇，而是离岸风造成的垂直补偿流。'},
+
+{id:'eac',n:'东澳大利亚暖流',t:'暖流',ca:'风海流',spd:.9,w:2.3,p:[[153,-20],[154,-28],[152,-36]],
+ d:'澳大利亚东岸（南太平洋西岸），自北向南。',
+ e:'增温增湿，使澳大利亚东岸湿润；与西岸寒流形成鲜明对比。',
+ x:'南半球副热带逆时针环流的西边界流，暖流。',
+ r:'南半球大洋西岸（大陆东岸）也是暖流，“东暖西寒”全球适用，不要以为南半球相反。'},
+
+{id:'wdrift',n:'西风漂流',t:'寒流',ca:'风海流',s:1,wrap:1,spd:1.1,w:2.6,p:[[-180,-48],[-140,-50],[-100,-52],[-60,-50],[-20,-48],[20,-47],[60,-48],[100,-50],[140,-52],[180,-50]],
+ d:'南半球40°S—60°S，自西向东环绕地球一周。',
+ e:'受盛行西风驱动，性质为寒流；阻碍南半球高低纬间热量交换。',
+ x:'南半球中高纬缺少陆地阻挡，不能形成闭合副极地环流，只形成环绕地球的西风漂流。',
+ r:'南半球西风漂流是寒流，北半球同纬度受西风驱动的是暖流（北大西洋暖流、北太平洋暖流），“南北同风不同性”。',
+ sp:'特殊在哪里：南半球中高纬没有闭合的副极地环流，只有这条环绕地球、自西向东的寒流。'}
+);
+/* ===== 第 1 段结束（下一段从 CURRENTS.push( 大西洋、印度洋、密度流 ) 继续） ===== */
+/* ================= 南极与南大洋 ================= */
+CURRENTS.push(
+{id:'acc',n:'南极环流（南极绕极流）',t:'寒流',ca:'风海流',s:1,wrap:1,spd:1.0,w:2.4,
+ p:[[180,-66],[140,-67],[100,-68],[60,-67],[20,-66],[-20,-67],[-60,-68],[-100,-67],[-140,-66],[-180,-66]],
+ d:'南极大陆外围，约65°S—70°S，自东向西环绕地球。',
+ e:'由极地东风驱动，是全球唯一东西贯通整个纬圈、不受大陆边界限制的大型洋流。',
+ x:'南极环流（极地东风、自东向西）与西风漂流（盛行西风、自西向东）在位置、驱动风带、方向上均不同。',
+ r:'二者不能混为一谈：南极环流更靠南、自东向西；西风漂流更靠北、自西向东。',
+ sp:'特殊在哪里：全球唯一东西贯通整个纬圈、不受大陆阻挡的洋流，驱动风带是极地东风而不是盛行西风。'},
+
+/* ================= 大西洋 ================= */
+{id:'gulf',n:'墨西哥湾暖流',t:'暖流',ca:'风海流',spd:2.0,w:3.0,p:[[82,22],[79,28],[74,34],[66,39],[58,42]],
+ d:'自墨西哥湾经佛罗里达海峡沿北美东岸北上，再转向东北。',
+ e:'世界最强大的暖流，增温增湿；与拉布拉多寒流交汇形成纽芬兰渔场，附近多海雾。',
+ x:'西边界流，流速快、水量大；纽芬兰渔场＝墨西哥湾暖流＋拉布拉多寒流交汇。',
+ r:'纽芬兰渔场是寒暖流交汇成因，且寒流可携带冰山、交汇处多海雾，威胁航运。'},
+
+{id:'nac',n:'北大西洋暖流',t:'暖流',ca:'风海流',spd:1.5,w:2.7,p:[[58,43],[40,49],[18,56],[2,61]],
+ d:'自北美东岸向东北，横渡大西洋到达欧洲西北部。',
+ e:'使西欧温带海洋性气候向北延伸到北极圈附近，摩尔曼斯克终年不冻。',
+ x:'暖流增温增湿的经典案例；与东格陵兰寒流交汇形成北海渔场。',
+ r:'北大西洋暖流是盛行西风驱动的风海流，不是密度流。'},
+
+{id:'lab',n:'拉布拉多寒流',t:'寒流',ca:'风海流',spd:1.0,w:2.3,p:[[-58,62],[-56,54],[-52,47],[-49,43]],
+ d:'自北冰洋、加拿大北极群岛南下，沿加拿大东岸自北向南。',
+ e:'降温减湿；与墨西哥湾暖流交汇形成纽芬兰渔场，多海雾、多冰山。',
+ x:'寒流降温减湿；携带冰山威胁航运。',
+ r:'与东格陵兰寒流区分：拉布拉多寒流在加拿大东岸，东格陵兰寒流在格陵兰东岸。'},
+
+{id:'canary',n:'加那利寒流',t:'寒流',ca:'补偿流',upd:1,spd:.75,w:2.3,p:[[-16,33],[-18,27],[-21,20],[-23,14]],
+ d:'非洲西北岸（大西洋东岸），自北向南。',
+ e:'降温减湿，与撒哈拉西岸沿海干旱、多雾有关；带有上升流性质。',
+ x:'东边界寒流、补偿流；与秘鲁、本格拉、西澳大利亚寒流同类。',
+ r:'与北大西洋暖流同在大西洋东岸，但中低纬是寒流、中高纬是暖流，性质相反。'},
+
+{id:'brazil',n:'巴西暖流',t:'暖流',ca:'风海流',spd:.9,w:2.3,p:[[-38,-9],[-40,-18],[-45,-26],[-50,-34]],
+ d:'南大西洋西岸，沿巴西东岸自北向南。',
+ e:'增温增湿，使巴西东南沿海湿润。',
+ x:'南半球副热带逆时针环流的西边界流，暖流。',
+ r:'南半球大洋西岸暖流自北向南，北半球大洋西岸暖流自南向北，方向相反源于环流方向相反。'},
+
+{id:'benguela',n:'本格拉寒流',t:'寒流',ca:'补偿流',upd:1,spd:.8,w:2.3,p:[[18,-35],[15,-28],[12,-20],[10,-12]],
+ d:'非洲西南岸（大西洋东岸），自南向北。',
+ e:'降温减湿，形成纳米布沙漠；上升流显著，渔业资源丰富。',
+ x:'东边界寒流、上升流性质。',
+ r:'寒流对气候是降温减湿，不要写成增温增湿。'},
+
+{id:'guinea',n:'几内亚暖流',t:'暖流',ca:'补偿流',s:1,spd:.75,w:2.2,p:[[-42,3],[-25,4],[-10,4],[4,3]],
+ d:'几内亚湾北部，自西向东。',
+ e:'增温增湿，使几内亚湾沿岸高温多雨。',
+ x:'赤道逆流的组成部分，自西向东，属暖流。',
+ r:'流向自西向东、与信风相反，但仍是暖流，不是寒流。',
+ sp:'特殊在哪里：它是赤道逆流的组成部分，流向与东北信风相反，成因是补偿流而不是风海流。'},
+
+{id:'egreen',n:'东格陵兰寒流',t:'寒流',ca:'风海流',s:1,spd:.9,w:2.3,p:[[-12,73],[-18,67],[-26,63],[-34,59]],
+ d:'沿格陵兰岛东岸自北向南。',
+ e:'携带浮冰和冰山南下；与北大西洋暖流交汇形成北海渔场。',
+ x:'东格陵兰寒流＋北大西洋暖流→北海渔场；寒流带冰山威胁航运。',
+ r:'北海渔场是北大西洋暖流与东格陵兰寒流交汇，不是与拉布拉多寒流。',
+ sp:'特殊在哪里：高纬流向低纬的寒流，携带浮冰与冰山，并参与北海渔场形成。'},
+
+/* ================= 印度洋 ================= */
+{id:'mon',n:'北印度洋季风环流',t:'季风反转',ca:'风海流',s:1,mon:1,spd:1.0,w:2.6,
+ p:[[46,7],[52,13],[60,18],[72,20],[85,18],[90,12],[88,6],[80,2],[66,2],[54,4],[46,7]],
+ wp:[[46,7],[54,4],[66,2],[80,2],[88,6],[90,12],[85,18],[72,20],[60,18],[52,13],[46,7]],
+ d:'北印度洋（阿拉伯海—孟加拉湾—赤道附近），约0°—25°N、45°E—95°E。',
+ e:'夏季西南季风驱动呈顺时针，冬季东北季风驱动呈逆时针，整体反转，影响季风区航运与渔业。',
+ x:'“夏顺冬逆”：夏季顺时针、冬季逆时针，全球唯一随季节系统性反转的大尺度海区。',
+ r:'反转的是整个北印度洋环流，不只是索马里一支；不能只记索马里而漏掉整体方向。',
+ sp:'特殊在哪里：全球唯一随季节系统性反转的大尺度海区。夏季西南季风→顺时针；冬季东北季风→逆时针。'},
+
+{id:'som',n:'索马里洋流',t:'季风反转',ca:'风海流',s:1,mon:1,upd:1,spd:1.1,w:2.5,
+ p:[[45,1],[48,6],[51,11],[55,15]],
+ wp:[[55,15],[51,11],[48,6],[45,1]],
+ d:'非洲东北部索马里半岛以东海域，夏季自西南向东北、冬季自东北向西南。',
+ e:'夏季在西南季风作用下为寒流，近岸上升流旺盛，形成季节性渔场；冬季为暖流。',
+ x:'全球唯一具有明显季节性质反转的洋流：夏季寒流（上升流）、冬季暖流。',
+ r:'不能只看纬度方向判性质：夏季由低纬流向高纬却是寒流，冬季由高纬流向低纬却是暖流（相对流经海区水温）。',
+ sp:'特殊在哪里：全球唯一明显随季节改变性质的洋流。夏季西南季风→离岸风→上升流→寒流；冬季东北季风→暖流，且是从较高纬流向较低纬的“暖流例外”。'},
+
+{id:'wa',n:'西澳大利亚寒流',t:'寒流',ca:'补偿流',upd:1,spd:.75,w:2.3,p:[[112,-33],[110,-25],[108,-18],[105,-13]],
+ d:'澳大利亚西岸（南印度洋东岸），自南向北。',
+ e:'降温减湿，与澳大利亚西部干旱有关；带有上升流性质。',
+ x:'南印度洋东边界寒流、补偿流。',
+ r:'与东澳大利亚暖流同属澳大利亚，但东岸暖、西岸寒，性质相反。'},
+
+/* ================= 特殊密度流 ================= */
+{id:'gib',n:'直布罗陀海峡密度流',t:'密度流',ca:'密度流',s:1,dual:1,spd:.5,w:2.2,
+ p:[[-8,35.0],[-2,36.0],[4,37.2]],p2:[[5,36.6],[-1,35.6],[-8,34.6]],
+ d:'大西洋与地中海之间的直布罗陀海峡。',
+ e:'表层海水由大西洋流入地中海，深层海水由地中海流出大西洋，形成双向流动。',
+ x:'地中海盐度高、密度大，大西洋盐度低、密度小；表层由密度小的一侧流向密度大的一侧，深层反向。',
+ r:'密度流由盐度、温度、密度差驱动，不是风海流；表层层流方向不要记反。',
+ sp:'特殊在哪里：不是风海流。表层：大西洋→地中海（密度小→密度大）；深层：地中海→大西洋。'},
+
+{id:'red',n:'红海—曼德海峡密度流',t:'密度流',ca:'密度流',s:1,dual:1,spd:.45,w:2.0,
+ p:[[44,12],[40,16],[36,21],[34,27]],p2:[[34,26],[38,19],[42,14],[44,11]],
+ d:'红海与亚丁湾之间的曼德海峡（红海—阿拉伯海方向）。',
+ e:'红海是世界盐度最高的海区之一，表层海水由亚丁湾流入红海，深层由红海流出。',
+ x:'迁移应用：表层由密度小的一侧流向密度大的一侧，深层反向，与直布罗陀海峡同理。',
+ r:'不要与风海流混淆；红海盐度高是因为蒸发强、淡水注入少、海域封闭。',
+ sp:'特殊在哪里：密度流迁移案例。表层：亚丁湾→红海；深层：红海→亚丁湾。'},
+
+{id:'hor',n:'波斯湾—霍尔木兹海峡密度流',t:'密度流',ca:'密度流',s:1,dual:1,spd:.45,w:2.0,
+ p:[[59,24.5],[56,26],[52,27],[48,29]],p2:[[49,28.4],[53,26.6],[57,25.2],[59,24.0]],
+ d:'波斯湾与阿曼湾之间的霍尔木兹海峡。',
+ e:'波斯湾盐度高、密度大，表层海水由阿曼湾流入波斯湾，深层反向流出。',
+ x:'与直布罗陀、曼德海峡同一规律：表层流向密度大的一侧。',
+ r:'三个密度流案例要能迁移判断，核心是“盐度→密度→表层流向”。',
+ sp:'特殊在哪里：密度流迁移案例。表层：阿曼湾→波斯湾；深层：波斯湾→阿曼湾。'}
+);
+
+/* ---- 渔场 ---- */
+var FISHERIES=[
+ {id:'hok',n:'北海道渔场',lon:147,lat:43,k:'交汇',c:'日本暖流（黑潮）＋千岛寒流（亲潮）',
+  chain:'寒暖流交汇→海水扰动→营养盐上泛→浮游生物繁盛→鱼类集聚→形成渔场',
+  x:'北海道渔场＝日本暖流＋千岛寒流，属寒暖流交汇成因。',r:'不要写成上升流成因，与秘鲁渔场区分。'},
+ {id:'nf',n:'纽芬兰渔场',lon:-51,lat:46,k:'交汇',c:'墨西哥湾暖流＋拉布拉多寒流',
+  chain:'寒暖流交汇→海水扰动→营养盐上泛→浮游生物繁盛→鱼类集聚；交汇处多海雾，寒流带冰山',
+  x:'纽芬兰渔场＝墨西哥湾暖流＋拉布拉多寒流；附近多海雾、多冰山，影响航运。',r:'成因是寒暖流交汇，不是上升流。'},
+ {id:'ns',n:'北海渔场',lon:3,lat:57,k:'交汇',c:'北大西洋暖流＋东格陵兰寒流',
+  chain:'寒暖流交汇→海水扰动→营养盐上泛→浮游生物繁盛→鱼类集聚',
+  x:'北海渔场＝北大西洋暖流＋东格陵兰寒流。',r:'东格陵兰寒流常被误记成拉布拉多寒流。'},
+ {id:'per',n:'秘鲁渔场',lon:-81,lat:-10,k:'上升流',c:'秘鲁寒流（上升补偿流）',
+  chain:'离岸风（东南信风）→表层海水离岸→深层冷海水上涌→营养盐上涌→浮游生物繁盛→渔场',
+  x:'秘鲁渔场是上升补偿流成因，四大渔场中成因独树一帜。',r:'不能写成寒暖流交汇；厄尔尼诺年上升流减弱、渔场减产。'}
+];
+
+/* ---- 风带 ---- */
+var WINDS=[
+ {n:'东北信风',a:[-158,22],b:[-108,12]},
+ {n:'东北信风',a:[-52,22],b:[-16,13]},
+ {n:'东南信风',a:[-108,-22],b:[-158,-4]},
+ {n:'东南信风',a:[-8,-22],b:[-36,-4]},
+ {n:'东南信风',a:[95,-25],b:[55,-8]},
+ {n:'盛行西风',a:[140,42],b:[176,45]},
+ {n:'盛行西风',a:[-58,48],b:[-14,53]},
+ {n:'盛行西风',a:[-160,-50],b:[-110,-50]},
+ {n:'盛行西风',a:[20,-50],b:[70,-50]},
+ {n:'西南季风',a:[42,-8],b:[68,16],se:'summer'},
+ {n:'东北季风',a:[84,24],b:[58,10],se:'winter'}
+];
+
+/* ---- 考点标注 ---- */
+var LABELS=[
+ {x:-40,y:32,t:'北顺南逆',s:'中低纬副热带环流'},
+ {x:-136,y:26,t:'东暖西寒',s:'大陆东岸＝大洋西岸'},
+ {x:74,y:-3,t:'夏顺冬逆',s:'北印度洋整体反转'},
+ {x:-92,y:-24,t:'上升补偿流',s:'秘鲁渔场成因'},
+ {x:-62,y:50,t:'寒暖流交汇多海雾',s:''},
+ {x:-118,y:-44,t:'暖流增温增湿·寒流降温减湿',s:''},
+ {x:-6,y:-58,t:'南半球中高纬无闭合环流',s:'只有西风漂流'},
+ {x:66,y:-58,t:'南北同风不同性',s:'北暖南寒'},
+ {x:150,y:30,t:'大陆东岸＝大洋西岸',s:'同一侧的两种说法'}
+];
+
+/* ---- 影响层标注 ---- */
+var CLIMATE=[
+ {x:-16,y:52,t:'北大西洋暖流→西欧温带海洋性气候向北延伸'},
+ {x:-97,y:-17,t:'秘鲁寒流→南美西岸干旱（阿塔卡马沙漠）'},
+ {x:8,y:-23,t:'本格拉寒流→纳米布沙漠'},
+ {x:-72,y:33,t:'暖流增温增湿／寒流降温减湿'}
+];
+var SAIL=[
+ {x:-46,y:38,t:'顺流加速：湾流—北大西洋航线'},
+ {x:-64,y:49,t:'纽芬兰附近寒暖流交汇，多海雾'},
+ {x:-30,y:66,t:'东格陵兰寒流携带冰山，威胁航运'},
+ {x:-112,y:-30,t:'逆流减速：南美西岸北上'}
+];
+
+/* =====================================================================
+   2. 投影、几何与绘图工具
+   ===================================================================== */
+var S={playing:true,season:'summer',
+  layers:{warm:1,cold:1,special:1,fish:1,wind:1,exam:1,climate:0,sail:0,poll:0},
+  hover:null};
+var cv=document.getElementById('cv'),ctx=cv.getContext('2d'),k=1;
+var GEO={};
+
+function resize(){
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  var w=cv.clientWidth||800;
+  cv.width=Math.round(w*dpr);cv.height=Math.round(w*dpr/2);
+  ctx.setTransform(cv.width/VW,0,0,cv.width/VW,0,0);
+  k=cv.width/VW;
+}
+function PX(lon){return (lon+180)/360*VW;}
+function PY(lat){return (90-lat)/180*VH;}
+function PT(p){return [PX(p[0]),PY(p[1])];}
+function hexA(h,a){var n=parseInt(h.slice(1),16);return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function arrowHead(x,y,ang,s,col){
+  ctx.save();ctx.translate(x,y);ctx.rotate(ang);ctx.beginPath();
+  ctx.moveTo(0,0);ctx.lineTo(-s,s*.55);ctx.lineTo(-s,-s*.55);ctx.closePath();
+  ctx.fillStyle=col;ctx.fill();ctx.restore();
+}
+function star(x,y,r,fill){
+  ctx.beginPath();
+  for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;
+    var px=x+Math.cos(a)*rr,py=y+Math.sin(a)*rr;i?ctx.lineTo(px,py):ctx.moveTo(px,py);}
+  ctx.closePath();ctx.fillStyle=fill;ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=1;ctx.stroke();
+}
+function chip(x,y,text,col,size,align){
+  var fs=size||12.5;ctx.font='600 '+fs+'px '+FONT;
+  var w=ctx.measureText(text).width+14;
+  var bx=align==='l'?x:x-w/2;
+  ctx.fillStyle='rgba(5,20,33,.85)';ctx.strokeStyle=hexA(col,.55);ctx.lineWidth=1;
+  roundRect(bx,y-10.5,w,21,7);ctx.fill();ctx.stroke();
+  ctx.fillStyle=col;ctx.textAlign='center';ctx.fillText(text,bx+w/2,y+4.4);
+  ctx.textAlign='left';
+}
+function prepare(pts){
+  var P=[],seg=[],cum=[0],tot=0;
+  for(var i=0;i<pts.length;i++)P.push(PT(pts[i]));
+  for(var j=1;j<P.length;j++){
+    var d=Math.hypot(P[j][0]-P[j-1][0],P[j][1]-P[j-1][1]);
+    seg.push(d);tot+=d;cum.push(tot);
+  }
+  return {P:P,seg:seg,cum:cum,total:tot||1};
+}
+function geomOf(c){
+  var key=c.id+'|'+(c.mon?S.season:'');
+  if(!GEO[key])GEO[key]=prepare(c.mon?(S.season==='summer'?c.p:c.wp):c.p);
+  if(c.dual&&!GEO[key+'|d'])GEO[key+'|d']=prepare(c.p2);
+  return GEO[key];
+}
+function deepGeo(c){return GEO[c.id+'|'+S.season+'|d']||GEO[c.id+'|d'];}
+function pointAt(g,t){
+  t=t-Math.floor(t);
+  var d=t*g.total,i=1;
+  while(i<g.cum.length&&g.cum[i]<d)i++;
+  i=Math.min(i,g.seg.length);
+  var s=g.seg[i-1]||1,r=(d-g.cum[i-1])/s;
+  var A=g.P[i-1],B=g.P[i];
+  return [A[0]+(B[0]-A[0])*r,A[1]+(B[1]-A[1])*r,Math.atan2(B[1]-A[1],B[0]-A[0])];
+}
+function effType(c){if(c.mon)return S.season==='summer'?'寒流':'暖流';return c.t;}
+function colorOf(c){if(c.t==='密度流')return COL.dens;return effType(c)==='暖流'?COL.warm:COL.cold;}
+function isVisible(c){if(c.s)return !!S.layers.special;return !!S.layers[c.t==='暖流'?'warm':'cold'];}
+function strokeGeo(g){
+  ctx.beginPath();
+  for(var i=0;i<g.P.length;i++){var p=g.P[i];i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}
+  ctx.stroke();
+}
+
+/* =====================================================================
+   3. 底图
+   ===================================================================== */
+function drawBase(){
+  var grd=ctx.createLinearGradient(0,0,0,VH);
+  grd.addColorStop(0,'#061a2c');grd.addColorStop(.5,'#0a2740');grd.addColorStop(1,'#061a2c');
+  ctx.fillStyle=grd;ctx.fillRect(0,0,VW,VH);
+
+  ctx.strokeStyle='rgba(110,165,205,.13)';ctx.lineWidth=1;ctx.beginPath();
+  for(var lon=-180;lon<=180;lon+=30){var x=PX(lon);ctx.moveTo(x,0);ctx.lineTo(x,VH);}
+  for(var lat=-90;lat<=90;lat+=30){var y=PY(lat);ctx.moveTo(0,y);ctx.lineTo(VW,y);}
+  ctx.stroke();
+
+  ctx.setLineDash([]);ctx.strokeStyle='rgba(255,209,102,.30)';ctx.beginPath();
+  ctx.moveTo(0,PY(0));ctx.lineTo(VW,PY(0));ctx.stroke();
+  ctx.setLineDash([6,8]);ctx.strokeStyle='rgba(255,255,255,.12)';
+  [23.5,-23.5,66.5,-66.5].forEach(function(la){
+    ctx.beginPath();ctx.moveTo(0,PY(la));ctx.lineTo(VW,PY(la));ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  LAND.forEach(function(poly,i){
+    ctx.beginPath();
+    poly.forEach(function(p,j){var x=PX(p[0]),y=PY(p[1]);j?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.closePath();
+    ctx.fillStyle=(i===6)?'#2b4b60':'#1e3d54';
+    ctx.fill();ctx.strokeStyle='#5d8fae';ctx.lineWidth=1.1;ctx.stroke();
+  });
+
+  ctx.textAlign='center';
+  ctx.font='600 15px '+FONT;ctx.fillStyle='rgba(140,195,228,.45)';
+  ctx.fillText('太 平 洋',PX(-145),PY(-26));
+  ctx.fillText('大 西 洋',PX(-26),PY(-26));
+  ctx.fillText('印 度 洋',PX(76),PY(-26));
+  ctx.font='600 13px '+FONT;ctx.fillStyle='rgba(205,232,247,.55)';
+  ctx.fillText('南 极 洲',PX(8),PY(-77));
+  ctx.fillStyle='rgba(150,200,230,.38)';ctx.font='12px '+FONT;
+  ctx.fillText('亚欧大陆',PX(88),PY(50));
+  ctx.fillText('非洲',PX(20),PY(6));
+  ctx.fillText('北美',PX(-100),PY(45));
+  ctx.fillText('南美',PX(-60),PY(-22));
+  ctx.fillText('澳大利亚',PX(134),PY(-26));
+  ctx.textAlign='left';
+}
+/* ===== 第 2 段结束（下一段从 windArrow / drawWinds 开始） ===== */
+/* =====================================================================
+   4. 风带
+   ===================================================================== */
+function windArrow(w){
+  var A=PT(w.a),B=PT(w.b),ang=Math.atan2(B[1]-A[1],B[0]-A[0]);
+  ctx.strokeStyle='rgba(255,255,255,.38)';ctx.lineWidth=1.8;ctx.setLineDash([10,8]);
+  ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
+  ctx.setLineDash([]);
+  [.52,.78,1].forEach(function(f){
+    var x=A[0]+(B[0]-A[0])*f,y=A[1]+(B[1]-A[1])*f;
+    arrowHead(x,y,ang,7,'rgba(255,255,255,.62)');
+  });
+  var mx=(A[0]+B[0])/2,my=(A[1]+B[1])/2;
+  ctx.font='12px '+FONT;ctx.textAlign='center';
+  ctx.fillStyle='rgba(5,20,33,.65)';
+  var tw=ctx.measureText(w.n).width+8;
+  roundRect(mx-tw/2,my-20,tw,17,5);ctx.fill();
+  ctx.fillStyle='rgba(240,250,255,.88)';ctx.fillText(w.n,mx,my-7);
+  ctx.textAlign='left';
+}
+function drawWinds(){
+  for(var i=0;i<WINDS.length;i++){
+    var w=WINDS[i];
+    if(w.se&&w.se!==S.season)continue;
+    windArrow(w);
+  }
+}
+
+/* =====================================================================
+   5. 洋流、粒子、渔场、标注
+   ===================================================================== */
+function drawUpwell(c,g){
+  ctx.strokeStyle='rgba(120,255,220,.85)';ctx.fillStyle='rgba(120,255,220,.85)';ctx.lineWidth=1.6;
+  [0.28,0.52,0.76].forEach(function(t){
+    var p=pointAt(g,t),x=p[0]+12,y=p[1];
+    ctx.beginPath();ctx.moveTo(x,y+10);ctx.lineTo(x,y-7);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x,y-12);ctx.lineTo(x-4.5,y-5.5);ctx.lineTo(x+4.5,y-5.5);
+    ctx.closePath();ctx.fill();
+  });
+}
+function drawParticles(c,g,col){
+  if(!c.parts)return;
+  for(var i=0;i<c.parts.length;i++){
+    var p=c.parts[i],a=pointAt(g,p.t),b=pointAt(g,p.t-0.012);
+    if(Math.abs(a[0]-b[0])<VW/2){
+      ctx.strokeStyle=hexA(col,.5);ctx.lineWidth=2.4;
+      ctx.beginPath();ctx.moveTo(b[0],b[1]);ctx.lineTo(a[0],a[1]);ctx.stroke();
+    }
+    ctx.fillStyle=hexA(col,.95);ctx.beginPath();ctx.arc(a[0],a[1],2.7,0,7);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.9)';ctx.beginPath();ctx.arc(a[0],a[1],1.15,0,7);ctx.fill();
+  }
+}
+function drawCurrent(c){
+  var g=geomOf(c),col=colorOf(c);
+  ctx.lineCap='round';ctx.lineJoin='round';
+
+  if(c.s){
+    ctx.setLineDash([9,7]);ctx.lineWidth=c.w+6;
+    ctx.strokeStyle='rgba(255,209,102,.40)';strokeGeo(g);ctx.setLineDash([]);
+  }
+  ctx.lineWidth=c.w;ctx.strokeStyle=hexA(col,.24);strokeGeo(g);
+  ctx.lineWidth=Math.max(1.2,c.w-1.4);ctx.strokeStyle=hexA(col,.62);strokeGeo(g);
+
+  var P=g.P;
+  if(!c.wrap&&P.length>1){
+    arrowHead(P[P.length-1][0],P[P.length-1][1],
+      Math.atan2(P[P.length-1][1]-P[P.length-2][1],P[P.length-1][0]-P[P.length-2][0]),
+      9,hexA(col,.95));
+  }
+  if(c.dual){
+    var g2=deepGeo(c);
+    if(g2){
+      var Q=g2.P;
+      ctx.setLineDash([5,6]);ctx.lineWidth=1.9;ctx.strokeStyle=hexA(col,.85);
+      strokeGeo(g2);ctx.setLineDash([]);
+      arrowHead(Q[Q.length-1][0],Q[Q.length-1][1],
+        Math.atan2(Q[Q.length-1][1]-Q[Q.length-2][1],Q[Q.length-1][0]-Q[Q.length-2][0]),
+        8,hexA(col,.95));
+    }
+  }
+  if(c.upd)drawUpwell(c,g);
+  drawParticles(c,g,col);
+
+  if(c.s){
+    var m=pointAt(g,.5);
+    var bx=Math.min(VW-46,Math.max(40,m[0]+14)),by=m[1]-22;
+    chip(bx,by,'例外',COL.sp,11.5);
+    c._badge={x:bx,y:by};
+  }else{c._badge=null;}
+
+  if(c.mon){
+    var q=pointAt(g,.12);
+    var txt=c.id==='som'?(S.season==='summer'?'夏·寒流':'冬·暖流')
+                       :(S.season==='summer'?'夏季·顺时针':'冬季·逆时针');
+    chip(q[0],q[1]+28,txt,S.season==='summer'?COL.cold:COL.warm,11.5);
+  }
+}
+function drawFisheries(){
+  ctx.textAlign='center';
+  for(var i=0;i<FISHERIES.length;i++){
+    var f=FISHERIES[i],x=PX(f.lon),y=PY(f.lat);
+    f._pos={x:x,y:y};
+    if(f.k==='交汇'){
+      star(x,y,10,COL.fishC);
+    }else{
+      star(x,y,10,COL.fishU);
+      ctx.strokeStyle='rgba(95,240,208,.7)';ctx.lineWidth=1.4;
+      ctx.beginPath();ctx.arc(x,y,15,0,7);ctx.stroke();
+    }
+    ctx.font='600 12.5px '+FONT;
+    var w=ctx.measureText(f.n).width+10;
+    ctx.fillStyle='rgba(5,20,33,.75)';
+    roundRect(x-w/2,y+13,w,18,6);ctx.fill();
+    ctx.fillStyle=(f.k==='交汇')?'#ffe6a6':'#a9fff0';
+    ctx.fillText(f.n,x,y+26);
+  }
+  ctx.textAlign='left';
+}
+function drawExamLabels(){
+  for(var i=0;i<LABELS.length;i++){
+    var l=LABELS[i],x=PX(l.x),y=PY(l.y);
+    chip(x,y,l.t,'#ffd166',12.5);
+    if(l.s){
+      ctx.font='11px '+FONT;ctx.fillStyle='rgba(255,209,102,.7)';
+      ctx.textAlign='center';ctx.fillText(l.s,x,y+22);ctx.textAlign='left';
+    }
+  }
+}
+function drawClimate(){
+  for(var i=0;i<CLIMATE.length;i++){
+    var c=CLIMATE[i],x=PX(c.x),y=PY(c.y);
+    ctx.font='12.5px '+FONT;
+    var w=ctx.measureText(c.t).width+16;
+    ctx.fillStyle='rgba(6,30,45,.88)';
+    ctx.strokeStyle='rgba(120,255,220,.5)';ctx.lineWidth=1;
+    roundRect(x,y-11,w,22,7);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#a9fff0';ctx.fillText(c.t,x+8,y+4.5);
+  }
+}
+function drawSail(){
+  for(var i=0;i<SAIL.length;i++){
+    var s=SAIL[i],x=PX(s.x),y=PY(s.y);
+    ctx.font='12.5px '+FONT;
+    var w=ctx.measureText(s.t).width+16;
+    ctx.fillStyle='rgba(36,26,6,.88)';
+    ctx.strokeStyle='rgba(255,209,102,.5)';ctx.lineWidth=1;
+    roundRect(x,y-11,w,22,7);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#ffd98a';ctx.fillText(s.t,x+8,y+4.5);
+  }
+}
+function drawPollution(){
+  var targets=['gulf','peru','kuro','benguela','eac'];
+  for(var i=0;i<targets.length;i++){
+    var c=CURRENTS.filter(function(x){return x.id===targets[i];})[0];
+    if(!c||!isVisible(c))continue;
+    var g=geomOf(c);
+    for(var j=0;j<7;j++){
+      var t=(T*0.035*c.spd+j/7)%1,p=pointAt(g,t);
+      ctx.fillStyle='rgba(226,168,90,.9)';
+      ctx.beginPath();ctx.arc(p[0],p[1],3,0,7);ctx.fill();
+      ctx.fillStyle='rgba(255,220,160,.55)';
+      ctx.beginPath();ctx.arc(p[0],p[1],5.5,0,7);ctx.fill();
+    }
+  }
+  chip(PX(-72),PY(-47),'污染扩散：加快净化速度，但扩大污染范围','#e2a85a',12.5);
+}
+function drawHover(){
+  var c=S.hover;if(!c)return;
+  var g=geomOf(c),col=colorOf(c);
+  ctx.lineWidth=c.w+4;ctx.strokeStyle=hexA(col,.30);strokeGeo(g);
+  ctx.lineWidth=1;ctx.strokeStyle='rgba(255,255,255,.9)';
+  ctx.setLineDash([3,5]);strokeGeo(g);ctx.setLineDash([]);
+}
+
+/* =====================================================================
+   6. 主渲染与动画循环
+   ===================================================================== */
+var T=0,last=performance.now();
+function render(){
+  ctx.clearRect(0,0,VW,VH);
+  drawBase();
+  if(S.layers.wind)drawWinds();
+  for(var i=0;i<CURRENTS.length;i++){
+    var c=CURRENTS[i];
+    if(isVisible(c))drawCurrent(c);
+  }
+  if(S.hover&&isVisible(S.hover))drawHover();
+  if(S.layers.fish)drawFisheries();
+  if(S.layers.exam)drawExamLabels();
+  if(S.layers.climate)drawClimate();
+  if(S.layers.sail)drawSail();
+  if(S.layers.poll)drawPollution();
+}
+function loop(now){
+  var dt=Math.min((now-last)/1000,.05);last=now;T+=dt;
+  if(S.playing){
+    for(var i=0;i<CURRENTS.length;i++){
+      var c=CURRENTS[i];
+      if(!c.parts)continue;
+      for(var j=0;j<c.parts.length;j++){
+        var p=c.parts[j];
+        p.t=(p.t+dt*c.spd*.055*p.sp)%1;
+      }
+    }
+  }
+  render();
+  requestAnimationFrame(loop);
+}
+/* ===== 第 3 段结束（下一段从 hitTest、事件绑定、卡片、测验、对比实现开始，并以 </html> 收尾） ===== */
+/* =====================================================================
+   7. 命中测试与坐标换算
+   ===================================================================== */
+function distSeg(x,y,x1,y1,x2,y2){
+  var dx=x2-x1,dy=y2-y1,L=dx*dx+dy*dy;
+  var t=L?((x-x1)*dx+(y-y1)*dy)/L:0;
+  t=Math.max(0,Math.min(1,t));
+  return Math.hypot(x-(x1+t*dx),y-(y1+t*dy));
+}
+function findCurrent(x,y){
+  var best=null,bd=13,i,j,c,g;
+  for(i=0;i<CURRENTS.length;i++){
+    c=CURRENTS[i];
+    if(!isVisible(c))continue;
+    g=geomOf(c);
+    for(j=1;j<g.P.length;j++){
+      var d=distSeg(x,y,g.P[j-1][0],g.P[j-1][1],g.P[j][0],g.P[j][1]);
+      if(d<bd){bd=d;best=c;}
+    }
+    if(c.dual){
+      var g2=deepGeo(c);
+      if(g2)for(j=1;j<g2.P.length;j++){
+        var d2=distSeg(x,y,g2.P[j-1][0],g2.P[j-1][1],g2.P[j][0],g2.P[j][1]);
+        if(d2<bd){bd=d2;best=c;}
+      }
+    }
+  }
+  return best;
+}
+function findFishery(x,y){
+  for(var i=0;i<FISHERIES.length;i++){
+    var f=FISHERIES[i];
+    if(f._pos&&Math.hypot(x-f._pos.x,y-f._pos.y)<17)return f;
+  }
+  return null;
+}
+function findBadge(x,y){
+  for(var i=0;i<CURRENTS.length;i++){
+    var c=CURRENTS[i];
+    if(c._badge&&Math.hypot(x-c._badge.x,y-c._badge.y)<24)return c;
+  }
+  return null;
+}
+function toLocal(e){
+  var r=cv.getBoundingClientRect();
+  var cx=e.clientX,cy=e.clientY;
+  return {x:(cx-r.left)/r.width*VW,y:(cy-r.top)/r.height*VH,cx:cx,cy:cy,left:r.left,top:r.top};
+}
+
+/* =====================================================================
+   8. 知识卡片
+   ===================================================================== */
+var modal=document.getElementById('modal'),mbody=document.getElementById('mbody');
+var CAUSE_TXT={
+ '风海流':'盛行风（信风、盛行西风、季风）吹拂海面，是洋流最主要的成因；地转偏向力和陆地形状使流向发生偏转。',
+ '密度流':'因盐度、温度差异导致海水密度不同：密度大的海区水面略低，表层海水由密度小的一侧流向密度大的一侧，深层反向。它不是风海流。',
+ '补偿流':'某海区海水流出后，相邻海区海水前来补充。分为水平补偿（如赤道逆流）和垂直补偿（上升流、下降流）。',
+ '上升补偿流':'离岸风使表层海水离岸，深层冷海水上涌补充，属于垂直补偿流；把营养盐带到表层，形成渔场。'
+};
+function openModal(html){mbody.innerHTML=html;modal.classList.add('on');}
+function closeModal(){modal.classList.remove('on');quiz=null;}
+document.getElementById('mclose').onclick=closeModal;
+modal.addEventListener('click',function(e){if(e.target===modal)closeModal();});
+
+function openCurrent(c,focus){
+  var t=effType(c),col=colorOf(c);
+  var cls=(t==='暖流')?'w':((t==='寒流')?'c':'y');
+  var typeTxt;
+  if(c.t==='密度流'){
+    typeTxt='密度流：表层与深层流向相反的双向流动（表层由大西洋/外海流向高盐度海区）。';
+  }else if(c.mon){
+    typeTxt=S.season==='summer'
+      ?'夏季：寒流性质。夏季西南季风使索马里沿岸形成离岸风，深层冷海水上涌，水温低于流经海区。'
+      :'冬季：暖流性质。冬季东北季风驱动，索马里洋流自较高纬流向较低纬，但水温高于流经海区，仍表现为暖流。';
+  }else{
+    typeTxt=t+'。'+(t==='暖流'?'由水温高的海区流向水温低的海区，多由低纬流向高纬。':'由水温低的海区流向水温高的海区，多由高纬流向低纬。')
+      +'（注意：暖流、寒流是相对流经海区水温而言，不是绝对温度，也不能只看纬度方向。）';
+  }
+  var h='<div class="ch" style="--c:'+col+'"><h2>'+c.n+'</h2>'+
+    '<span class="tag '+cls+'">'+t+'</span><span class="tag">'+c.ca+'</span>'+
+    (c.s?'<span class="tag y">特殊洋流</span>':'')+'</div>';
+  h+='<div class="kv"><b>性质</b><p>'+typeTxt+'</p></div>';
+  h+='<div class="kv"><b>成因类型</b><p>'+c.ca+'。'+(CAUSE_TXT[c.ca]||'')+'</p></div>';
+  h+='<div class="kv"><b>分布位置</b><p>'+c.d+'</p></div>';
+  h+='<div class="kv"><b>影响（气候 / 渔场 / 航行 / 污染）</b><p>'+c.e+'</p></div>';
+  h+='<div class="kv"><b>高考考点</b><p>'+c.x+'</p></div>';
+  h+='<div class="kv hl"><b>易错点</b><p>'+c.r+'</p></div>';
+  if(c.s)h+='<div class="kv hl" style="'+(focus?'box-shadow:0 0 0 2px #ffd166 inset;':'')+'"><b>特殊在哪里（例外说明）</b><p>'+c.sp+'</p></div>';
+  if(c.mon)h+='<div class="kv"><b>当前季节提示</b><p>现在是'+(S.season==='summer'?'夏季':'冬季')+'，可点击控制面板的“夏季/冬季”按钮，观察整条环流与索马里洋流颜色、方向、性质标签的同步反转。</p></div>';
+  openModal(h);
+}
+function openFishery(f){
+  var up=(f.k==='上升流');
+  var h='<div class="ch" style="--c:'+(up?COL.fishU:COL.fishC)+'"><h2>'+f.n+'</h2>'+
+    '<span class="tag '+(up?'c':'y')+'">'+f.k+'成因</span><span class="tag">'+(up?'★ 青色星标':'★ 金色星标')+'</span></div>';
+  h+='<div class="kv"><b>主要成因</b><p>'+f.c+'</p></div>';
+  h+='<div class="kv"><b>成因链（必背）</b><p class="chain">'+f.chain.replace(/→/g,'<em>→</em>')+'</p></div>';
+  h+='<div class="kv"><b>高考考点</b><p>'+f.x+'</p></div>';
+  h+='<div class="kv hl"><b>易错点</b><p>'+f.r+'</p></div>';
+  if(up)h+='<div class="kv hl"><b>四大渔场中的“例外”</b><p>北海道、纽芬兰、北海三个渔场都是寒暖流交汇成因；只有秘鲁渔场是上升补偿流成因。判断渔场成因时先看有没有离岸风与上升流。</p></div>';
+  openModal(h);
+}
+
+/* =====================================================================
+   9. 测验模式
+   ===================================================================== */
+var quiz=null;
+function qBlock(i,title,opts){
+  var s='<div class="q" data-q="'+i+'"><p>'+title+'</p><div class="opts">';
+  opts.forEach(function(o){
+    s+='<button class="opt" data-q="'+i+'" data-v="'+o+'">'+(o==='密度流'?'密度流（双向）':o)+'</button>';
+  });
+  return s+'</div><div class="fb"></div></div>';
+}
+function startQuiz(){
+  var c=CURRENTS[Math.floor(Math.random()*CURRENTS.length)];
+  var t=(c.t==='密度流')?'密度流':(c.mon?(S.season==='summer'?'寒流':'暖流'):c.t);
+  var cause=(c.ca==='风海流')?'风海流':((c.ca==='密度流')?'密度流':'补偿流');
+  quiz={c:c,ans:[t,cause,c.s?'是':'否'],done:[false,false,false],score:0,
+    seasonTxt:c.mon?('（本题按当前季节：'+(S.season==='summer'?'夏季':'冬季')+'）'):'',
+    exp:[
+      '性质要按“相对流经海区水温”判断。'+(c.mon?(S.season==='summer'?'夏季西南季风下为寒流；':'冬季东北季风下为暖流；'):'')+c.r,
+      CAUSE_TXT[c.ca]+(c.ca==='上升补偿流'?'（上升流属于垂直补偿流。）':''),
+      c.s?('这是特殊洋流。'+c.sp):('这不是特殊洋流，但要注意：'+c.r)
+    ]};
+  var h='<div class="ch" style="--c:'+colorOf(c)+'"><h2>随堂检测</h2><span class="tag">随机抽题</span><span class="tag y">三连问</span></div>';
+  h+='<div class="kv"><b>题目洋流</b><p style="font-size:17px;color:#ffd166">'+c.n+'</p>'+
+     '<p style="font-size:12.5px;color:#8fb8d2">先在图上找到它，再作答。'+quiz.seasonTxt+'</p></div>';
+  h+=qBlock(0,'1. 它的性质是？',['暖流','寒流','密度流']);
+  h+=qBlock(1,'2. 它的成因类型是？',['风海流','密度流','补偿流']);
+  h+=qBlock(2,'3. 它是否属于特殊洋流？',['是','否']);
+  h+='<div id="quizFoot"><div style="margin-top:10px;font-size:14px;color:#8ff0c2">本轮得分：0 / 3</div></div>';
+  openModal(h);
+}
+function answer(i,v,btn){
+  if(!quiz||quiz.done[i])return;
+  quiz.done[i]=true;
+  var ok=(v===quiz.ans[i]);
+  if(ok)quiz.score++;
+  btn.classList.add(ok?'ok':'no');
+  var box=btn.closest('.q'),fb=box.querySelector('.fb');
+  fb.style.display='block';
+  fb.innerHTML=(ok?'<span style="color:#8ff0c2">✔ 正确。</span> ':'<span style="color:#ffb3b3">✘ 错误，正确答案：'+quiz.ans[i]+'。</span><br>')+quiz.exp[i];
+  box.querySelectorAll('.opt').forEach(function(b){
+    if(b!==btn&&b.dataset.v===quiz.ans[i])b.classList.add('ok');
+    b.disabled=true;
+  });
+  document.getElementById('quizFoot').innerHTML=
+    '<div style="margin-top:10px;font-size:14px;color:#8ff0c2">本轮得分：'+quiz.score+' / 3</div>'+
+    (quiz.done.every(Boolean)?'<button class="btn sm" style="margin-top:8px;width:auto" data-next="1">下一题 →</button>':'');
+}
+mbody.addEventListener('click',function(e){
+  var b=e.target.closest('.opt');
+  if(b){answer(+b.dataset.q,b.dataset.v,b);return;}
+  if(e.target.closest('[data-next]'))startQuiz();
+});
+
+/* =====================================================================
+   10. 对比模式（并列示意图）
+   ===================================================================== */
+function dArrow(g,x1,y1,x2,y2,col,lw,head){
+  g.strokeStyle=col;g.fillStyle=col;g.lineWidth=lw||3;g.lineCap='round';
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  var a=Math.atan2(y2-y1,x2-x1),s=head||11;
+  g.beginPath();g.moveTo(x2,y2);
+  g.lineTo(x2-s*Math.cos(a-.42),y2-s*Math.sin(a-.42));
+  g.lineTo(x2-s*Math.cos(a+.42),y2-s*Math.sin(a+.42));
+  g.closePath();g.fill();
+}
+function loopBox(g,x,y,w,h,cw,col,title,sub){
+  g.fillStyle='rgba(10,40,64,.9)';g.strokeStyle='rgba(120,175,210,.45)';g.lineWidth=1.5;
+  g.beginPath();g.rect(x,y,w,h);g.fill();g.stroke();
+  var p=18;
+  if(cw){
+    dArrow(g,x+p,y+p,x+w-p,y+p,col,3);
+    dArrow(g,x+w-p,y+p,x+w-p,y+h-p,col,3);
+    dArrow(g,x+w-p,y+h-p,x+p,y+h-p,col,3);
+    dArrow(g,x+p,y+h-p,x+p,y+p,col,3);
+  }else{
+    dArrow(g,x+w-p,y+p,x+p,y+p,col,3);
+    dArrow(g,x+w-p,y+h-p,x+w-p,y+p,col,3);
+    dArrow(g,x+p,y+h-p,x+w-p,y+h-p,col,3);
+    dArrow(g,x+p,y+p,x+p,y+h-p,col,3);
+  }
+  g.textAlign='center';
+  g.fillStyle='#eaf7ff';g.font='600 15px '+FONT;
+  g.fillText(title,x+w/2,y+h/2-4);
+  g.fillStyle='rgba(190,222,242,.82)';g.font='12.5px '+FONT;
+  g.fillText(sub,x+w/2,y+h/2+18);
+  g.textAlign='left';
+}
+function cmpTitle(g,W,t1,t2){
+  g.fillStyle='#eaf7ff';g.font='600 15px '+FONT;g.textAlign='center';
+  g.fillText(t1,W*0.26,30);g.fillText(t2,W*0.74,30);g.textAlign='left';
+}
+function cmp1(g,W,H){
+  g.fillStyle='#081c2c';g.fillRect(0,0,W,H);
+  cmpTitle(g,W,'北半球副热带环流：顺时针','北印度洋季风环流：夏顺冬逆');
+  loopBox(g,30,50,W*0.40,H-160,true,COL.warm,'北半球副热带环流','顺时针（南半球逆时针）');
+  loopBox(g,W*0.54,50,W*0.40,H-160,true,COL.cold,'北印度洋（夏季）','西南季风 → 顺时针');
+  g.font='13px '+FONT;g.fillStyle='#ffd166';g.textAlign='center';
+  g.fillText('速记：北顺南逆 · 东暖西寒（大陆东岸＝大洋西岸）',W*0.26,H-70);
+  g.fillText('冬季：东北季风 → 逆时针，环流整体反转',W*0.74,H-70);
+  g.fillStyle='rgba(190,222,242,.8)';g.font='12.5px '+FONT;
+  g.fillText('一般中低纬环流常年方向不变',W*0.26,H-44);
+  g.fillText('只有一个海区随季节系统性反转',W*0.74,H-44);
+  g.textAlign='left';
+}
+function cmp2(g,W,H){
+  g.fillStyle='#081c2c';g.fillRect(0,0,W,H);
+  cmpTitle(g,W,'寒暖流交汇渔场（北海道/纽芬兰/北海）','上升流渔场（秘鲁）');
+  g.fillStyle='rgba(10,40,64,.9)';g.strokeStyle='rgba(120,175,210,.45)';
+  g.beginPath();g.rect(30,50,W*0.40,H-110);g.fill();g.stroke();
+  g.beginPath();g.rect(W*0.54,50,W*0.40,H-110);g.fill();g.stroke();
+  dArrow(g,90,250,215,130,COL.warm,4);
+  dArrow(g,330,90,215,130,COL.cold,4);
+  star(222,126,12,COL.fishC);
+  g.font='12.5px '+FONT;g.fillStyle='#ff9a86';g.textAlign='left';
+  g.fillText('暖流（由低纬来）',88,268);
+  g.fillStyle='#86c9ff';g.fillText('寒流（由高纬来）',300,84);
+  g.fillStyle='#ffe6a6';g.fillText('★ 交汇处：海水扰动、营养盐上泛',150,296);
+  g.fillStyle='rgba(190,222,242,.85)';g.fillText('日本暖流＋千岛寒流 / 墨西哥湾暖流＋拉布拉多寒流 / 北大西洋暖流＋东格陵兰寒流',40,322);
+
+  g.fillStyle='#1e3d54';g.strokeStyle='#5d8fae';
+  g.beginPath();g.rect(W*0.54+300,50,60,H-110);g.fill();g.stroke();
+  g.fillStyle='rgba(200,230,245,.8)';g.font='12px '+FONT;
+  g.fillText('陆地',W*0.54+312,72);
+  [120,170,220].forEach(function(y,idx){
+    dArrow(g,W*0.54+290,y,W*0.54+120,y,'rgba(255,255,255,.75)',2.5,9);
+  });
+  g.fillStyle='rgba(255,255,255,.8)';
+  g.fillText('离岸风（东南信风）',W*0.54+120,105);
+  [0,1,2].forEach(function(i){
+    var x=W*0.54+270-i*26;
+    dArrow(g,x,240,x,150,'rgba(95,240,208,.9)',2.5,9);
+  });
+  star(W*0.54+225,120,12,COL.fishU);
+  g.fillStyle='#a9fff0';g.fillText('↑ 深层冷海水上涌，带营养盐',W*0.54+70,268);
+  g.fillStyle='#a9fff0';g.fillText('★ 秘鲁渔场：上升补偿流成因',W*0.54+110,296);
+}
+function cmp3(g,W,H){
+  g.fillStyle='#081c2c';g.fillRect(0,0,W,H);
+  cmpTitle(g,W,'一般判定：看相对水温','索马里洋流：季节性质反转');
+  g.fillStyle='rgba(10,40,64,.9)';g.strokeStyle='rgba(120,175,210,.45)';
+  g.beginPath();g.rect(30,50,W*0.40,H-110);g.fill();g.stroke();
+  g.beginPath();g.rect(W*0.54,50,W*0.40,H-110);g.fill();g.stroke();
+  dArrow(g,140,265,140,90,COL.warm,4);
+  dArrow(g,260,90,260,265,COL.cold,4);
+  g.font='12.5px '+FONT;g.fillStyle='#ff9a86';g.textAlign='left';
+  g.fillText('低纬 → 高纬：一般判为暖流',70,86);
+  g.fillStyle='#86c9ff';g.fillText('高纬 → 低纬：一般判为寒流',190,285);
+  g.fillStyle='#ffd166';g.fillText('前提：水温高于流经海区＝暖流；低于＝寒流',50,315);
+
+  dArrow(g,W*0.54+120,265,W*0.54+120,95,COL.cold,4);
+  dArrow(g,W*0.54+250,95,W*0.54+250,265,COL.warm,4);
+  g.fillStyle='#86c9ff';g.fillText('夏季：低纬→高纬，却是寒流',W*0.54+40,80);
+  g.fillStyle='#ff9a86';g.fillText('冬季：高纬→低纬，却是暖流',W*0.54+175,285);
+  g.fillStyle='#ffd166';g.fillText('全球唯一明显随季节反转性质的洋流',W*0.54+40,315);
+}
+function cmp4(g,W,H){
+  g.fillStyle='#081c2c';g.fillRect(0,0,W,H);
+  g.fillStyle='#eaf7ff';g.font='600 15px '+FONT;g.textAlign='center';
+  g.fillText('南极环流 与 西风漂流：方向、驱动、性质对比',W/2,28);g.textAlign='left';
+  g.fillStyle='rgba(10,40,64,.9)';g.strokeStyle='rgba(120,175,210,.45)';
+  g.beginPath();g.rect(40,60,W-80,95);g.fill();g.stroke();
+  [0.2,0.42,0.64,0.86].forEach(function(f){
+    dArrow(g,40+(W-80)*f-40,107,40+(W-80)*f+40,107,COL.cold,3.5,10);
+  });
+  g.fillStyle='#86c9ff';g.font='13px '+FONT;
+  g.fillText('西风漂流：40°S—60°S · 盛行西风驱动 · 自西向东 · 寒流',60,84);
+  g.fillStyle='rgba(190,222,242,.8)';g.font='12px '+FONT;
+  g.fillText('北半球同受西风驱动的是北大西洋暖流、北太平洋暖流 → “南北同风不同性”',60,140);
+
+  g.fillStyle='rgba(10,40,64,.9)';g.strokeStyle='rgba(120,175,210,.45)';
+  g.beginPath();g.rect(40,190,W-80,95);g.fill();g.stroke();
+  [0.2,0.42,0.64,0.86].forEach(function(f){
+    dArrow(g,40+(W-80)*f+40,237,40+(W-80)*f-40,237,COL.cold,3.5,10);
+  });
+  g.fillStyle='#86c9ff';g.fillText('南极环流（南极绕极流）：约65°S—70°S · 极地东风驱动 · 自东向西 · 寒流',60,214);
+  g.fillStyle='rgba(190,222,242,.8)';
+  g.fillText('全球唯一东西贯通整个纬圈、不受大陆边界限制的大型洋流',60,270);
+  g.fillStyle='#ffd166';g.font='13px '+FONT;
+  g.fillText('记忆：西风漂流更北、自西向东；南极环流更南、自东向西。两者不能混为一谈。',60,318);
+}
+var CMP={
+ 1:{d:cmp1,n:'对比要点：一般中低纬副热带环流方向常年固定（北顺南逆、东暖西寒）；北印度洋季风环流是唯一随季节整体反转的大尺度海区——夏季西南季风顺时针，冬季东北季风逆时针，即“夏顺冬逆”。'},
+ 2:{d:cmp2,n:'对比要点：北海道、纽芬兰、北海都是“寒暖流交汇→海水扰动→营养盐上泛→浮游生物繁盛”的成因；秘鲁渔场是“离岸风→表层海水离岸→深层冷海水上涌→营养盐上涌”的上升补偿流成因，四大渔场中独树一帜。'},
+ 3:{d:cmp3,n:'对比要点：一般规律是“低纬流向高纬为暖流、高纬流向低纬为寒流”，但判断标准始终是相对流经海区的水温。索马里洋流夏季由低纬流向高纬却是寒流（上升流），冬季由高纬流向低纬却是暖流，是全球唯一明显季节性质反转的洋流。'},
+ 4:{d:cmp4,n:'对比要点：西风漂流位于40°S—60°S，由盛行西风驱动，自西向东，性质为寒流；南极环流更靠南（约65°S—70°S），由极地东风驱动，自东向西，是全球唯一东西贯通整个纬圈、不受大陆阻挡的洋流。'}
+};
+function openCompare(n){
+  openModal('<div class="cmpwrap"><canvas id="cmpc" width="960" height="360"></canvas></div><div class="cmpnote" id="cmpnote"></div>');
+  var c=document.getElementById('cmpc'),g=c.getContext('2d');
+  CMP[n].d(g,960,360);
+  document.getElementById('cmpnote').textContent=CMP[n].n;
+}
+
+/* =====================================================================
+   11. 事件绑定、季节切换、图层、初始化
+   ===================================================================== */
+document.getElementById('btnPlay').onclick=function(){
+  S.playing=!S.playing;
+  this.textContent=S.playing?'⏸ 暂停':'▶ 播放';
+};
+document.getElementById('btnReset').onclick=resetAll;
+document.getElementById('btnQuiz').onclick=startQuiz;
+document.querySelectorAll('.cmps .btn').forEach(function(b){
+  b.onclick=function(){openCompare(+b.dataset.cmp);};
+});
+document.querySelectorAll('.segbtn').forEach(function(b){
+  b.onclick=function(){
+    S.season=b.dataset.season;
+    updateSeasonUI();
+    if(quiz&&quiz.c.mon)startQuiz();
+  };
+});
+document.getElementById('layers').addEventListener('change',function(e){
+  var kk=e.target.dataset.layer;
+  if(!kk)return;
+  S.layers[kk]=e.target.checked?1:0;
+});
+cv.addEventListener('pointermove',function(e){
+  var p=toLocal(e),c=findCurrent(p.x,p.y),tip=document.getElementById('tip');
+  S.hover=c;
+  if(c){
+    tip.style.display='block';
+    tip.style.left=(p.cx-p.left)+'px';
+    tip.style.top=(p.cy-p.top)+'px';
+    tip.textContent=c.n+'　'+effType(c)+(c.s?'　（特殊洋流·点击看例外）':'');
+    cv.style.cursor='pointer';
+  }else{
+    tip.style.display='none';
+    cv.style.cursor=(findFishery(p.x,p.y)||findBadge(p.x,p.y))?'pointer':'crosshair';
+  }
+});
+cv.addEventListener('pointerleave',function(){
+  S.hover=null;document.getElementById('tip').style.display='none';
+});
+cv.addEventListener('click',function(e){
+  var p=toLocal(e);
+  var b=findBadge(p.x,p.y); if(b){openCurrent(b,true);return;}
+  var f=findFishery(p.x,p.y); if(f){openFishery(f);return;}
+  var c=findCurrent(p.x,p.y); if(c)openCurrent(c,false);
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+
+function updateSeasonUI(){
+  document.getElementById('seasonPill').textContent='当前季节：'+(S.season==='summer'?'夏季':'冬季');
+  document.getElementById('seasonHint').textContent=S.season==='summer'
+    ?'夏季：西南季风→北印度洋环流顺时针；索马里洋流为寒流（上升流），形成季节性渔场。'
+    :'冬季：东北季风→北印度洋环流逆时针；索马里洋流为暖流——由较高纬流向较低纬的暖流例外。';
+  document.querySelectorAll('.segbtn').forEach(function(b){
+    b.classList.toggle('on',b.dataset.season===S.season);
+  });
+}
+function resetAll(){
+  S.playing=true;S.season='summer';S.hover=null;
+  for(var kk in S.layers)S.layers[kk]=0;
+  S.layers.warm=1;S.layers.cold=1;S.layers.special=1;
+  S.layers.fish=1;S.layers.wind=1;S.layers.exam=1;
+  document.querySelectorAll('#layers input').forEach(function(i){
+    i.checked=!!S.layers[i.dataset.layer];
+  });
+  document.getElementById('btnPlay').textContent='⏸ 暂停';
+  closeModal();updateSeasonUI();
+}
+function initParticles(){
+  for(var i=0;i<CURRENTS.length;i++){
+    var c=CURRENTS[i],g=geomOf(c);
+    var n=Math.max(6,Math.round(g.total/46));
+    c.parts=[];
+    for(var j=0;j<n;j++)c.parts.push({t:j/n,sp:.85+Math.random()*.3});
+  }
+}
+function init(){
+  resize();
+  initParticles();
+  updateSeasonUI();
+  window.addEventListener('resize',resize);
+  window.addEventListener('orientationchange',function(){setTimeout(resize,200);});
+  requestAnimationFrame(loop);
+}
+init();
+})();
+</script>
+</body>
+</html>
