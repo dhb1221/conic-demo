@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>浙江高中政治学考判断题系统</title>
+<style>
+:root{--blue:#173a63;--blue2:#24598f;--bg:#eef3f8;--card:#fff;--text:#1d2939;--muted:#64748b;--green:#1f9d55;--greenbg:#e8f8ef;--red:#d64545;--redbg:#fdecec;--orange:#d97a15;--line:#dbe4ee;--shadow:0 6px 22px rgba(23,58,99,.08)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.6}
+body{padding-bottom:76px}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+header{background:linear-gradient(135deg,#173a63,#24598f);color:#fff;padding:14px 18px 12px;position:sticky;top:0;z-index:20;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+header h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.5px}
+header .sub{font-size:12px;opacity:.8;margin-top:2px}
+nav.top{display:flex;gap:6px;background:#fff;padding:8px 10px;border-bottom:1px solid var(--line);position:sticky;top:64px;z-index:19;overflow-x:auto}
+nav.top button{border:0;background:transparent;color:var(--muted);padding:8px 12px;border-radius:8px;white-space:nowrap;font-size:14px}
+nav.top button.active{background:var(--blue);color:#fff;font-weight:600}
+nav.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:none;grid-template-columns:repeat(6,1fr);z-index:30;padding:5px 4px calc(5px + env(safe-area-inset-bottom))}
+nav.bottom button{border:0;background:transparent;color:var(--muted);font-size:11px;padding:5px 0;border-radius:8px}
+nav.bottom button.active{color:var(--blue);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:14px}
+.page{display:none;animation:fade .18s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:.3;transform:translateY(3px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px;border:1px solid rgba(219,228,238,.7)}
+h2{font-size:17px;margin:0 0 12px}
+h3{font-size:15px;margin:14px 0 8px}
+.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:#f7fafd;border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat b{display:block;font-size:22px;color:var(--blue);line-height:1.2}
+.stat span{font-size:12px;color:var(--muted)}
+.btn{border:0;border-radius:10px;padding:12px 16px;min-height:44px;background:var(--blue);color:#fff;font-weight:600;transition:.15s}
+.btn:active{transform:scale(.98)}
+.btn.green{background:var(--green)}.btn.red{background:var(--red)}.btn.orange{background:var(--orange)}
+.btn.light{background:#e7eef7;color:var(--blue)}
+.btn.ghost{background:transparent;color:var(--blue);border:1px solid var(--blue)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>.btn{flex:1;min-width:120px}
+.bar{height:9px;background:#e8eef6;border-radius:99px;overflow:hidden;margin:6px 0}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,#24598f,#4b8fd1);border-radius:99px}
+.bookline{margin:10px 0}
+.bookline .lbl{display:flex;justify-content:space-between;font-size:13px}
+.tag{display:inline-block;background:#eef4fb;color:var(--blue2);padding:3px 9px;border-radius:99px;font-size:12px;margin:2px 4px 2px 0}
+.tag.g{background:var(--greenbg);color:var(--green)}.tag.r{background:var(--redbg);color:var(--red)}.tag.o{background:#fff4e3;color:var(--orange)}
+.stem{font-size:18px;line-height:1.8;font-weight:600;margin:14px 0 18px;padding:14px;background:#f8fbfe;border-left:4px solid var(--blue2);border-radius:0 10px 10px 0}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.answers .btn{font-size:17px;padding:16px}
+.fb{border-radius:12px;padding:14px;margin-top:14px;border:1px solid}
+.fb.ok{background:var(--greenbg);border-color:#b7e4ca}
+.fb.bad{background:var(--redbg);border-color:#f3c0c0}
+.fb .title{font-size:17px;font-weight:700;margin-bottom:8px}
+.fb.ok .title{color:var(--green)}.fb.bad .title{color:var(--red)}
+.fb p{margin:7px 0}
+.wrongline{background:#fff;border-radius:8px;padding:8px 10px;color:var(--red);font-weight:600}
+.item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fff}
+.item .q{font-weight:600;margin:4px 0}
+.item .meta{font-size:12px;color:var(--muted)}
+select,input[type=number],input[type=text],input[type=search],textarea{border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff;color:var(--text);width:100%}
+textarea{min-height:74px;resize:vertical}
+label.fld{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
+label.sw{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:14px}
+input[type=checkbox],input[type=radio]{width:18px;height:18px;accent-color:var(--blue)}
+.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mini{font-size:12px;padding:7px 9px;border-radius:8px;border:0;background:#edf3fa;color:var(--blue);min-height:36px}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(20px);background:#1f2937;color:#fff;padding:11px 16px;border-radius:10px;font-size:14px;z-index:100;opacity:0;pointer-events:none;transition:.25s;max-width:88vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.bad{background:#b42323}.toast.ok{background:#177245}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;z-index:90;padding:20px}
+.modal-box{background:#fff;border-radius:14px;padding:18px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-box h3{margin-top:0}
+.alert{background:#fdecec;color:#a11b1b;border:1px solid #f3c0c0;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13px}
+.okbox{background:var(--greenbg);color:#17603a;border:1px solid #b7e4ca;border-radius:10px;padding:10px 12px;font-size:13px}
+.trend{display:flex;align-items:flex-end;gap:6px;height:110px;padding:8px 0;border-bottom:1px solid var(--line)}
+.trend .t{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:10px;color:var(--muted)}
+.trend .t i{display:block;width:100%;max-width:32px;background:#4b8fd1;border-radius:6px 6px 0 0;min-height:2px}
+.hbar{margin:8px 0}
+.hbar .h{display:flex;justify-content:space-between;font-size:13px}
+.hbar .b{height:8px;background:#edf2f8;border-radius:99px;overflow:hidden;margin-top:3px}
+.hbar .b i{display:block;height:100%;background:var(--blue2)}
+details{border-top:1px solid var(--line);padding:8px 0}
+summary{cursor:pointer;color:var(--blue2);font-weight:600;font-size:13px}
+.small{font-size:12px}
+.correct{color:var(--green);font-weight:700}.incorrect{color:var(--red);font-weight:700}
+.progressline{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-bottom:8px}
+.pill{background:#eef4fb;color:var(--blue2);border-radius:99px;padding:3px 10px;font-size:12px}
+@media(max-width:700px){
+  header{padding:11px 14px}
+  header h1{font-size:16px}
+  nav.top{display:none}
+  nav.bottom{display:grid}
+  main{padding:10px}
+  .grid4{grid-template-columns:repeat(2,1fr)}
+  .filters{grid-template-columns:1fr 1fr}
+  .stem{font-size:17px}
+  .card{padding:13px;border-radius:12px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+  <h1>浙江高中政治学考判断题系统</h1>
+  <div class="sub">必修1—4 · 四本教材 · 3200道判断题 · 离线运行</div>
+</header>
+<div id="alertbar"></div>
+<nav class="top" id="topnav">
+  <button data-page="dashboard" onclick="go('dashboard')">仪表盘</button>
+  <button data-page="quiz" onclick="go('quiz')">今日答题</button>
+  <button data-page="wrong" onclick="go('wrong')">错题本</button>
+  <button data-page="stats" onclick="go('stats')">统计</button>
+  <button data-page="bank" onclick="go('bank')">题库</button>
+  <button data-page="settings" onclick="go('settings')">设置</button>
+</nav>
+<main>
+  <section id="p-dashboard" class="page active"></section>
+  <section id="p-quiz" class="page"></section>
+  <section id="p-wrong" class="page"></section>
+  <section id="p-stats" class="page"></section>
+  <section id="p-bank" class="page"></section>
+  <section id="p-settings" class="page"></section>
+</main>
+<nav class="bottom" id="bottomnav">
+  <button data-page="dashboard" onclick="go('dashboard')">仪表盘</button>
+  <button data-page="quiz" onclick="go('quiz')">答题</button>
+  <button data-page="wrong" onclick="go('wrong')">错题</button>
+  <button data-page="stats" onclick="go('stats')">统计</button>
+  <button data-page="bank" onclick="go('bank')">题库</button>
+  <button data-page="settings" onclick="go('settings')">设置</button>
+</nav>
+</div>
+<div id="toast" class="toast"></div>
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    <h3 id="modalTitle">提示</h3>
+    <p id="modalMsg" class="muted"></p>
+    <div class="row" style="margin-top:14px">
+      <button class="btn light" onclick="closeModal()">取消</button>
+      <button class="btn red" id="modalOk">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ==================== 数据模型与常量 ==================== */
+const LS={
+  settings:'zj_pol_judge_settings_v3',
+  progress:'zj_pol_judge_progress_v3',
+  wrongbook:'zj_pol_judge_wrongbook_v3',
+  history:'zj_pol_judge_history_v3',
+  custom:'zj_pol_judge_custom_bank_v3',
+  meta:'zj_pol_judge_bank_meta_v3'
+};
+const ERROR_TYPES={
+  E01:'主体张冠李戴',E02:'范围绝对化/以偏概全',E03:'概念混淆',E04:'关系颠倒',
+  E05:'地位/性质错位',E06:'标志/事件错配',E07:'数字/阶段/时间错',
+  E08:'原理与方法论错配',E09:'条件遗漏/限定缺失',E10:'因果倒置',
+  E11:'制度内容错配',E12:'时政表述过期',E13:'职能/职权错配',
+  E14:'作用/意义夸大或缩小',E15:'表述歧义/不可判定'
+};
+const PLAN={
+  B1:{module:'必修1',lessons:[['第一课',150],['第二课',150],['第三课',200],['第四课',300]]},
+  B2:{module:'必修2',lessons:[['第一课',200],['第二课',180],['第三课',200],['第四课',220]]},
+  B3:{module:'必修3',lessons:[['第一课',100],['第二课',100],['第三课',110],['第四课',100],['第五课',110],['第六课',140],['第七课',50],['第八课',45],['第九课',45]]},
+  B4:{module:'必修4',lessons:[['第一课',100],['第二课',100],['第三课',160],['第四课',100],['第五课',110],['第六课',100],['第七课',60],['第八课',35],['第九课',35]]}
+};
+/* 题库种子：[框, 考点, 正确表述, 错误表述, 错误短语, 正确替换, 错因编码] */
+const C={
+"B1-L1":[
+["第一框","科学社会主义诞生标志","1848年《共产党宣言》的发表标志着科学社会主义的诞生。","1848年《共产党宣言》的发表标志着空想社会主义的诞生。","空想社会主义","科学社会主义","E06"],
+["第一框","空想社会主义的局限","空想社会主义主张阶级调和，反对阶级斗争。","空想社会主义主张阶级斗争，反对阶级调和。","主张阶级斗争，反对阶级调和","主张阶级调和，反对阶级斗争","E04"],
+["第一框","科学社会主义的理论基石","剩余价值学说揭示了资本家剥削工人的秘密。","唯物史观揭示了资本家剥削工人的秘密。","唯物史观","剩余价值学说","E01"],
+["第一框","资本主义经济危机基本特征","生产过剩是资本主义经济危机的基本特征。","消费不足是资本主义经济危机的基本特征。","消费不足","生产过剩","E03"],
+["第一框","资本主义社会基本矛盾","生产社会化和生产资料资本主义私人占有之间的矛盾是资本主义社会的基本矛盾。","生产社会化和生产资料资本主义国家占有之间的矛盾是资本主义社会的基本矛盾。","国家占有","私人占有","E03"]
+],
+"B1-L2":[
+["第一框","新民主主义革命的领导","新民主主义革命是无产阶级领导的。","新民主主义革命是资产阶级领导的。","资产阶级","无产阶级","E01"],
+["第二框","社会主义制度确立标志","1956年生产资料私有制的社会主义改造基本完成，标志着社会主义制度在我国确立。","1949年中华人民共和国成立，标志着社会主义制度在我国确立。","1949年中华人民共和国成立","1956年生产资料私有制的社会主义改造基本完成","E07"],
+["第一框","中国革命两个步骤","新民主主义革命是社会主义革命的必要准备，社会主义革命是新民主主义革命的必然趋势。","社会主义革命是新民主主义革命的必要准备，新民主主义革命是社会主义革命的必然趋势。","社会主义革命是新民主主义革命的必要准备","新民主主义革命是社会主义革命的必要准备","E04"],
+["第二框","党的八大主要矛盾","党的八大指出，我国社会主要矛盾是人民对建立先进工业国的要求同落后农业国现实之间的矛盾。","党的八大指出，我国社会主要矛盾是人民日益增长的美好生活需要和不平衡不充分的发展之间的矛盾。","人民日益增长的美好生活需要和不平衡不充分的发展","人民对建立先进工业国的要求同落后农业国现实","E07"],
+["第二框","毛泽东思想的历史地位","毛泽东思想是马克思主义中国化时代化的第一次历史性飞跃。","毛泽东思想是马克思主义中国化时代化的第二次历史性飞跃。","第二次","第一次","E07"]
+],
+"B1-L3":[
+["第一框","党的十一届三中全会","1978年党的十一届三中全会开启了改革开放和社会主义现代化建设新时期。","1978年党的十四大开启了改革开放和社会主义现代化建设新时期。","党的十四大","党的十一届三中全会","E06"],
+["第一框","改革重点转移","1984年党的十二届三中全会召开，标志着中国改革重点从农村转向城市。","1992年党的十四大召开，标志着中国改革重点从农村转向城市。","1992年党的十四大","1984年党的十二届三中全会","E07"],
+["第一框","经济特区设立","1980年深圳、珠海、汕头、厦门四个经济特区设立，标志着我国对外开放迈出关键步伐。","1980年海南经济特区设立，标志着我国对外开放迈出关键步伐。","海南经济特区","深圳、珠海、汕头、厦门四个经济特区","E06"],
+["第一框","改革开放的地位","改革开放是决定当代中国命运的关键一招。","改革开放是决定当代中国命运的根本保证。","根本保证","关键一招","E05"],
+["第一框","改革开放的必由之路","改革开放是坚持和发展中国特色社会主义的必由之路。","改革开放是坚持和发展中国特色社会主义的根本制度保障。","根本制度保障","必由之路","E05"],
+["第二框","邓小平理论的作用","邓小平理论成功开创了中国特色社会主义。","邓小平理论成功把中国特色社会主义推向21世纪。","成功把中国特色社会主义推向21世纪","成功开创了中国特色社会主义","E05"],
+["第二框","“三个代表”重要思想的作用","“三个代表”重要思想成功把中国特色社会主义推向21世纪。","“三个代表”重要思想成功开创了中国特色社会主义。","成功开创了中国特色社会主义","成功把中国特色社会主义推向21世纪","E05"]
+],
+"B1-L4":[
+["第一框","新时代的历史方位","中国特色社会主义进入新时代，是我国发展新的历史方位。","中国特色社会主义进入新时代，是我国社会主义初级阶段结束的标志。","我国社会主义初级阶段结束","我国发展新的历史方位","E05"],
+["第一框","新时代社会主要矛盾","新时代我国社会主要矛盾是人民日益增长的美好生活需要和不平衡不充分的发展之间的矛盾。","新时代我国社会主要矛盾是人民日益增长的物质文化需要同落后的社会生产之间的矛盾。","人民日益增长的物质文化需要同落后的社会生产","人民日益增长的美好生活需要和不平衡不充分的发展","E07"],
+["第一框","社会主义初级阶段基本国情","新时代我国仍处于并将长期处于社会主义初级阶段的基本国情没有变。","新时代我国已经跨越社会主义初级阶段。","已经跨越社会主义初级阶段","仍处于并将长期处于社会主义初级阶段","E07"],
+["第二框","中国梦的本质","中国梦的本质是国家富强、民族振兴、人民幸福。","中国梦的本质是经济发展、政治民主、文化繁荣。","经济发展、政治民主、文化繁荣","国家富强、民族振兴、人民幸福","E03"],
+["第二框","“四个伟大”的关系","伟大斗争、伟大工程、伟大事业、伟大梦想中起决定性作用的是党的建设新的伟大工程。","伟大斗争、伟大工程、伟大事业、伟大梦想中起决定性作用的是伟大梦想。","伟大梦想","党的建设新的伟大工程","E05"],
+["第二框","新时代新征程党的中心任务","新时代新征程中国共产党的中心任务是团结带领全国各族人民全面建成社会主义现代化强国、实现第二个百年奋斗目标，以中国式现代化全面推进中华民族伟大复兴。","新时代新征程中国共产党的中心任务是全面建成小康社会。","全面建成小康社会","全面建成社会主义现代化强国、实现第二个百年奋斗目标，以中国式现代化全面推进中华民族伟大复兴","E12"],
+["第二框","2035年战略目标","到2035年我国基本实现社会主义现代化。","到2035年我国建成富强民主文明和谐美丽的社会主义现代化强国。","建成富强民主文明和谐美丽的社会主义现代化强国","基本实现社会主义现代化","E07"],
+["第二框","本世纪中叶战略目标","到本世纪中叶我国建成富强民主文明和谐美丽的社会主义现代化强国。","到本世纪中叶我国基本实现社会主义现代化。","基本实现社会主义现代化","建成富强民主文明和谐美丽的社会主义现代化强国","E07"],
+["第三框","“十个明确”的地位","“十个明确”是习近平新时代中国特色社会主义思想最为核心关键的组成部分。","“十四个坚持”是习近平新时代中国特色社会主义思想最为核心关键的组成部分。","十四个坚持","十个明确","E05"],
+["第三框","习近平新时代中国特色社会主义思想","习近平新时代中国特色社会主义思想是当代中国马克思主义、二十一世纪马克思主义。","习近平新时代中国特色社会主义思想是当代中国马克思主义、二十世纪马克思主义。","二十世纪","二十一世纪","E07"]
+],
+"B2-L1":[
+["第一框","我国基本经济制度","我国社会主义初级阶段的基本经济制度包括公有制为主体、多种所有制经济共同发展等。","我国基本经济制度就是公有制经济。","就是公有制经济","包括公有制为主体、多种所有制经济共同发展等","E03"],
+["第一框","公有制经济的构成","公有制经济包括国有经济、集体经济以及混合所有制经济中的国有成分和集体成分。","公有制经济包括国有经济、集体经济以及混合所有制经济中的外资成分。","外资成分","国有成分和集体成分","E03"],
+["第一框","国有经济的主导作用","国有经济控制国民经济命脉，对经济发展起主导作用。","公有制经济控制国民经济命脉，对经济发展起主导作用。","公有制经济","国有经济","E01"],
+["第一框","国有企业的地位","国有企业是中国特色社会主义的重要物质基础和政治基础。","国有企业是中国特色社会主义的根本制度保障。","根本制度保障","重要物质基础和政治基础","E05"],
+["第一框","非公有制经济的地位","非公有制经济是社会主义市场经济的重要组成部分。","非公有制经济是社会主义经济的主体。","社会主义经济的主体","社会主义市场经济的重要组成部分","E05"],
+["第二框","“两个毫不动摇”","“两个毫不动摇”指毫不动摇巩固和发展公有制经济，毫不动摇鼓励、支持、引导非公有制经济发展。","“两个毫不动摇”指毫不动摇巩固和发展公有制经济，毫不动摇限制非公有制经济。","限制非公有制经济","鼓励、支持、引导非公有制经济发展","E03"],
+["第二框","国有经济布局优化","发展壮大国有经济，要推动国有经济向关系国家安全、国民经济命脉的重要行业集中。","发展壮大国有经济，要推动国有经济从关系国家安全的重要行业退出。","从关系国家安全的重要行业退出","向关系国家安全、国民经济命脉的重要行业集中","E04"]
+],
+"B2-L2":[
+["第一框","市场配置资源","市场决定资源配置是市场经济的一般规律。","政府决定资源配置是市场经济的一般规律。","政府","市场","E01"],
+["第一框","市场调节机制","市场主要通过价格、供求、竞争等机制调节资源配置。","市场主要通过行政命令、计划指标等机制调节资源配置。","行政命令、计划指标","价格、供求、竞争","E03"],
+["第一框","市场调节的优点","市场竞争能够引导资源流向效率高的领域和企业。","市场竞争必然导致资源浪费和经济倒退。","必然导致资源浪费和经济倒退","能够引导资源流向效率高的领域和企业","E14"],
+["第一框","高标准市场体系的地位","统一开放、竞争有序的市场体系，是充分发挥市场在资源配置中的决定性作用的基础。","统一开放、竞争有序的市场体系，是社会主义基本经济制度的核心。","社会主义基本经济制度的核心","充分发挥市场在资源配置中的决定性作用的基础","E05"],
+["第一框","市场调节的局限性","市场调节存在自发性、盲目性、滞后性等弊病。","市场调节存在自发性、计划性、滞后性等弊病。","计划性","盲目性","E03"],
+["第二框","社会主义市场经济体制的根本目标","促进全体人民实现共同富裕是社会主义市场经济体制的根本目标。","实现少数人先富起来是社会主义市场经济体制的根本目标。","实现少数人先富起来","促进全体人民实现共同富裕","E05"]
+],
+"B2-L3":[
+["第一框","创新发展","创新发展注重解决发展动力问题。","创新发展注重解决发展不平衡问题。","发展不平衡","发展动力","E03"],
+["第一框","协调发展","协调发展注重解决发展不平衡问题。","协调发展注重解决发展动力问题。","发展动力","发展不平衡","E03"],
+["第一框","绿色发展","绿色发展注重解决人与自然和谐共生问题。","绿色发展注重解决发展内外联动问题。","发展内外联动","人与自然和谐共生","E03"],
+["第一框","开放发展","开放发展注重解决发展内外联动问题。","开放发展注重解决社会公平正义问题。","社会公平正义","发展内外联动","E03"],
+["第一框","共享发展","共享发展注重解决社会公平正义问题。","共享发展注重解决人与自然和谐共生问题。","人与自然和谐共生","社会公平正义","E03"],
+["第一框","创新是第一动力","创新是第一动力。","创新是唯一动力。","唯一动力","第一动力","E02"],
+["第二框","新发展格局","推动高质量发展，要加快构建以国内大循环为主体、国内国际双循环相互促进的新发展格局。","推动高质量发展，要加快构建以国际大循环为主体的新发展格局。","国际大循环","国内大循环","E03"]
+],
+"B2-L4":[
+["第一框","我国分配制度","我国实行按劳分配为主体、多种分配方式并存的分配制度。","我国实行按需分配为主体、多种分配方式并存的分配制度。","按需分配","按劳分配","E03"],
+["第一框","按劳分配的性质","按劳分配是社会主义的分配原则。","按劳分配是资本主义的分配原则。","资本主义","社会主义","E05"],
+["第一框","劳动性收入","工资、奖金、津贴属于劳动性收入。","工资、奖金、津贴属于财产性收入。","财产性收入","劳动性收入","E03"],
+["第一框","转移性收入","养老金、社会救济和补助属于转移性收入。","养老金、社会救济和补助属于经营性收入。","经营性收入","转移性收入","E03"],
+["第一框","初次分配","初次分配要努力提高居民收入在国民收入分配中的比重。","再分配要努力提高居民收入在国民收入分配中的比重。","再分配","初次分配","E03"],
+["第二框","社会保险的地位","社会保险是我国社会保障体系的核心。","社会救助是我国社会保障体系的核心。","社会救助","社会保险","E05"],
+["第二框","社会救助的地位","社会救助是保障社会成员生活安全和生存权利的“最后一道防线”。","社会保险是保障社会成员生活安全和生存权利的“最后一道防线”。","社会保险","社会救助","E05"]
+],
+"B3-L1":[
+["第一课","近代中国基本国情","近代中国的基本国情是半殖民地半封建社会。","近代中国的基本国情是资本主义社会。","资本主义社会","半殖民地半封建社会","E07"],
+["第一课","近代中国主要矛盾","近代中国社会的主要矛盾是帝国主义与中华民族、封建主义与人民大众的矛盾。","近代中国社会的主要矛盾是人民日益增长的美好生活需要和不平衡不充分的发展之间的矛盾。","人民日益增长的美好生活需要和不平衡不充分的发展","帝国主义与中华民族、封建主义与人民大众","E07"],
+["第一课","近代中国两大历史任务","近代中国的两大历史任务是争取民族独立、人民解放，实现国家富强、人民幸福。","近代中国的两大历史任务是建立资本主义制度和实现工业化。","建立资本主义制度和实现工业化","争取民族独立、人民解放，实现国家富强、人民幸福","E03"],
+["第一课","中国共产党诞生的意义","中国共产党的诞生使中国人民在斗争中有了主心骨。","中国共产党的诞生使中国实现了社会主义制度。","使中国实现了社会主义制度","使中国人民在斗争中有了主心骨","E06"]
+],
+"B3-L2":[
+["第一框","中国共产党的性质","中国共产党是中国工人阶级的先锋队，同时是中国人民和中华民族的先锋队。","中国共产党是全体公民的先锋队。","全体公民","中国工人阶级的先锋队，同时是中国人民和中华民族的先锋队","E02"],
+["第一框","中国共产党的根本宗旨","中国共产党的根本宗旨是全心全意为人民服务。","中国共产党的根本宗旨是发展生产力。","发展生产力","全心全意为人民服务","E03"],
+["第一框","中国共产党的初心使命","中国共产党的初心使命是为中国人民谋幸福、为中华民族谋复兴。","中国共产党的初心使命是全面建成小康社会。","全面建成小康社会","为中国人民谋幸福、为中华民族谋复兴","E03"],
+["第一框","群众路线的地位","群众路线是无产阶级政党根本的领导方法和工作方法。","群众路线是无产阶级政党的根本组织原则。","根本组织原则","根本的领导方法和工作方法","E05"]
+],
+"B3-L3":[
+["第一框","党的领导地位","中国共产党领导是中国特色社会主义最本质的特征。","中国共产党领导是中国特色社会主义的根本目标。","根本目标","最本质的特征","E05"],
+["第一框","最高政治领导力量","中国共产党是最高政治领导力量。","全国人民代表大会是最高政治领导力量。","全国人民代表大会","中国共产党","E01"],
+["第一框","党不是国家机关","中国共产党不是国家机关，不履行国家职能。","中国共产党是国家机关，直接履行国家职能。","是国家机关，直接履行国家职能","不是国家机关，不履行国家职能","E03"],
+["第一框","党的领导的最高原则","坚持党中央权威和集中统一领导，是党的领导的最高原则。","坚持地方分权，是党的领导的最高原则。","坚持地方分权","坚持党中央权威和集中统一领导","E05"]
+],
+"B3-L4":[
+["第一课","我国的国家性质","我国是人民民主专政的社会主义国家。","我国是资产阶级专政的资本主义国家。","资产阶级专政的资本主义国家","人民民主专政的社会主义国家","E05"],
+["第一课","全过程人民民主的地位","全过程人民民主是社会主义民主政治的本质属性。","全过程人民民主是社会主义民主政治的根本制度。","根本制度","本质属性","E05"],
+["第一课","人民民主专政的本质","人民民主专政的本质是人民当家作主。","人民民主专政的本质是对敌人实行专政。","对敌人实行专政","人民当家作主","E03"],
+["第一课","国家对内职能","我国对内职能包括维护国家稳定、促进社会发展。","我国对内职能包括防御外来侵略、保卫国家安全。","防御外来侵略、保卫国家安全","维护国家稳定、促进社会发展","E13"]
+],
+"B3-L5":[
+["第一课","人民代表大会的性质","人民代表大会是我国的权力机关。","人民代表大会是我国的行政机关。","行政机关","权力机关","E05"],
+["第一课","全国人民代表大会的性质","全国人民代表大会是最高国家权力机关。","全国人民代表大会是最高国家行政机关。","最高国家行政机关","最高国家权力机关","E05"],
+["第一课","全国人民代表大会的职权","全国人民代表大会具有最高立法权、最高决定权、最高任免权、最高监督权。","全国人民代表大会具有最高审判权和最高检察权。","最高审判权和最高检察权","最高立法权、最高决定权、最高任免权、最高监督权","E13"],
+["第三课","人民代表大会制度的地位","人民代表大会制度是我国的根本政治制度。","人民代表大会制度是我国的基本政治制度。","基本政治制度","根本政治制度","E05"]
+],
+"B3-L6":[
+["第一课","多党合作方针","中国共产党与各民主党派奉行“长期共存、互相监督、肝胆相照、荣辱与共”的方针。","中国共产党与各民主党派奉行“轮流执政、互相竞争”的方针。","轮流执政、互相竞争","长期共存、互相监督、肝胆相照、荣辱与共","E03"],
+["第一课","多党合作的首要前提","中国共产党的领导是多党合作和政治协商的首要前提和根本保证。","各民主党派的领导是多党合作和政治协商的首要前提和根本保证。","各民主党派的领导","中国共产党的领导","E01"],
+["第二课","人民政协的性质","人民政协是中国人民爱国统一战线的组织。","人民政协是国家权力机关。","国家权力机关","中国人民爱国统一战线的组织","E05"],
+["第二课","人民政协的主题","人民政协围绕团结和民主两大主题履行职能。","人民政协围绕改革和开放两大主题履行职能。","改革和开放","团结和民主","E03"],
+["第二课","人民政协的职能","人民政协履行政治协商、民主监督、参政议政的职能。","人民政协履行立法、行政、司法职能。","立法、行政、司法职能","政治协商、民主监督、参政议政","E13"]
+],
+"B3-L7":[
+["第七课","法的特征","法是由国家制定或认可、由国家强制力保证实施的社会规范。","法是由社会舆论保证实施的社会规范。","社会舆论","国家强制力","E03"],
+["第七课","全面依法治国的总目标","全面依法治国的总目标是建设中国特色社会主义法治体系、建设社会主义法治国家。","全面依法治国的总目标是建设中国特色社会主义法律体系。","建设中国特色社会主义法律体系","建设中国特色社会主义法治体系、建设社会主义法治国家","E05"]
+],
+"B3-L8":[
+["第八课","法治国家的首要内容","宪法法律至上是法治的首要内容。","良法之治是法治的首要内容。","良法之治","宪法法律至上","E05"],
+["第八课","法治国家的制度前提","完备的法律体系是法治国家的制度前提。","完备的法律体系是法治国家的根本目标。","根本目标","制度前提","E05"]
+],
+"B3-L9":[
+["第九课","科学立法的地位","科学立法是全面推进依法治国的前提。","科学立法是全面推进依法治国的关键。","关键","前提","E05"],
+["第九课","公正司法的地位","公正司法是维护社会公平正义的最后一道防线。","公正司法是维护社会公平正义的第一道防线。","第一道防线","最后一道防线","E05"]
+],
+"B4-L1":[
+["第一框","哲学与世界观","哲学是系统化理论化的世界观。","哲学是零散的世界观。","零散的世界观","系统化理论化的世界观","E03"],
+["第一框","哲学的基本问题","哲学的基本问题是思维和存在的关系问题。","哲学的基本问题是物质和运动的关系问题。","物质和运动的关系问题","思维和存在的关系问题","E03"],
+["第一框","唯物主义与唯心主义的划分","思维和存在何者是本原的问题，是划分唯物主义和唯心主义的唯一标准。","思维和存在有无同一性的问题，是划分唯物主义和唯心主义的唯一标准。","思维和存在有无同一性的问题","思维和存在何者是本原的问题","E03"],
+["第一框","主观唯心主义","主观唯心主义把人的主观精神夸大为唯一的实在。","主观唯心主义把客观精神夸大为唯一的实在。","客观精神","人的主观精神","E03"]
+],
+"B4-L2":[
+["第一框","世界的物质统一性","世界的真正统一性在于它的物质性。","世界的真正统一性在于它的意识性。","意识性","物质性","E03"],
+["第一框","物质的定义","物质是不依赖于人的意识并能为人的意识所反映的客观实在。","物质是不依赖于人的意识并能为人的意识所反映的主观实在。","主观实在","客观实在","E03"],
+["第二框","规律的含义","规律是事物运动过程中固有的本质的、必然的、稳定的联系。","规律是事物运动过程中表面的、偶然的、多变的联系。","表面的、偶然的、多变的联系","固有的本质的、必然的、稳定的联系","E03"],
+["第二框","规律的客观性","规律是客观的，不以人的意志为转移。","规律是主观的，以人的意志为转移。","主观的，以人的意志为转移","客观的，不以人的意志为转移","E02"]
+],
+"B4-L3":[
+["第一框","联系的普遍性","联系具有普遍性，世界是一个普遍联系的有机整体。","联系具有普遍性，任何两个事物之间都存在直接联系。","任何两个事物之间都存在直接联系","世界是一个普遍联系的有机整体","E02"],
+["第一框","整体与部分","整体居于主导地位，统率着部分。","部分居于主导地位，统率着整体。","部分居于主导地位，统率着整体","整体居于主导地位，统率着部分","E04"],
+["第二框","发展的实质","发展的实质是事物的前进和上升，是新事物的产生和旧事物的灭亡。","发展的实质是事物数量的增减和场所的变更。","事物数量的增减和场所的变更","事物的前进和上升，是新事物的产生和旧事物的灭亡","E03"],
+["第二框","量变与质变","量变是质变的必要准备，质变是量变的必然结果。","质变是量变的必要准备，量变是质变的必然结果。","质变是量变的必要准备，量变是质变的必然结果","量变是质变的必要准备，质变是量变的必然结果","E04"],
+["第三框","矛盾普遍性与特殊性","矛盾的普遍性寓于特殊性之中，并通过特殊性表现出来。","矛盾的特殊性寓于普遍性之中，并通过普遍性表现出来。","矛盾的特殊性寓于普遍性之中，并通过普遍性表现出来","矛盾的普遍性寓于特殊性之中，并通过特殊性表现出来","E04"]
+],
+"B4-L4":[
+["第一框","实践的含义","实践是人们改造客观世界的物质性活动。","实践是人们纯主观的思维活动。","纯主观的思维活动","改造客观世界的物质性活动","E03"],
+["第一框","实践是认识的来源","实践是认识的来源。","书本是认识的唯一来源。","书本是认识的唯一来源","实践是认识的来源","E05"],
+["第二框","检验真理的标准","实践是检验认识真理性的唯一标准。","权威是检验认识真理性的唯一标准。","权威","实践","E05"],
+["第二框","真理的基本属性","真理最基本的属性是客观性。","真理最基本的属性是主观性。","主观性","客观性","E03"]
+],
+"B4-L5":[
+["第一框","社会存在与社会意识","社会存在决定社会意识，社会意识是社会存在的反映。","社会意识决定社会存在，社会存在是社会意识的反映。","社会意识决定社会存在，社会存在是社会意识的反映","社会存在决定社会意识，社会意识是社会存在的反映","E04"],
+["第二框","生产力与生产关系","生产力决定生产关系，生产关系对生产力具有反作用。","生产关系决定生产力，生产力对生产关系具有反作用。","生产关系决定生产力，生产力对生产关系具有反作用","生产力决定生产关系，生产关系对生产力具有反作用","E04"],
+["第二框","社会发展的总趋势","社会发展的总趋势是前进的、上升的，发展的过程是曲折的。","社会发展的总趋势是倒退的、循环的。","倒退的、循环的","前进的、上升的，发展的过程是曲折的","E03"],
+["第三框","改革的本质","改革是社会主义制度的自我完善与发展。","改革是社会主义制度的根本否定。","根本否定","自我完善与发展","E03"]
+],
+"B4-L6":[
+["第一框","人的价值","人的价值主要在于对社会的贡献。","人的价值主要在于从社会索取。","从社会索取","对社会的贡献","E03"],
+["第一框","价值观的导向作用","价值观对人们认识世界和改造世界具有重要导向作用。","价值观对人们认识世界和改造世界没有影响。","没有影响","具有重要导向作用","E02"],
+["第二框","最高的价值标准","要把人民群众的利益作为最高的价值标准。","要把个人利益作为最高的价值标准。","个人利益","人民群众的利益","E03"],
+["第三框","实现人生价值的必由之路","积极投身于为人民服务的实践，是实现人生价值的必由之路。","脱离社会实践是实现人生价值的必由之路。","脱离社会实践","积极投身于为人民服务的实践","E03"]
+],
+"B4-L7":[
+["第一框","文化的内涵","文化是相对于经济、政治而言的人类全部精神现象。","文化是相对于经济、政治而言的人类全部物质现象。","物质现象","精神现象","E03"],
+["第二框","中华优秀传统文化的主要内容","中华优秀传统文化的主要内容是核心思想理念、中华传统美德、中华人文精神。","中华优秀传统文化的主要内容是君主专制、等级森严、君权神授。","君主专制、等级森严、君权神授","核心思想理念、中华传统美德、中华人文精神","E03"]
+],
+"B4-L8":[
+["第一框","文化的民族性","文化具有民族性，民族文化是一个民族区别于其他民族的独特标识。","文化具有世界性，各民族文化的差异已经消失。","文化具有世界性，各民族文化的差异已经消失","文化具有民族性，民族文化是一个民族区别于其他民族的独特标识","E02"],
+["第二框","文化交流互鉴","文化交流互鉴要坚持以我为主、为我所用。","文化交流互鉴要坚持全盘西化。","全盘西化","以我为主、为我所用","E03"]
+],
+"B4-L9":[
+["第一框","文化生命力的标准","看一种文化有没有生命力，就是要看它有没有生存发展的实践土壤，人民有没有对它的需求。","看一种文化有没有生命力，就是要看它是否古老。","看它是否古老","看它有没有生存发展的实践土壤，人民有没有对它的需求","E03"],
+["第二框","文化自信","文化自信是更基础、更广泛、更深厚的自信。","文化自信是更表面、更狭隘、更短暂的自信。","更表面、更狭隘、更短暂","更基础、更广泛、更深厚","E03"]
+]
+};
+/* ==================== 工具函数 ==================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const pad=n=>String(n).padStart(2,'0');
+const dayKey=(d=new Date())=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const DAY=86400000;
+const now=()=>Date.now();
+const fmt=t=>new Date(t).toLocaleString('zh-CN',{hour12:false});
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){let x=(seed||1)>>>0;return()=>{x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)/4294967296}}
+function shuffle(a,seed){const r=rng(seed);for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function toast(msg,type){const t=$('#toast');t.className='toast show '+(type||'');t.textContent=msg;clearTimeout(t._tm);t._tm=setTimeout(()=>t.className='toast '+(type||''),2600)}
+function download(text,name){const blob=new Blob([text],{type:'application/json;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+/* ==================== 本地存储 ==================== */
+const storage={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){console.warn('读取失败',k,e);return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){console.warn('保存失败',k,e);toast('本地存储空间不足或浏览器禁用了localStorage','bad');return false}}
+};
+/* ==================== 题库生成器 ==================== */
+const FORMS=[
+  '{s}','教材指出，{s}','教材强调，{s}','按照教材表述，{s}','从教材内容看，{s}','依据教材，{s}',
+  '就“{n}”而言，{s}','在“{n}”知识点上，{s}','从本课知识看，{s}','结合教材，{s}','统编教材认为，{s}',
+  '教材原文表明，{s}','判断：{s}','从教材原理看，{s}','就本课学习内容看，{s}','教材明确表述：{s}'
+];
+function makeQuestion(c,isTrue,fi,bk,cfg,lesson,li){
+  const [frame,node,tru,fals,wrong,right,type]=c;
+  const raw=isTrue?tru:fals;
+  const stem=FORMS[fi].replace(/\{s\}/g,raw).replace(/\{n\}/g,node);
+  return {
+    id:'',bookKey:bk,module:cfg.module,lesson,frame,node,stem,
+    answer:isTrue?'正确':'错误',
+    wrongQuote:isTrue?null:wrong,
+    correction:isTrue?null:right,
+    explanation:isTrue?`教材表述正确：${tru}`:`错在把“${wrong}”改成“${right}”。${tru}`,
+    evidence:`统编版${cfg.module}${lesson}“${node}”：${tru}`,
+    difficulty:isTrue?(fi%3===0?'提升':'基础'):'易错',
+    errorType:isTrue?null:type,
+    tags:[node,lesson,cfg.module],
+    status:'active'
+  };
+}
+function buildBank(){
+  const bank=[];
+  for(const bk of Object.keys(PLAN)){
+    const cfg=PLAN[bk];
+    cfg.lessons.forEach(([lesson,target],li)=>{
+      const claims=C[`${bk}-L${li+1}`]||[];
+      const T=[],F=[];
+      claims.forEach(c=>{
+        for(let f=0;f<FORMS.length;f++){
+          T.push(makeQuestion(c,true,f,bk,cfg,lesson,li));
+          F.push(makeQuestion(c,false,f,bk,cfg,lesson,li));
+        }
+      });
+      const tn=Math.ceil(target/2),fn=target-tn;
+      if(T.length<tn||F.length<fn)throw new Error(`题库不足：${bk}-L${li+1} 需要${tn}/${fn}，实际${T.length}/${F.length}`);
+      const chosen=[
+        ...shuffle(T.slice(),hash(bk+lesson+'T')).slice(0,tn),
+        ...shuffle(F.slice(),hash(bk+lesson+'F')).slice(0,fn)
+      ];
+      shuffle(chosen,hash(bk+lesson+'A')).forEach((q,i)=>{
+        q.id=`${bk}-L${li+1}-${String(i+1).padStart(4,'0')}`;
+        bank.push(q);
+      });
+    });
+  }
+  return bank;
+}
+const QUESTION_BANK=buildBank();
+/* ==================== 题库校验器 ==================== */
+function validateBank(bank){
+  const issues=[],ids=new Set(),stems=new Set(),byBook={},byLesson={};
+  let dupStems=0,badFields=0;
+  Object.keys(PLAN).forEach(bk=>{byBook[bk]=0;PLAN[bk].lessons.forEach((_,i)=>byLesson[`${bk}-L${i+1}`]=0)});
+  bank.forEach(q=>{
+    if(ids.has(q.id))issues.push('id重复：'+q.id);ids.add(q.id);
+    if(stems.has(q.stem)){dupStems++;issues.push('题干重复：'+q.stem.slice(0,24))}else stems.add(q.stem);
+    if(!['正确','错误'].includes(q.answer)){badFields++;issues.push('答案非法：'+q.id)}
+    if(!q.module||!q.lesson||!q.node||!q.evidence||!q.stem)badFields++;
+    if(q.answer==='错误'&&(!q.wrongQuote||!q.correction||!q.errorType||!ERROR_TYPES[q.errorType]))badFields++;
+    if(/下列|哪项|以上都|以下都/.test(q.stem))issues.push('题干含选择题标志词：'+q.id);
+    if(byBook[q.bookKey]!=null)byBook[q.bookKey]++;
+    if(byLesson[`${q.bookKey}-L${q.lesson.replace('第','').replace('课','')}`]!=null)byLesson[`${q.bookKey}-L${q.lesson.replace('第','').replace('课','')}`]++;
+  });
+  Object.keys(PLAN).forEach(bk=>{
+    if(byBook[bk]!==800)issues.push(`${bk}题量${byBook[bk]}，应为800`);
+    PLAN[bk].lessons.forEach(([lesson,need],i)=>{
+      const k=`${bk}-L${i+1}`;
+      if(byLesson[k]!==need)issues.push(`${bk}${lesson}题量${byLesson[k]}，应为${need}`);
+    });
+  });
+  if(bank.length!==3200)issues.push(`总题量${bank.length}，应为3200`);
+  return {ok:issues.length===0,issues,dupStems,badFields,total:bank.length,byBook,byLesson,uniqueStems:stems.size};
+}
+let BANK_VALIDATION=validateBank(QUESTION_BANK);
+/* ==================== 状态管理 ==================== */
+const DEF_SETTINGS={daily:20,mode:'mixed',ratio:'5:5',modules:['必修1','必修2','必修3','必修4'],preferNew:true,preferWrong:true,instant:true,errorBoost:true};
+let settings=Object.assign({},DEF_SETTINGS,storage.get(LS.settings,{}));
+if(!Array.isArray(settings.modules)||!settings.modules.length)settings.modules=DEF_SETTINGS.modules.slice();
+settings.daily=Math.max(1,Math.min(100,parseInt(settings.daily,10)||20));
+let progress=storage.get(LS.progress,{q:{}});
+if(!progress||typeof progress.q!=='object')progress={q:{}};
+let wrongbook=storage.get(LS.wrongbook,{});
+if(!wrongbook||typeof wrongbook!=='object')wrongbook={};
+let history=storage.get(LS.history,[]);
+if(!Array.isArray(history))history=[];
+let customBank=storage.get(LS.custom,[]);
+if(!Array.isArray(customBank))customBank=[];
+let QMAP={};
+function allBank(){return QUESTION_BANK.concat(customBank)}
+function rebuildMap(){QMAP={};allBank().forEach(q=>QMAP[q.id]=q)}
+rebuildMap();
+function saveAll(){
+  storage.set(LS.settings,settings);storage.set(LS.progress,progress);
+  storage.set(LS.wrongbook,wrongbook);storage.set(LS.history,history);
+  storage.set(LS.custom,customBank);
+  storage.set(LS.meta,{total:BANK_VALIDATION.total,byBook:BANK_VALIDATION.byBook,ok:BANK_VALIDATION.ok,updatedAt:now()});
+}
+function todayHistory(){const d=dayKey();return history.filter(h=>dayKey(new Date(h.time))===d)}
+function dueIds(){const t=now();return Object.entries(progress.q).filter(([,p])=>!p.mastered&&p.next&&p.next<=t).map(([id])=>id)}
+function masteredCount(){return Object.values(progress.q).filter(p=>p.mastered).length}
+function streak(){let n=0;for(let i=history.length-1;i>=0;i--){if(history[i].correct)n++;else break}return n}
+/* ==================== 复习算法与抽题 ==================== */
+function buildQueue(n){
+  const due=new Set(dueIds());
+  const pool=allBank().filter(q=>{
+    if(!settings.modules.includes(q.module))return false;
+    const p=progress.q[q.id];
+    return !(p&&p.mastered);
+  });
+  function rank(q){
+    let r=0;
+    if(due.has(q.id))r-=1000;
+    if(settings.preferWrong&&wrongbook[q.id])r-=500;
+    if(settings.preferNew&&!progress.q[q.id])r-=100;
+    if(settings.mode==='basic'&&q.difficulty==='基础')r-=20;
+    if(settings.mode==='error'&&q.errorType)r-=30;
+    if(settings.errorBoost&&q.errorType)r-=5;
+    return r;
+  }
+  pool.sort((a,b)=>rank(a)-rank(b)||hash(a.id)-hash(b.id));
+  const need=answerNeeds(n);
+  const used=new Set(),out=[];
+  need.forEach(ans=>{
+    const q=pool.find(x=>!used.has(x.id)&&x.answer===ans);
+    if(q){out.push(q);used.add(q.id)}
+  });
+  if(out.length<n){
+    for(const q of pool){if(out.length>=n)break;if(!used.has(q.id)){out.push(q);used.add(q.id)}}
+  }
+  return out.slice(0,n);
+}
+function answerNeeds(n){
+  let t;
+  if(settings.ratio==='6:4')t=Math.round(n*.6);
+  else if(settings.ratio==='4:6')t=Math.round(n*.4);
+  else if(settings.ratio==='随机')t=Math.floor(Math.random()*(n+1));
+  else t=Math.ceil(n/2);
+  return shuffle(Array(t).fill('正确').concat(Array(n-t).fill('错误')),now()%999999);
+}
+function updateProgress(q,correct){
+  const id=q.id;
+  const p=progress.q[id]||{box:0,correctStreak:0,firstCorrectAt:0,seen:0};
+  p.seen=(p.seen||0)+1;
+  if(correct){
+    p.correctStreak=(p.correctStreak||0)+1;
+    if(!p.firstCorrectAt)p.firstCorrectAt=now();
+    p.box=Math.min(4,(p.box||0)+1);
+    const gap={1:1,2:3,3:7,4:15}[p.box]||1;
+    p.next=now()+gap*DAY;
+    if(p.correctStreak>=3&&now()-p.firstCorrectAt>=3*DAY)p.mastered=true;
+  }else{
+    p.box=1;p.correctStreak=0;p.firstCorrectAt=0;p.next=now()+DAY;p.mastered=false;
+  }
+  p.last=now();
+  progress.q[id]=p;
+}
+function addWrong(q,auto){
+  const w=wrongbook[q.id]||{count:0,redo:0};
+  if(auto)w.count=(w.count||0)+1;
+  if(!w.count)w.count=1;
+  w.last=now();w.errorType=q.errorType||w.errorType||'E03';w.redo=0;
+  wrongbook[q.id]=w;
+}
+/* ==================== 页面渲染：仪表盘 ==================== */
+function go(page){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  const el=$('#p-'+page);if(el)el.classList.add('active');
+  document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  if(page==='dashboard')renderDashboard();
+  if(page==='quiz')renderQuiz();
+  if(page==='wrong')renderWrong();
+  if(page==='stats')renderStats();
+  if(page==='bank')renderBank();
+  if(page==='settings')renderSettings();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderDashboard(){
+  const th=todayHistory(),total=history.length,acc=total?Math.round(history.filter(h=>h.correct).length/total*100):0;
+  const tacc=th.length?Math.round(th.filter(h=>h.correct).length/th.length*100):0;
+  let books='';
+  for(const bk of Object.keys(PLAN)){
+    const done=Object.keys(progress.q).filter(id=>id.startsWith(bk+'-')).length;
+    const pct=Math.min(100,Math.round(done/800*100));
+    books+=`<div class="bookline"><div class="lbl"><span>${PLAN[bk].module}</span><span>${done}/800 · ${pct}%</span></div><div class="bar"><i style="width:${pct}%"></i></div></div>`;
+  }
+  $('#p-dashboard').innerHTML=`
+    <div class="card">
+      <h2>今日概览</h2>
+      <div class="grid4">
+        <div class="stat"><b>${settings.daily}</b><span>今日任务</span></div>
+        <div class="stat"><b>${th.length}</b><span>今日已完成</span></div>
+        <div class="stat"><b>${tacc}%</b><span>今日正确率</span></div>
+        <div class="stat"><b>${streak()}</b><span>连续答对</span></div>
+        <div class="stat"><b>${total}</b><span>累计答题</span></div>
+        <div class="stat"><b>${masteredCount()}</b><span>已斩题</span></div>
+        <div class="stat"><b>${Object.keys(wrongbook).length}</b><span>错题数</span></div>
+        <div class="stat"><b>${dueIds().length}</b><span>待复习</span></div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" onclick="startDaily()">开始今日答题</button>
+        <button class="btn orange" onclick="startDue()">复习到期题</button>
+        <button class="btn light" onclick="go('wrong')">复习错题</button>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn light" onclick="go('stats')">查看统计</button>
+        <button class="btn light" onclick="go('bank')">题库浏览</button>
+        <button class="btn light" onclick="go('settings')">设置</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>四本书进度</h2>
+      ${books}
+      <p class="muted" style="margin-top:10px">题库总览：必修1 800题 · 必修2 800题 · 必修3 800题 · 必修4 800题，合计 <b>${QUESTION_BANK.length}</b> 题；自定义 ${customBank.length} 题。</p>
+    </div>
+    <div class="card">
+      <h2>复习节奏</h2>
+      <p class="small">新题答完后进入第1盒，次日复习；答对依次进入 3、7、15 天盒；答错回到第1盒并进入错题本。连续3次答对且至少跨3天，标记为“已斩”。</p>
+    </div>`;
+}
+/* ==================== 今日答题 ==================== */
+let session={list:[],idx:0,answered:false,results:[],mode:'daily',start:0,qStart:0,showExp:false};
+function startDaily(){
+  const list=buildQueue(settings.daily);
+  if(!list.length)return toast('当前设置下没有可抽取的题目，请检查模块选择','bad');
+  session={list,idx:0,answered:false,results:[],mode:'daily',start:now(),qStart:now(),showExp:false};
+  go('quiz');
+}
+function startDue(){
+  const ids=dueIds().map(id=>QMAP[id]).filter(Boolean);
+  if(!ids.length)return toast('暂时没有到期复习题');
+  startRedo(ids.map(q=>q.id),'due');
+}
+function startRedo(ids,mode){
+  const list=ids.map(id=>QMAP[id]).filter(Boolean);
+  if(!list.length)return toast('没有找到可重练的题目','bad');
+  session={list,idx:0,answered:false,results:[],mode:mode||'redo',start:now(),qStart:now(),showExp:false,redoHits:{}};
+  go('quiz');
+}
+function renderQuiz(){
+  const box=$('#p-quiz');
+  if(!session.list.length){
+    box.innerHTML=`<div class="card"><h2>今日答题</h2><p class="muted">还没有生成答题任务。</p><button class="btn" onclick="startDaily()">生成今日任务</button></div>`;return;
+  }
+  if(session.idx>=session.list.length){renderSummary();return}
+  const q=session.list[session.idx];
+  const p=progress.q[q.id];
+  const answered=session.answered;
+  const last=session.results[session.results.length-1];
+  const ok=answered&&last&&last.q.id===q.id&&last.correct;
+  let feedback='';
+  if(answered&&last&&last.q.id===q.id){
+    const detail=(settings.instant||session.showExp)?`
+      ${q.answer==='错误'?`<p class="wrongline">错在：把“${esc(q.wrongQuote)}”改成“${esc(q.correction)}”</p>`:''}
+      ${q.errorType?`<p><b>错因：</b><span class="tag r">${q.errorType} ${ERROR_TYPES[q.errorType]}</span></p>`:''}
+      <p><b>解析：</b>${esc(q.explanation)}</p>
+      <p><b>教材依据：</b>${esc(q.evidence)}</p>
+      <p><b>知识点：</b>${q.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</p>
+      ${settings.instant?'':`<button class="mini" onclick="session.showExp=true;renderQuiz()">收起解析</button>`}
+    `:`<button class="btn light" onclick="session.showExp=true;renderQuiz()">查看解析</button>`;
+    feedback=`<div class="fb ${ok?'ok':'bad'}">
+      <div class="title">${ok?'回答正确':'回答错误'}</div>
+      <p>标准答案：<b>${q.answer}</b>　你的答案：<b>${last.user}</b></p>
+      ${detail}
+    </div>`;
+  }
+  box.innerHTML=`
+    <div class="card">
+      <div class="progressline"><span>第 ${session.idx+1} / ${session.list.length} 题</span><span class="pill">${q.module} · ${q.lesson} · ${q.frame}</span></div>
+      <div class="tags">${q.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+      <div class="stem">${esc(q.stem)}</div>
+      ${!answered?`<div class="answers">
+        <button class="btn green" onclick="submitAnswer('正确')">正确</button>
+        <button class="btn red" onclick="submitAnswer('错误')">错误</button>
+      </div>`:`${feedback}
+      <div class="row" style="margin-top:12px">
+        <button class="btn" onclick="nextQuestion()">${session.idx+1>=session.list.length?'查看总结':'下一题'}</button>
+        <button class="btn light" onclick="addWrongById('${q.id}')">加入错题本</button>
+        <button class="btn light" onclick="markMastered('${q.id}')">标记已掌握</button>
+      </div>`}
+      ${p?`<p class="muted small" style="margin-top:10px">当前复习盒：第${p.box||0}盒${p.mastered?' · 已斩':''}</p>`:''}
+    </div>`;
+}
+function submitAnswer(user){
+  if(session.answered)return;
+  const q=session.list[session.idx];
+  if(!q)return;
+  const correct=user===q.answer;
+  const ms=Math.max(0,now()-(session.qStart||now()));
+  session.answered=true;
+  session.results.push({q,user,correct,ms,time:now()});
+  history.push({id:q.id,user,correct,time:now(),errorType:q.errorType,ms,module:q.module,lesson:q.lesson,node:q.node,answer:q.answer});
+  updateProgress(q,correct);
+  if(!correct)addWrong(q,true);
+  if(session.mode==='redo'&&correct){
+    const w=wrongbook[q.id];
+    if(w){w.redo=(w.redo||0)+1;if(w.redo>=2)delete wrongbook[q.id]}
+  }
+  saveAll();
+  renderQuiz();
+}
+function nextQuestion(){
+  session.idx++;session.answered=false;session.showExp=false;session.qStart=now();
+  if(session.idx>=session.list.length)renderSummary();else renderQuiz();
+}
+function addWrongById(id){
+  const q=QMAP[id];if(!q)return;
+  addWrong(q,false);saveAll();toast('已加入错题本','ok');
+}
+function markMastered(id){
+  const p=progress.q[id]||{box:4,correctStreak:3,firstCorrectAt:now()-3*DAY,seen:1};
+  p.mastered=true;p.box=4;p.next=now()+7*DAY;progress.q[id]=p;saveAll();toast('已标记为掌握','ok');
+}
+function renderSummary(){
+  const rs=session.results;
+  const right=rs.filter(r=>r.correct).length;
+  const acc=rs.length?Math.round(right/rs.length*100):0;
+  const wrong=rs.filter(r=>!r.correct);
+  const em={};wrong.forEach(r=>{if(r.q.errorType)em[r.q.errorType]=(em[r.q.errorType]||0)+1});
+  const weak=Object.entries(em).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  $('#p-quiz').innerHTML=`
+    <div class="card">
+      <h2>本组完成</h2>
+      <div class="grid4">
+        <div class="stat"><b>${rs.length}</b><span>本组题数</span></div>
+        <div class="stat"><b>${right}</b><span>答对</span></div>
+        <div class="stat"><b>${acc}%</b><span>正确率</span></div>
+        <div class="stat"><b>${wrong.length}</b><span>错题</span></div>
+      </div>
+      ${weak.length?`<p style="margin-top:12px"><b>薄弱错因：</b>${weak.map(([k,v])=>`<span class="tag r">${k} ${ERROR_TYPES[k]}×${v}</span>`).join('')}</p>`:''}
+      <p class="muted">建议下一组：每日${acc<70?15:settings.daily}题，${acc<70?'易错':'混合'}模式，正误比5:5，优先错题与未做题。</p>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" onclick="startDaily()">再练一组</button>
+        <button class="btn light" onclick="go('dashboard')">返回仪表盘</button>
+        <button class="btn orange" onclick="go('wrong')">查看错题</
+      </div>
+    </div>`;
+}
+
+/* ==================== 校验器修正：按课序号统计 ==================== */
+function validateBank(bank){
+  const issues=[],ids=new Set(),stems=new Set(),byBook={},byLesson={};
+  let dupStems=0,badFields=0;
+  const cn={'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9};
+  const lessonNo=s=>{const m=String(s).match(/第(.+)课/);return m?(cn[m[1]]||0):0};
+  Object.keys(PLAN).forEach(bk=>{
+    byBook[bk]=0;
+    PLAN[bk].lessons.forEach((_,i)=>byLesson[`${bk}-L${i+1}`]=0);
+  });
+  bank.forEach(q=>{
+    if(ids.has(q.id))issues.push('id重复：'+q.id);
+    ids.add(q.id);
+    if(stems.has(q.stem)){dupStems++;issues.push('题干重复：'+String(q.stem).slice(0,26));}
+    else stems.add(q.stem);
+    if(!['正确','错误'].includes(q.answer)){badFields++;issues.push('答案非法：'+q.id);}
+    if(!q.module||!q.lesson||!q.node||!q.evidence||!q.stem)badFields++;
+    if(q.answer==='错误'&&(!q.wrongQuote||!q.correction||!q.errorType||!ERROR_TYPES[q.errorType]))badFields++;
+    if(/下列|哪项|以上都|以下都/.test(q.stem))issues.push('题干含选择题标志词：'+q.id);
+    if(byBook[q.bookKey]!=null)byBook[q.bookKey]++;
+    const lk=`${q.bookKey}-L${lessonNo(q.lesson)}`;
+    if(byLesson[lk]!=null)byLesson[lk]++;
+  });
+  Object.keys(PLAN).forEach(bk=>{
+    if(byBook[bk]!==800)issues.push(`${bk}题量${byBook[bk]}，应为800`);
+    PLAN[bk].lessons.forEach(([lesson,need],i)=>{
+      const k=`${bk}-L${i+1}`;
+      if(byLesson[k]!==need)issues.push(`${bk}${lesson}题量${byLesson[k]}，应为${need}`);
+    });
+  });
+  if(bank.length!==3200)issues.push(`总题量${bank.length}，应为3200`);
+  return {ok:issues.length===0,issues,dupStems,badFields,total:bank.length,byBook,byLesson,uniqueStems:stems.size};
+}
+
+/* ==================== 页面渲染：错题本 ==================== */
+let wrongUI={module:'全部',error:'全部',q:''};
+function renderWrong(){
+  const arr=Object.entries(wrongbook).map(([id,w])=>{
+    const q=QMAP[id];
+    return q?{q,w}:null;
+  }).filter(Boolean);
+  const filtered=arr.filter(({q,w})=>{
+    if(wrongUI.module!=='全部'&&q.module!==wrongUI.module)return false;
+    if(wrongUI.error!=='全部'&&(w.errorType||q.errorType)!==wrongUI.error)return false;
+    if(wrongUI.q&&!q.stem.includes(wrongUI.q)&&!q.node.includes(wrongUI.q))return false;
+    return true;
+  }).sort((a,b)=>(b.w.last||0)-(a.w.last||0));
+
+  const list=filtered.map(({q,w})=>`
+    <div class="item">
+      <label class="sw" style="margin:0 0 4px">
+        <input type="checkbox" class="wchk" value="${esc(q.id)}">
+        <span class="meta">${esc(q.module)} · ${esc(q.lesson)} · ${esc(q.node)}</span>
+      </label>
+      <div class="q">${esc(q.stem)}</div>
+      <div class="meta">
+        错因：<span class="tag r">${esc(w.errorType||q.errorType||'E03')} ${esc(ERROR_TYPES[w.errorType||q.errorType]||'概念混淆')}</span>
+        错误次数：${w.count||1} · 上次：${w.last?fmt(w.last):'—'} · 重练连对：${w.redo||0}/2
+      </div>
+      ${q.answer==='错误'?`<div class="small" style="margin-top:6px;color:#a11b1b">错点：把“${esc(q.wrongQuote)}”改成“${esc(q.correction)}”</div>`:''}
+      <div class="row" style="margin-top:8px">
+        <button class="mini" onclick="startRedo(['${q.id}'],'redo')">重练此题</button>
+        <button class="mini" onclick="removeWrongOne('${q.id}')">移出错题本</button>
+      </div>
+    </div>`).join('');
+
+  $('#p-wrong').innerHTML=`
+    <div class="card">
+      <h2>错题本</h2>
+      <p class="muted">共 ${arr.length} 道错题；当前筛选 ${filtered.length} 道。错题重练答对不立即移出，连续2次答对才移出。</p>
+      <div class="filters" style="margin:10px 0">
+        <select onchange="wrongSet('module',this.value)">
+          <option value="全部">全部模块</option>
+          ${Object.keys(PLAN).map(bk=>`<option value="${PLAN[bk].module}" ${wrongUI.module===PLAN[bk].module?'selected':''}>${PLAN[bk].module}</option>`).join('')}
+        </select>
+        <select onchange="wrongSet('error',this.value)">
+          <option value="全部">全部错因</option>
+          ${Object.entries(ERROR_TYPES).map(([k,v])=>`<option value="${k}" ${wrongUI.error===k?'selected':''}>${k} ${v}</option>`).join('')}
+        </select>
+        <input type="search" placeholder="搜索题干/知识点" value="${esc(wrongUI.q)}" oninput="wrongSet('q',this.value)">
+        <button class="mini" onclick="wrongUI={module:'全部',error:'全部',q:''};renderWrong()">重置筛选</button>
+      </div>
+      <div class="row">
+        <button class="btn" onclick="redoSelected()">重练选中</button>
+        <button class="btn red" onclick="removeSelectedWrong()">移出选中</button>
+        <button class="btn light" onclick="exportWrong()">导出错题</button>
+      </div>
+    </div>
+    <div class="card">
+      ${list||'<p class="muted">当前没有符合条件的错题。</p>'}
+    </div>`;
+}
+function wrongSet(k,v){wrongUI[k]=v;renderWrong()}
+function removeWrongOne(id){
+  confirmBox('移出错题本','确定把这道题移出错题本吗？',()=>{
+    delete wrongbook[id];saveAll();renderWrong();toast('已移出','ok');
+  });
+}
+function selectedWrongIds(){return [...document.querySelectorAll('.wchk:checked')].map(x=>x.value)}
+function redoSelected(){
+  const ids=selectedWrongIds();
+  if(!ids.length)return toast('请先勾选错题','bad');
+  startRedo(ids,'redo');
+}
+function removeSelectedWrong(){
+  const ids=selectedWrongIds();
+  if(!ids.length)return toast('请先勾选错题','bad');
+  confirmBox('移出错题本',`确定移出选中的 ${ids.length} 道题吗？`,()=>{
+    ids.forEach(id=>delete wrongbook[id]);saveAll();renderWrong();toast('已移出','ok');
+  });
+}
+function exportWrong(){
+  const data=Object.entries(wrongbook).map(([id,w])=>({question:QMAP[id]||null,record:w})).filter(x=>x.question);
+  download(JSON.stringify({exportedAt:new Date().toISOString(),count:data.length,data},null,2),'政治学考错题本.json');
+}
+
+/* ==================== 页面渲染：统计 ==================== */
+function renderStats(){
+  const total=history.length;
+  const right=history.filter(h=>h.correct).length;
+  const acc=total?Math.round(right/total*100):0;
+  const todayN=todayHistory().length;
+  const days=new Set(history.map(h=>dayKey(new Date(h.time))));
+  let streakDays=0;
+  const d=new Date();d.setHours(0,0,0,0);
+  for(let i=0;i<400;i++){
+    const k=dayKey(new Date(d.getTime()-i*DAY));
+    if(days.has(k))streakDays++;else if(i>0)break;
+  }
+  const bookBars=Object.keys(PLAN).map(bk=>{
+    const hs=history.filter(h=>h.module===PLAN[bk].module);
+    const c=hs.filter(h=>h.correct).length;
+    const a=hs.length?Math.round(c/hs.length*100):0;
+    return `<div class="hbar"><div class="h"><span>${PLAN[bk].module}</span><span>${hs.length}题 · 正确率${a}%</span></div><div class="b"><i style="width:${a}%"></i></div></div>`;
+  }).join('');
+
+  const em={};
+  history.filter(h=>!h.correct).forEach(h=>{
+    const k=h.errorType||'E03';em[k]=(em[k]||0)+1;
+  });
+  const maxE=Math.max(1,...Object.values(em));
+  const errorBars=Object.entries(em).sort((a,b)=>b[1]-a[1]).map(([k,v])=>
+    `<div class="hbar"><div class="h"><span>${k} ${ERROR_TYPES[k]||''}</span><span>${v}次</span></div><div class="b"><i style="width:${Math.round(v/maxE*100)}%"></i></div></div>`
+  ).join('')||'<p class="muted">暂无错因数据。</p>';
+
+  const weakMap={};
+  history.filter(h=>!h.correct).forEach(h=>{
+    const k=h.node||'未标注知识点';weakMap[k]=(weakMap[k]||0)+1;
+  });
+  const weak=Object.entries(weakMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const weakHtml=weak.length?weak.map(([k,v],i)=>`<div class="hbar"><div class="h"><span>${i+1}. ${esc(k)}</span><span>${v}次</span></div><div class="b"><i style="width:${Math.round(v/(weak[0][1]||1)*100)}%"></i></div></div>`).join(''):'<p class="muted">暂无薄弱知识点数据。</p>';
+
+  const base=new Date();base.setHours(0,0,0,0);
+  const trend=[];
+  for(let i=6;i>=0;i--){
+    const dt=new Date(base.getTime()-i*DAY),k=dayKey(dt);
+    const hs=history.filter(h=>dayKey(new Date(h.time))===k);
+    trend.push({k,n:hs.length,c:hs.filter(h=>h.correct).length});
+  }
+  const maxT=Math.max(1,...trend.map(x=>x.n));
+  const trendHtml=trend.map(x=>`<div class="t"><span>${x.n}</span><i style="height:${Math.max(2,Math.round(x.n/maxT*70))}px;background:${x.n?('#4b8fd1'):'#dbe4ee'}"></i><span>${x.k.slice(5)}</span></div>`).join('');
+
+  const completion=Object.keys(PLAN).map(bk=>{
+    const done=Object.keys(progress.q).filter(id=>id.startsWith(bk+'-')).length;
+    return `<div class="hbar"><div class="h"><span>${PLAN[bk].module}</span><span>${done}/800 · ${Math.min(100,Math.round(done/800*100))}%</span></div><div class="b"><i style="width:${Math.min(100,done/800*100)}%"></i></div></div>`;
+  }).join('');
+
+  $('#p-stats').innerHTML=`
+    <div class="card">
+      <h2>学习数据</h2>
+      <div class="grid4">
+        <div class="stat"><b>${total}</b><span>总答题数</span></div>
+        <div class="stat"><b>${acc}%</b><span>总正确率</span></div>
+        <div class="stat"><b>${todayN}</b><span>今日答题</span></div>
+        <div class="stat"><b>${streakDays}</b><span>连续天数</span></div>
+      </div>
+    </div>
+    <div class="card"><h2>四本书正确率</h2>${bookBars}</div>
+    <div class="card"><h2>错因分布</h2>${errorBars}</div>
+    <div class="card"><h2>薄弱知识点 Top10</h2>${weakHtml}</div>
+    <div class="card"><h2>最近7天答题趋势</h2><div class="trend">${trendHtml}</div><p class="muted small">柱上数字为该日答题数。</p></div>
+    <div class="card"><h2>每本书完成度</h2>${completion}</div>`;
+}
+
+/* ==================== 页面渲染：题库浏览 ==================== */
+let bankUI={book:'全部',lesson:'全部',ans:'全部',q:'',limit:30};
+function renderBank(){
+  const base=QUESTION_BANK;
+  const lessons=[...new Set(base.filter(q=>bankUI.book==='全部'||q.module===bankUI.book).map(q=>q.module+'|'+q.lesson))];
+  const filtered=base.filter(q=>{
+    if(bankUI.book!=='全部'&&q.module!==bankUI.book)return false;
+    if(bankUI.lesson!=='全部'&&(q.module+'|'+q.lesson)!==bankUI.lesson)return false;
+    if(bankUI.ans!=='全部'&&q.answer!==bankUI.ans)return false;
+    if(bankUI.q&&!q.stem.includes(bankUI.q)&&!q.node.includes(bankUI.q))return false;
+    return true;
+  });
+  const list=filtered.slice(0,bankUI.limit).map(q=>`
+    <div class="item">
+      <div class="meta">${esc(q.id)} · ${esc(q.module)} ${esc(q.lesson)} ${esc(q.frame)} · <span class="tag ${q.answer==='正确'?'g':'r'}">${q.answer}</span> ${q.errorType?`<span class="tag o">${q.errorType}</span>`:''}</div>
+      <div class="q">${esc(q.stem)}</div>
+      <details>
+        <summary>查看答案与解析</summary>
+        <p><b>标准答案：</b>${q.answer}</p>
+        ${q.answer==='错误'?`<p><b>错点：</b>把“${esc(q.wrongQuote)}”改成“${esc(q.correction)}”</p>`:''}
+        <p><b>解析：</b>${esc(q.explanation)}</p>
+        <p><b>依据：</b>${esc(q.evidence)}</p>
+        <p><b>知识点：</b>${q.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</p>
+      </details>
+    </div>`).join('');
+  const v=BANK_VALIDATION;
+  const byBook=Object.keys(PLAN).map(bk=>`${PLAN[bk].module} ${v.byBook[bk]||0}/800`).join(' · ');
+  const lessonRows=Object.keys(PLAN).map(bk=>PLAN[bk].lessons.map(([lesson,need],i)=>{
+    const have=v.byLesson[`${bk}-L${i+1}`]||0;
+    return `<span class="tag ${have===need?'g':'r'}">${PLAN[bk].module}${lesson} ${have}/${need}</span>`;
+  }).join('')).join('');
+  $('#p-bank').innerHTML=`
+    <div class="card">
+      <h2>题库总览</h2>
+      <p>${byBook} · 合计 <b>${QUESTION_BANK.length}</b> 题 · 自定义 <b>${customBank.length}</b> 题</p>
+      <p class="${v.ok?'okbox':'alert'}">${v.ok?'题库校验通过：3200题，题量、答案字段、错点字段均正常。':`题库校验失败：${v.issues.slice(0,6).map(esc).join('；')}`}</p>
+      <p class="small">重复题干 ${v.dupStems} 个 · 缺字段题 ${v.badFields} 个 · 唯题干 ${v.uniqueStems} 个</p>
+      <details><summary>查看每课题量</summary><div style="margin-top:8px">${lessonRows}</div></details>
+    </div>
+    <div class="card">
+      <h2>筛选与搜索</h2>
+      <div class="filters">
+        <select onchange="bankSet('book',this.value)">
+          <option value="全部">全部模块</option>
+          ${Object.keys(PLAN).map(bk=>`<option value="${PLAN[bk].module}" ${bankUI.book===PLAN[bk].module?'selected':''}>${PLAN[bk].module}</option>`).join('')}
+        </select>
+        <select onchange="bankSet('lesson',this.value)">
+          <option value="全部">全部课</option>
+          ${lessons.map(x=>{const [m,l]=x.split('|');return `<option value="${x}" ${bankUI.lesson===x?'selected':''}>${m}${l}</option>`}).join('')}
+        </select>
+        <select onchange="bankSet('ans',this.value)">
+          <option value="全部">全部答案</option>
+          <option value="正确" ${bankUI.ans==='正确'?'selected':''}>正确</option>
+          <option value="错误" ${bankUI.ans==='错误'?'selected':''}>错误</option>
+        </select>
+        <input type="search" placeholder="搜索题干或知识点" value="${esc(bankUI.q)}" oninput="bankSet('q',this.value)">
+      </div>
+      <p class="muted small" style="margin-top:8px">筛选结果 ${filtered.length} 题，当前显示 ${Math.min(filtered.length,bankUI.limit)} 题。</p>
+      ${list||'<p class="muted">没有匹配的题目。</p>'}
+      ${bankUI.limit<filtered.length?`<button class="btn light" onclick="bankMore()">加载更多</button>`:''}
+    </div>
+    <div class="card">
+      <h2>添加自定义判断题</h2>
+      <div class="filters" style="grid-template-columns:1fr 1fr">
+        <select id="c-module">${Object.keys(PLAN).map(bk=>`<option>${PLAN[bk].module}</option>`).join('')}</select>
+        <input id="c-lesson" placeholder="课，如：第一课" value="第一课">
+        <input id="c-frame" placeholder="框，如：第一框" value="自定义">
+        <input id="c-node" placeholder="知识点">
+      </div>
+      <label class="fld">题干（20—80字为宜）</label>
+      <textarea id="c-stem" placeholder="输入单句判断陈述"></textarea>
+      <div class="filters" style="grid-template-columns:1fr 1fr;margin-top:8px">
+        <select id="c-answer"><option>正确</option><option>错误</option></select>
+        <select id="c-type">${Object.entries(ERROR_TYPES).map(([k,v])=>`<option value="${k}">${k} ${v}</option>`).join('')}</select>
+      </div>
+      <label class="fld">错误题必填：被改错短语</label>
+      <input id="c-wrong" placeholder="如：全国人民代表大会">
+      <label class="fld">错误题必填：正确替换</label>
+      <input id="c-right" placeholder="如：中国共产党">
+      <label class="fld">解析</label>
+      <textarea id="c-exp" placeholder="说明错在哪个词、哪个关系"></textarea>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" onclick="saveCustom()">保存自定义题</button>
+        <button class="btn light" onclick="go('settings')">返回设置</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>数据导入导出</h2>
+      <div class="row">
+        <button class="btn" onclick="exportAll()">导出全部数据</button>
+        <button class="btn light" onclick="document.getElementById('importFile').click()">导入 JSON 恢复</button>
+        <input id="importFile" type="file" accept=".json,application/json" class="hidden" onchange="importFile(event)">
+      </div>
+      <p class="muted small" style="margin-top:8px">导出包含设置、进度、错题本、历史、自定义题库。导入前会校验字段，坏数据不会覆盖原数据。</p>
+    </div>`;
+}
+function bankSet(k,v){
+  bankUI[k]=v;
+  if(k==='book')bankUI.lesson='全部';
+  bankUI.limit=30;
+  renderBank();
+}
+function bankMore(){bankUI.limit+=30;renderBank()}
+function saveCustom(){
+  const module=$('#c-module').value;
+  const lesson=$('#c-lesson').value.trim();
+  const frame=$('#c-frame').value.trim()||'自定义';
+  const node=$('#c-node').value.trim();
+  const stem=$('#c-stem').value.trim();
+  const answer=$('#c-answer').value;
+  const type=$('#c-type').value;
+  const wrong=$('#c-wrong').value.trim();
+  const right=$('#c-right').value.trim();
+  const exp=$('#c-exp').value.trim();
+  if(!lesson||!node||!stem)return toast('课、知识点、题干不能为空','bad');
+  if(stem.length<5||stem.length>100)return toast('题干长度应为5—100字','bad');
+  if(/下列|哪项|以上都|以下都/.test(stem))return toast('题干不得包含选择题标志词','bad');
+  if(answer==='错误'&&(!wrong||!right))return toast('错误题必须填写错点和正确替换','bad');
+  if(allBank().some(q=>q.stem===stem))return toast('题干已存在，请修改','bad');
+  const q={
+    id:'C-'+now(),bookKey:'C',module,lesson,frame,node,stem,answer,
+    wrongQuote:answer==='错误'?wrong:null,
+    correction:answer==='错误'?right:null,
+    explanation:exp||(answer==='错误'?`错在把“${wrong}”改成“${right}”。`:'自定义正确表述。'),
+    evidence:exp?`自定义题：${exp}`:`统编版${module}${lesson}“${node}”`,
+    difficulty:'自定义',
+    errorType:answer==='错误'?type:null,
+    tags:[node,lesson,module,'自定义'],
+    status:'active'
+  };
+  customBank.push(q);storage.set(LS.custom,customBank);rebuildMap();
+  toast('自定义题已保存','ok');renderBank();
+}
+function exportAll(){
+  const data={
+    version:3,exportedAt:new Date().toISOString(),
+    settings,progress,wrongbook,history,custom:customBank
+  };
+  download(JSON.stringify(data,null,2),'政治学考判断题数据.json');
+}
+function importFile(e){
+  const f=e.target.files&&e.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      if(!d||typeof d!=='object')throw new Error('根对象非法');
+      if(d.settings!=null&&(typeof d.settings!=='object'||Array.isArray(d.settings)))throw new Error('settings非法');
+      if(d.progress!=null&&(!d.progress.q||typeof d.progress.q!=='object'))throw new Error('progress非法');
+      if(d.wrongbook!=null&&(typeof d.wrongbook!=='object'||Array.isArray(d.wrongbook)))throw new Error('wrongbook非法');
+      if(d.history!=null&&!Array.isArray(d.history))throw new Error('history非法');
+      if(d.custom!=null&&!Array.isArray(d.custom))throw new Error('custom非法');
+      if(d.settings)settings=Object.assign({},DEF_SETTINGS,d.settings);
+      if(!Array.isArray(settings.modules)||!settings.modules.length)settings.modules=DEF_SETTINGS.modules.slice();
+      if(d.progress&&d.progress.q)progress=d.progress;
+      if(d.wrongbook)wrongbook=d.wrongbook;
+      if(d.history)history=d.history;
+      if(d.custom)customBank=d.custom;
+      saveAll();
+      toast('导入成功，页面即将刷新','ok');
+      setTimeout(()=>location.reload(),650);
+    }catch(err){
+      toast('导入失败：JSON格式或字段不合法，原数据未覆盖','bad');
+    }
+  };
+  r.readAsText(f);
+}
+
+/* ==================== 页面渲染：设置 ==================== */
+function renderSettings(){
+  const v=BANK_VALIDATION;
+  const mods=['必修1','必修2','必修3','必修4'];
+  $('#p-settings').innerHTML=`
+    <div class="card">
+      <h2>每日任务</h2>
+      <label class="fld">每日出题数量（1—100）</label>
+      <input type="number" id="s-daily" min="1" max="100" value="${settings.daily}">
+      <div class="row" style="margin-top:8px">
+        ${[5,10,15,20,30,50].map(n=>`<button class="mini" onclick="setDaily(${n})">${n}题</button>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <h2>出题参数</h2>
+      <label class="fld">出题模式</label>
+      <select id="s-mode">
+        <option value="basic" ${settings.mode==='basic'?'selected':''}>基础</option>
+        <option value="error" ${settings.mode==='error'?'selected':''}>易错</option>
+        <option value="mixed" ${settings.mode==='mixed'?'selected':''}>混合（默认）</option>
+      </select>
+      <label class="fld">正误比例</label>
+      <select id="s-ratio">
+        <option value="5:5" ${settings.ratio==='5:5'?'selected':''}>5:5（默认）</option>
+        <option value="6:4" ${settings.ratio==='6:4'?'selected':''}>6:4</option>
+        <option value="4:6" ${settings.ratio==='4:6'?'selected':''}>4:6</option>
+        <option value="随机" ${settings.ratio==='随机'?'selected':''}>随机</option>
+      </select>
+      <label class="fld">模块选择</label>
+      <div class="grid">
+        ${mods.map(m=>`<label class="sw"><input type="checkbox" class="s-mod" value="${m}" ${settings.modules.includes(m)?'checked':''}>${m}</label>`).join('')}
+      </div>
+      <label class="sw"><input type="checkbox" id="s-new" ${settings.preferNew?'checked':''}>优先未做题</label>
+      <label class="sw"><input type="checkbox" id="s-wrong" ${settings.preferWrong?'checked':''}>优先错题</label>
+      <label class="sw"><input type="checkbox" id="s-instant" ${settings.instant?'checked':''}>显示即时解析</label>
+      <label class="sw"><input type="checkbox" id="s-boost" ${settings.errorBoost?'checked':''}>开启错因强化</label>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" onclick="saveSettings()">保存设置</button>
+        <button class="btn light" onclick="checkBank()">题库校验</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>题库状态</h2>
+      <p class="${v.ok?'okbox':'alert'}">${v.ok?'校验通过：四本书各800题，合计3200题。':`校验失败：${v.issues.slice(0,6).map(esc).join('；')}`}</p>
+      <p class="small">${Object.keys(PLAN).map(bk=>`${PLAN[bk].module}：${v.byBook[bk]||0}/800`).join(' · ')}</p>
+      <p class="small">重复题干：${v.dupStems} · 缺字段题：${v.badFields} · 唯一题干：${v.uniqueStems}</p>
+      <details><summary>查看每课题量</summary><div style="margin-top:8px">${Object.keys(PLAN).map(bk=>PLAN[bk].lessons.map(([l,n],i)=>{const h=v.byLesson[`${bk}-L${i+1}`]||0;return `<span class="tag ${h===n?'g':'r'}">${PLAN[bk].module}${l} ${h}/${n}</span>`}).join('')).join('')}</div></details>
+    </div>
+    <div class="card">
+      <h2>危险操作</h2>
+      <p class="muted small">重置将清空答题进度、错题本和历史记录，但保留设置和自定义题库。</p>
+      <button class="btn red" onclick="resetProgress()">重置学习进度</button>
+    </div>`;
+}
+function setDaily(n){const el=$('#s-daily');if(el)el.value=n}
+function saveSettings(){
+  const daily=parseInt($('#s-daily').value,10);
+  if(!Number.isFinite(daily)||daily<1||daily>100)return toast('每日题量必须在1—100之间','bad');
+  const mods=[...document.querySelectorAll('.s-mod:checked')].map(x=>x.value);
+  if(!mods.length)return toast('至少选择一个模块','bad');
+  settings={
+    daily,
+    mode:$('#s-mode').value,
+    ratio:$('#s-ratio').value,
+    modules:mods,
+    preferNew:$('#s-new').checked,
+    preferWrong:$('#s-wrong').checked,
+    instant:$('#s-instant').checked,
+    errorBoost:$('#s-boost').checked
+  };
+  saveAll();toast('设置已保存','ok');renderSettings();
+}
+function checkBank(){
+  BANK_VALIDATION=validateBank(QUESTION_BANK);
+  if(BANK_VALIDATION.ok)toast('题库校验通过：3200题，四本书各800题','ok');
+  else toast('题库校验失败：'+BANK_VALIDATION.issues[0],'bad');
+  renderSettings();
+}
+function resetProgress(){
+  confirmBox('重置学习进度','二次确认：将清空全部答题进度、错题本和历史记录，且不可恢复。确定继续吗？',()=>{
+    progress={q:{}};wrongbook={};history=[];
+    saveAll();toast('学习进度已重置','ok');go('dashboard');
+  });
+}
+
+/* ==================== 自定义弹窗 ==================== */
+let modalAction=null;
+function confirmBox(title,msg,fn){
+  $('#modalTitle').textContent=title;
+  $('#modalMsg').textContent=msg;
+  modalAction=fn;
+  $('#modalOk').onclick=()=>{
+    const f=modalAction;closeModal();
+    if(typeof f==='function')f();
+  };
+  $('#modal').classList.remove('hidden');
+}
+function closeModal(){
+  $('#modal').classList.add('hidden');
+  modalAction=null;
+}
+
+/* ==================== 初始化 ==================== */
+function initApp(){
+  BANK_VALIDATION=validateBank(QUESTION_BANK);
+  if(!BANK_VALIDATION.ok){
+    $('#alertbar').innerHTML=`<div style="max-width:980px;margin:10px auto 0;padding:0 14px"><div class="alert">题库校验失败：${BANK_VALIDATION.issues.slice(0,6).map(esc).join('；')}</div></div>`;
+    console.error('题库校验失败',BANK_VALIDATION.issues);
+  }
+  storage.set(LS.settings,settings);
+  storage.set(LS.progress,progress);
+  storage.set(LS.wrongbook,wrongbook);
+  storage.set(LS.history,history);
+  storage.set(LS.custom,customBank);
+  storage.set(LS.meta,{total:QUESTION_BANK.length,byBook:BANK_VALIDATION.byBook,ok:BANK_VALIDATION.ok,updatedAt:now()});
+  renderDashboard();
+  go('dashboard');
+}
+initApp();
+</script>
+</body>
+</html>
