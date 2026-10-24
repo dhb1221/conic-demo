@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>大气环流动态示意图 · 高中地理</title>
+<style>
+:root{
+  --panel:#0d1724;--line:#1e3448;--txt:#e6eef8;--mut:#8fa3ba;
+  --low:#f0564a;--sh:#f0a03c;--sl:#4f93e8;--ph:#3c6ea5;
+  --up:#ff6252;--dn:#4f93e8;--wd:#ffd873;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;height:100vh;overflow:hidden;color:var(--txt);
+  background:radial-gradient(1200px 700px at 50% -10%,#122033,#070d15 62%);
+  font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  display:flex;flex-direction:column;
+}
+/* 顶栏 */
+.topbar{height:56px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;
+  padding:0 14px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(16,29,44,.96),rgba(9,17,27,.92))}
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto;
+  background:conic-gradient(from 0deg,var(--low),var(--sh),var(--sl),var(--ph),var(--low));
+  box-shadow:0 0 14px #4f93e8aa}
+.brand h1{font-size:16px;margin:0;font-weight:700;white-space:nowrap}
+.badge{font-size:11px;color:#9fc4e6;border:1px solid #294b68;background:#102638;
+  padding:2px 8px;border-radius:20px;white-space:nowrap}
+.top-actions{display:flex;gap:7px}
+/* 按钮 */
+.btn{font-family:inherit;font-size:13px;color:#cfe0f2;background:#132234;
+  border:1px solid #26415b;border-radius:9px;padding:7px 10px;cursor:pointer;
+  transition:.15s;white-space:nowrap}
+.btn:hover{background:#1a3049;border-color:#3a648a;color:#fff}
+.btn.active{background:linear-gradient(180deg,#1f4a6e,#173a58);
+  border-color:#4b8fbe;color:#fff;box-shadow:inset 0 0 0 1px #2e6c96}
+.btn.ghost{background:transparent}
+.btn.sm{font-size:12px;padding:6px 8px}
+.btn.wide{width:100%;margin-bottom:6px}
+#btnDrawer{display:none}
+.icon-btn{display:none;background:transparent;border:none;color:#8fa3ba;
+  font-size:22px;line-height:1;cursor:pointer}
+/* 三栏 */
+.app{flex:1 1 auto;min-height:0;display:grid;
+  grid-template-columns:232px minmax(0,1fr) 296px;gap:10px;padding:10px 12px}
+.panel{background:linear-gradient(180deg,rgba(16,29,44,.94),rgba(10,18,28,.94));
+  border:1px solid var(--line);border-radius:14px;padding:10px;overflow-y:auto;
+  scrollbar-width:thin}
+.panel::-webkit-scrollbar{width:6px}
+.panel::-webkit-scrollbar-thumb{background:#274058;border-radius:4px}
+.ph{font-size:11px;letter-spacing:1.4px;color:#7994ae;font-weight:700;
+  margin:2px 0 8px;display:flex;align-items:center;justify-content:space-between}
+.ph:not(:first-child){margin-top:14px;padding-top:11px;border-top:1px dashed #1c3142}
+.mnav{display:flex;flex-direction:column;gap:5px}
+.mbtn{display:flex;align-items:center;gap:8px;text-align:left;width:100%;
+  background:#0f1e2d;border:1px solid #1e3549;border-radius:10px;padding:6px 8px;
+  color:#c3d6e8;cursor:pointer;font-family:inherit;transition:.15s}
+.mbtn:hover{background:#152b40;border-color:#2f587a}
+.mbtn.active{background:linear-gradient(90deg,#1c4363,#122c42);
+  border-color:#4a8cbb;color:#fff}
+.mbtn .no{font-size:11px;font-weight:700;color:#7c9bb6;background:#0a1622;
+  border:1px solid #243f57;border-radius:6px;padding:2px 5px;flex:0 0 auto}
+.mbtn.active .no{color:#bfe4ff;border-color:#4a8cbb}
+.mbtn .nm{font-size:12.5px;font-weight:600;line-height:1.1}
+.mbtn .ds{font-size:10px;color:#7890a8;display:block;margin-top:1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sw-list{display:flex;flex-direction:column;gap:6px}
+.switch{display:flex;align-items:center;gap:8px;width:100%;text-align:left;
+  background:#0f1e2d;border:1px solid #1e3549;border-radius:9px;color:#a9bdd2;
+  padding:7px 9px;font-size:12px;cursor:pointer;font-family:inherit;transition:.15s}
+.switch:hover{border-color:#31597a}
+.switch i{width:30px;height:16px;border-radius:10px;background:#23384b;
+  position:relative;display:inline-block;flex:0 0 auto;transition:.18s}
+.switch i::after{content:"";position:absolute;left:2px;top:2px;width:12px;height:12px;
+  border-radius:50%;background:#7f97ac;transition:.18s}
+.switch.on{color:#e6f4ff;border-color:#3c7ba6;background:#12283a}
+.switch.on i{background:#2e6f9b}
+.switch.on i::after{left:16px;background:#d8f0ff}
+.hint{font-size:11px;line-height:1.6;color:#7f96ac;margin:7px 0 0}
+/* 舞台 */
+.stage-wrap{background:linear-gradient(180deg,#0b1622,#08111b);
+  border:1px solid var(--line);border-radius:16px;padding:4px;min-height:0;
+  display:flex;align-items:center;justify-content:center;overflow:hidden}
+#stage{width:100%;height:100%;display:block}
+/* 右侧知识卡 */
+.panel.right{display:flex;flex-direction:column;gap:9px}
+#know{display:flex;flex-direction:column;gap:8px}
+.khead{display:flex;gap:8px;align-items:flex-start}
+.kno{font-size:12px;font-weight:700;color:#bfe4ff;background:#15324a;
+  border:1px solid #35668c;border-radius:8px;padding:4px 7px;flex:0 0 auto}
+.khead h2{font-size:14.5px;margin:0;line-height:1.3}
+.ksub{font-size:11px;color:#7d95ad;margin:3px 0 0}
+.kb h3{font-size:11px;letter-spacing:1px;color:#7fa0bb;margin:0 0 4px}
+.kb p{font-size:12.2px;line-height:1.66;color:#c2d4e6;margin:0}
+.kb b{color:#ffe4a8;font-weight:600}
+.kstatus{font-size:11px;color:#8fa8bf;background:#0b1826;border:1px solid #1d3346;
+  border-radius:8px;padding:6px 8px;line-height:1.6}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-family:inherit;font-size:11.5px;color:#ffd9a0;background:#1d2a1c;
+  border:1px solid #5c4a26;border-radius:20px;padding:4px 9px;cursor:pointer;transition:.15s}
+.chip:hover{background:#2c3d25;border-color:#a07f3e;color:#fff0c8}
+.legend{border:1px solid #1d3346;border-radius:12px;padding:9px;background:#0b1826}
+.legend h3{font-size:11px;letter-spacing:1px;color:#7994ae;margin:0 0 7px}
+.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}
+.legend-grid span{font-size:11px;color:#a9bdd2;display:flex;align-items:center;gap:5px}
+.legend-grid i{width:10px;height:10px;border-radius:3px;flex:0 0 auto;display:inline-block}
+/* 时间轴 */
+.timeline{flex:0 0 auto;display:grid;grid-template-columns:150px minmax(0,1fr) 280px;
+  gap:12px;align-items:center;padding:9px 16px 12px;border-top:1px solid var(--line);
+  background:linear-gradient(0deg,rgba(12,22,34,.98),rgba(10,18,28,.92))}
+.tl-block{display:flex;flex-direction:column;gap:2px;font-size:11px;color:#8298af}
+.tl-block strong{font-size:14px;color:#ffe4a8;font-weight:700}
+.tl-block.right{flex-direction:row;justify-content:flex-end;gap:14px;flex-wrap:wrap;align-items:center}
+.tl-block.right b{color:#ffd873}
+.tl-slider{position:relative;padding-bottom:13px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;
+  border-radius:4px;outline:none;cursor:pointer;
+  background:linear-gradient(90deg,#3c6ea5,#4f93e8 35%,#f0a03c 70%,#f0564a)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;
+  border-radius:50%;background:#fff;border:3px solid #2e6f9b;box-shadow:0 0 10px #4f93e8aa}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;
+  background:#fff;border:3px solid #2e6f9b;cursor:pointer}
+.tl-ticks{position:absolute;left:0;right:0;top:14px;display:flex;
+  justify-content:space-between;font-size:10px;color:#6c8298}
+/* 弹窗 */
+.modal{position:fixed;inset:0;background:rgba(3,8,15,.74);z-index:80;display:none;
+  align-items:center;justify-content:center;padding:18px}
+.modal.open{display:flex}
+.modal-card{width:min(560px,96vw);max-height:84vh;overflow-y:auto;
+  background:linear-gradient(180deg,#122234,#0b1624);border:1px solid #35668c;
+  border-radius:16px;padding:18px;box-shadow:0 24px 80px rgba(0,0,0,.65)}
+.modal-card h3{margin:0 0 9px;font-size:16.5px;color:#ffe4a8}
+.modal-card p{font-size:13.2px;line-height:1.8;color:#c9dbeb;margin:0 0 9px}
+.modal-card .warn{background:#2a1f12;border-left:3px solid #f0a03c;
+  padding:8px 10px;border-radius:6px;color:#ffd9a0}
+.modal-close{float:right;background:#17293b;border:1px solid #2d4d66;color:#a9bdd2;
+  border-radius:8px;padding:4px 10px;cursor:pointer;font-family:inherit}
+.tip-svg{width:100%;height:auto;border:1px solid #24415a;border-radius:10px;
+  margin:6px 0 10px;background:#08131f}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:35;display:none}
+/* SVG 文本 */
+.h1{font-size:21px;font-weight:700;fill:#fff;letter-spacing:.6px;text-anchor:start}
+.sub{font-size:12.5px;fill:#8ba3bb;text-anchor:start}
+.t{fill:#dce8f5;font-size:13px;text-anchor:middle;font-family:inherit}
+.t.small{font-size:11.5px;fill:#9cb1c7}
+.windlab{fill:#ffe9a8;font-size:12.5px;font-weight:600;text-anchor:middle;
+  paint-order:stroke;stroke:#08111c;stroke-width:4;stroke-linejoin:round}
+.label{transition:opacity .2s}
+svg.hide-labels .label{opacity:0;pointer-events:none}
+.clickable{cursor:pointer}
+.clickable:hover{filter:brightness(1.25)}
+/* 动画 */
+@keyframes pulseGrow{0%{transform:scale(.45);opacity:.75}70%{opacity:.18}100%{transform:scale(2.3);opacity:0}}
+.pulse{animation:pulseGrow 2.6s ease-out infinite;transform-box:fill-box;transform-origin:center}
+svg.focus30 .pulse{animation-duration:1.5s}
+@keyframes shatterFade{0%{opacity:1;transform:none}25%{opacity:.95;transform:translateY(-5px) scale(1.01)}
+  100%{opacity:0;transform:translateY(16px) scale(.93)}}
+#singleWrap.shatter{animation:shatterFade 1.15s cubic-bezier(.3,.1,.4,1) forwards;
+  transform-box:fill-box;transform-origin:center}
+@keyframes appearUp{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+#threeWrap.appear{animation:appearUp .85s .55s cubic-bezier(.2,.8,.3,1) both;
+  transform-box:fill-box;transform-origin:center}
+@keyframes blobIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+.blob{animation:blobIn .85s cubic-bezier(.2,.85,.3,1) both;
+  transform-box:fill-box;transform-origin:center}
+svg.paused *{animation-play-state:paused!important}
+/* 响应式 */
+@media (max-width:1120px){
+  .app{grid-template-columns:216px minmax(0,1fr) 268px}
+  .badge{display:none}
+}
+@media (max-width:900px){
+  body{overflow:auto;height:auto;min-height:100dvh}
+  .topbar{position:sticky;top:0;z-index:30}
+  #btnDrawer{display:inline-flex}
+  .app{grid-template-columns:1fr;padding:8px;gap:8px}
+  .panel.left{position:fixed;top:0;bottom:0;left:0;width:280px;z-index:40;
+    border-radius:0 16px 16px 0;transform:translateX(-105%);transition:transform .25s;
+    box-shadow:20px 0 60px rgba(0,0,0,.6)}
+  .panel.left.open{transform:translateX(0)}
+  .icon-btn{display:block}
+  .stage-wrap{order:2;min-height:54vh}
+  .panel.right{order:3}
+  .timeline{grid-template-columns:1fr;gap:6px;padding:8px 12px 12px}
+  .tl-block.right{justify-content:flex-start}
+  .brand h1{font-size:15px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <h1>大气环流动态示意图</h1>
+    <span class="badge">高中地理 · 大气环流</span>
+  </div>
+  <div class="top-actions">
+    <button class="btn ghost" id="btnDrawer">☰ 控制台</button>
+    <button class="btn ghost" id="btnPauseTop">暂停</button>
+  </div>
+</header>
+
+<main class="app">
+  <aside class="panel left" id="leftPanel">
+    <div class="ph"><span>模块导航</span><button class="icon-btn" id="btnCloseDrawer">×</button></div>
+    <nav class="mnav" id="moduleNav"></nav>
+
+    <div class="ph">动画控制</div>
+    <div class="grid2">
+      <button class="btn" id="btnPause">暂停</button>
+      <button class="btn" id="btnReset">重置</button>
+      <button class="btn" id="btnSlow">慢放 1x</button>
+      <button class="btn active" id="btnLabels">标注 开</button>
+    </div>
+
+    <div class="ph">条件开关</div>
+    <div class="sw-list">
+      <button class="switch" data-toggle="coriolisOn"><i></i>地转偏向力</button>
+      <button class="switch" data-toggle="landSeaOn"><i></i>加入海陆分布</button>
+      <button class="switch" data-toggle="plateauOn"><i></i>叠加青藏高原</button>
+      <button class="switch" data-toggle="climateLayerOn"><i></i>气候带示意层</button>
+    </div>
+
+    <div class="ph">本模块选项</div>
+    <div id="moduleControls"></div>
+  </aside>
+
+  <section class="stage-wrap">
+    <svg id="stage" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet"
+      role="img" aria-label="大气环流动态示意图"></svg>
+  </section>
+
+  <aside class="panel right">
+    <div id="know"></div>
+    <div class="legend">
+      <h3>图例</h3>
+      <div class="legend-grid">
+        <span><i style="background:#f0564a"></i>赤道低压 / 上升</span>
+        <span><i style="background:#f0a03c"></i>副热带高压</span>
+        <span><i style="background:#4f93e8"></i>副极地低压 / 下沉</span>
+        <span><i style="background:#3c6ea5"></i>极地高压</span>
+        <span><i style="background:#ffd873"></i>风带 / 气流</span>
+        <span><i style="background:#5fd39b"></i>气候示意层</span>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<footer class="timeline">
+  <div class="tl-block">
+    <span>时间轴（1—12 月）</span>
+    <strong id="monthVal">7.0 月</strong>
+  </div>
+  <div class="tl-slider">
+    <input id="month" type="range" min="1" max="12" step="0.1" value="7" aria-label="月份">
+    <div class="tl-ticks"><span>1月</span><span>4月</span><span>7月</span><span>10月</span><span>12月</span></div>
+  </div>
+  <div class="tl-block right">
+    <span>太阳直射点 <b id="declVal">—</b></span>
+    <span>气压带偏移 <b id="shiftVal">—</b></span>
+  </div>
+</footer>
+
+<div class="backdrop" id="backdrop"></div>
+
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose">关闭</button>
+    <h3 id="modalTitle">提示</h3>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ===== 第 2 段从这里开始粘贴 ===== */
+(function(){
+"use strict";
+
+/* ================= 1. 配置与状态 ================= */
+const NS="http://www.w3.org/2000/svg";
+const C={low:"#f0564a",sh:"#f0a03c",sl:"#4f93e8",ph:"#3c6ea5",
+         up:"#ff6252",dn:"#4f93e8",wd:"#ffd873"};
+
+const DEF={currentModule:"thermal",season:7,coriolisOn:false,landSeaOn:false,
+  plateauOn:false,climateLayerOn:true,paused:false,speed:1,showLabels:true,
+  thermalMode:"landsea",focus30:false};
+const S=Object.assign({},DEF);
+
+const MODULES=[
+  {id:"thermal",n:"01",name:"热力环流",desc:"母版 · 冷热不均"},
+  {id:"single", n:"02",name:"单圈环流",desc:"假设地球不自转"},
+  {id:"three",  n:"03",name:"三圈环流",desc:"低纬·中纬·高纬"},
+  {id:"belts",  n:"04",name:"七压六风",desc:"气压带与风带"},
+  {id:"season", n:"05",name:"季节移动",desc:"随直射点移动"},
+  {id:"landsea",n:"06",name:"海陆修正",desc:"带状 → 块状"},
+  {id:"monsoon",n:"07",name:"季风环流",desc:"东亚 · 南亚"},
+  {id:"climate",n:"08",name:"气候落地",desc:"环流 → 气候"}
+];
+
+const TM={
+  landsea:{name:"海陆风",btn:"海陆风",
+    hint:"白天陆地升温快，近地面陆地形成低压，风从海洋吹向陆地（海风）。",
+    result:"白天海风、夜晚陆风，是最基本的热力环流。"},
+  valley:{name:"山谷风",btn:"山谷风",
+    hint:"白天山坡受热快，气流沿坡上升，谷底空气补充（谷风）；夜晚相反。",
+    result:"白天谷风、夜晚山风，属于热力环流的地方性表现。"},
+  city:{name:"城市热岛环流",btn:"城市热岛",
+    hint:"城区气温高、气流上升，近地面风由郊区吹向城区。",
+    result:"形成城市热岛环流，郊区污染物容易被带回城区。"}
+};
+
+const $=s=>document.querySelector(s);
+const stage=document.getElementById("stage");
+
+let streams=[],pending=[],animTime=0,lastT=performance.now();
+
+/* ================= 2. 基础工具 ================= */
+function base(){
+  return defs()+'<rect x="0" y="0" width="1000" height="620" fill="url(#sky)"/>';
+}
+function defs(){
+  return `<defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0c1826"/><stop offset="1" stop-color="#08111c"/>
+    </linearGradient>
+    <marker id="mRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="13"
+      markerHeight="13" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="${C.up}"/></marker>
+    <marker id="mBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="13"
+      markerHeight="13" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="${C.dn}"/></marker>
+    <marker id="mWind" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11"
+      markerHeight="11" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="${C.wd}"/></marker>
+    <marker id="mOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12"
+      markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="${C.sh}"/></marker>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>`;
+}
+function head(t,s){
+  return `<text x="40" y="46" class="h1">${t}</text>
+          <text x="40" y="70" class="sub">${s}</text>`;
+}
+function tx(x,y,s,cls,extra){
+  return `<text x="${x}" y="${y}" class="${cls||"t"}" ${extra||""}>${s}</text>`;
+}
+function tag(x,y,text,color,tip,w,action){
+  const width=w||Math.max(92,text.length*13+26);
+  const attr=action?`data-action="${action}"`:`data-tip="${tip}"`;
+  return `<g class="clickable label" ${attr}>
+    <rect x="${x-width/2}" y="${y-15}" width="${width}" height="30" rx="15"
+      fill="#0b1522" fill-opacity=".94" stroke="${color}" stroke-opacity=".8"/>
+    <text x="${x}" y="${y+4}" text-anchor="middle" fill="${color}"
+      font-size="13" font-weight="600">${text}</text></g>`;
+}
+function latY(lat,top,bot){
+  top=(top===undefined)?110:top; bot=(bot===undefined)?530:bot;
+  return top+(90-lat)/180*(bot-top);
+}
+function beltShift(m){return 7*Math.sin(2*Math.PI*(m-4.7)/12);}
+function declOf(m){return 23.5*Math.sin(2*Math.PI*(m-3.7)/12);}
+function fmtLat(v){
+  if(Math.abs(v)<0.05)return "0°";
+  return Math.abs(v).toFixed(1)+"°"+(v>0?"N":"S");
+}
+function isSummer(){return S.season>=5&&S.season<=9;}
+
+/* ================= 3. 粒子系统 ================= */
+function addStream(d,opt){
+  pending.push(Object.assign({d:d,n:8,k:0.18,color:C.wd,r:3,opacity:.95},opt||{}));
+}
+function finalizeStreams(){
+  const cache=document.getElementById("pathCache");
+  const layer=document.getElementById("particleLayer");
+  streams=[];
+  if(!cache||!layer)return;
+  pending.forEach(function(def){
+    const p=document.createElementNS(NS,"path");
+    p.setAttribute("d",def.d);
+    p.setAttribute("fill","none");
+    cache.appendChild(p);
+    let len=1;
+    try{len=p.getTotalLength()||1;}catch(e){len=1;}
+    const items=[];
+    for(let i=0;i<def.n;i++){
+      const c=document.createElementNS(NS,"circle");
+      c.setAttribute("r",def.r);
+      c.setAttribute("fill",def.color);
+      c.setAttribute("opacity",def.opacity);
+      layer.appendChild(c);
+      items.push({el:c,off:i/def.n});
+    }
+    streams.push({path:p,len:len,items:items,k:def.k});
+  });
+  updateParticles();
+}
+function updateParticles(){
+  for(let i=0;i<streams.length;i++){
+    const st=streams[i];
+    for(let j=0;j<st.items.length;j++){
+      const it=st.items[j];
+      let u=(it.off+animTime*st.k)%1;
+      if(u<0)u+=1;
+      let pt; try{pt=st.path.getPointAtLength(u*st.len);}catch(e){continue;}
+      it.el.setAttribute("cx",pt.x);
+      it.el.setAttribute("cy",pt.y);
+    }
+  }
+}
+
+/* ================= 4. 绘图形状工具 ================= */
+function loopD(x1,x2,yT,yB,dir){
+  const r=16;
+  if(dir==="upRight"){
+    return `M${x2},${yB} L${x2},${yT+r} Q${x2},${yT} ${x2-r},${yT}
+      L${x1+r},${yT} Q${x1},${yT} ${x1},${yT+r}
+      L${x1},${yB-r} Q${x1},${yB} ${x1+r},${yB}
+      L${x2-r},${yB} Q${x2},${yB} ${x2},${yB-r} Z`;
+  }
+  return `M${x2},${yT} L${x2},${yB-r} Q${x2},${yB} ${x2-r},${yB}
+    L${x1+r},${yB} Q${x1},${yB} ${x1},${yB-r}
+    L${x1},${yT+r} Q${x1},${yT} ${x1+r},${yT}
+    L${x2-r},${yT} Q${x2},${yT} ${x2},${yT+r} Z`;
+}
+function tri(x,y,rot,color){
+  return `<path d="M-6.5,-5 L6.5,0 L-6.5,5 Z" fill="${color}"
+    transform="translate(${x},${y}) rotate(${rot})"/>`;
+}
+function loopArrows(x1,x2,yT,yB,dir,color){
+  const mx=(x1+x2)/2,my=(yT+yB)/2;
+  if(dir==="upRight"){
+    return tri(x2,my,-90,color)+tri(x1,my,90,color)+
+           tri(mx,yT,180,color)+tri(mx,yB,0,color);
+  }
+  return tri(x2,my,90,color)+tri(x1,my,-90,color)+
+         tri(mx,yT,0,color)+tri(mx,yB,180,color);
+}
+function zoneLabel(x,y,text,color,size){
+  return `<text x="${x}" y="${y}" text-anchor="middle" fill="${color}"
+    font-size="${size||11.5}" font-weight="600" paint-order="stroke"
+    stroke="#08111c" stroke-width="4" stroke-linejoin="round"
+    class="label">${text}</text>`;
+}
+
+/* ================= 5. 模块一：热力环流 ================= */
+function rThermal(){
+  let s=base()+head("热力环流 · 母版","冷热不均 → 垂直运动 → 同一水平面气压差 → 水平气流");
+  s+=`<rect x="90" y="468" width="820" height="96" fill="#16232f" stroke="#2a4055"/>`;
+
+  if(S.thermalMode==="landsea"){
+    s+=`<rect x="90" y="468" width="240" height="96" fill="#0f2a3f"/>
+        <rect x="670" y="468" width="240" height="96" fill="#0f2a3f"/>
+        <rect x="330" y="468" width="340" height="96" fill="#26301f"/>
+        <text x="210" y="552" class="t small" fill="#7fb6e8">海洋</text>
+        <text x="500" y="552" class="t small" fill="#c9d88a">陆地</text>
+        <text x="790" y="552" class="t small" fill="#7fb6e8">海洋</text>`;
+  }else if(S.thermalMode==="valley"){
+    s+=`<path d="M90,468 L165,410 L240,468Z" fill="#20303d"/>
+        <path d="M760,468 L835,410 L910,468Z" fill="#20303d"/>
+        <text x="165" y="552" class="t small">谷底</text>
+        <text x="500" y="552" class="t small">山坡</text>
+        <text x="835" y="552" class="t small">谷底</text>`;
+  }else{
+    s+=`<rect x="400" y="430" width="26" height="38" fill="#233646"/>
+        <rect x="432" y="418" width="30" height="50" fill="#233646"/>
+        <rect x="468" y="436" width="24" height="32" fill="#233646"/>
+        <rect x="560" y="424" width="34" height="44" fill="#233646"/>
+        <text x="300" y="552" class="t small">郊区</text>
+        <text x="500" y="552" class="t small">城区</text>
+        <text x="700" y="552" class="t small">郊区</text>`;
+  }
+
+  s+=`<text x="500" y="497" fill="#ff9a8a" font-size="15" font-weight="700" text-anchor="middle">热</text>
+      <text x="275" y="497" fill="#8fc0ff" font-size="15" font-weight="700" text-anchor="middle">冷</text>
+      <text x="725" y="497" fill="#8fc0ff" font-size="15" font-weight="700" text-anchor="middle">冷</text>`;
+
+  s+=`<ellipse cx="500" cy="468" rx="165" ry="16" fill="${C.up}" opacity=".22"/>`;
+  s+=`<line x1="500" y1="450" x2="500" y2="262" stroke="${C.up}" stroke-width="7"
+      stroke-linecap="round" marker-end="url(#mRed)"/>
+      <line x1="275" y1="262" x2="275" y2="448" stroke="${C.dn}" stroke-width="7"
+      stroke-linecap="round" marker-end="url(#mBlue)"/>
+      <line x1="725" y1="262" x2="725" y2="448" stroke="${C.dn}" stroke-width="7"
+      stroke-linecap="round" marker-end="url(#mBlue)"/>`;
+
+  s+=`<path d="M486,242 L320,242" stroke="${C.wd}" stroke-width="4" fill="none" marker-end="url(#mWind)"/>
+      <path d="M514,242 L680,242" stroke="${C.wd}" stroke-width="4" fill="none" marker-end="url(#mWind)"/>
+      <path d="M320,456 L470,456" stroke="${C.wd}" stroke-width="4" fill="none" marker-end="url(#mWind)"/>
+      <path d="M680,456 L530,456" stroke="${C.wd}" stroke-width="4" fill="none" marker-end="url(#mWind)"/>`;
+
+  s+=tx(520,360,"受热上升","t small",'text-anchor="start"');
+  s+=tx(295,360,"冷却下沉","t small",'text-anchor="start"');
+  s+=tx(745,360,"冷却下沉","t small",'text-anchor="start"');
+
+  s+=tag(275,208,"高空 低气压",C.dn,"thermal",120);
+  s+=tag(500,208,"高空 高气压",C.up,"thermal",120);
+  s+=tag(725,208,"高空 低气压",C.dn,"thermal",120);
+  s+=tag(275,528,"近地面 高气压",C.dn,"thermal",132);
+  s+=tag(500,528,"近地面 低气压",C.up,"thermal",132);
+  s+=tag(725,528,"近地面 高气压",C.dn,"thermal",132);
+  s+=tx(500,592,"同一水平面气压差 → 水平气流（风）；近地面与高空气压性质相反","t small");
+
+  addStream("M500,448 L500,255 Q500,242 486,242 L288,242 Q274,242 274,256 "+
+    "L274,442 Q274,456 288,456 L486,456 Q500,456 500,442",
+    {n:7,k:.2,color:C.up,r:3});
+  addStream("M500,448 L500,255 Q500,242 514,242 L712,242 Q726,242 726,256 "+
+    "L726,442 Q726,456 712,456 L514,456 Q500,456 500,442",
+    {n:7,k:.2,color:C.wd,r:3});
+  return s;
+}
+
+/* ================= 6. 模块二：单圈环流 ================= */
+function rSingle(){
+  const on=S.coriolisOn;
+  let s=base()+head("单圈环流","假设：地球不自转 · 太阳直射赤道 · 地表均匀");
+  s+=`<rect x="120" y="120" width="760" height="352" rx="18" fill="#0d1b29" stroke="#22384d"/>`;
+  s+=`<ellipse cx="820" cy="470" rx="95" ry="10" fill="${C.up}" opacity=".25"/>
+      <ellipse cx="180" cy="470" rx="95" ry="10" fill="${C.dn}" opacity=".28"/>
+      <line x1="120" y1="470" x2="880" y2="470" stroke="#2b4257" stroke-width="3"/>`;
+  s+=tx(180,502,"90°N 极地")+tx(820,502,"0° 赤道");
+  s+=tx(180,540,"冷却下沉","t small")+tx(820,540,"受热上升","t small");
+
+  s+=`<g id="singleWrap" class="${on?"shatter":""}">
+    <path d="M820,450 L820,215 Q820,198 802,198 L198,198 Q180,198 180,215
+      L180,445 Q180,462 198,462 L802,462 Q820,462 820,450"
+      fill="none" stroke="${C.wd}" stroke-width="3" opacity=".55"/>
+    <line x1="820" y1="450" x2="820" y2="232" stroke="${C.up}" stroke-width="7"
+      stroke-linecap="round" marker-end="url(#mRed)"/>
+    <line x1="180" y1="232" x2="180" y2="448" stroke="${C.dn}" stroke-width="7"
+      stroke-linecap="round" marker-end="url(#mBlue)"/>
+    <path d="M780,208 L262,208" stroke="${C.wd}" stroke-width="4" fill="none" marker-end="url(#mWind)"/>
+    <path d="M222,450 L778,450" stroke="${C.wd}" stroke-width="4" fill="none" marker-end="url(#mWind)"/>
+    <text x="500" y="188" class="t small">高空：赤道 → 极地</text>
+    <text x="500" y="490" class="t small">近地面：极地 → 赤道</text>
+  </g>`;
+
+  if(on){
+    const cells=[
+      {x1:180,x2:393,dir:"upRight",color:"#74a3d2",name:"极地环流",sub:"高纬 90°–60°"},
+      {x1:393,x2:607,dir:"downRight",color:"#e0b155",name:"费雷尔环流",sub:"中纬 60°–30°"},
+      {x1:607,x2:820,dir:"upRight",color:"#f0564a",name:"哈得来环流",sub:"低纬 30°–0°"}
+    ];
+    s+=`<g id="threeWrap" class="appear">`;
+    cells.forEach(function(c){
+      s+=`<path d="${loopD(c.x1,c.x2,210,430,c.dir)}" fill="none"
+        stroke="${c.color}" stroke-width="3.5" opacity=".92"/>`;
+      s+=loopArrows(c.x1,c.x2,210,430,c.dir,c.color);
+      s+=`<text x="${(c.x1+c.x2)/2}" y="316" text-anchor="middle" fill="${c.color}"
+        font-size="13" font-weight="700">${c.name}</text>
+        <text x="${(c.x1+c.x2)/2}" y="334" text-anchor="middle" class="t small">${c.sub}</text>`;
+    });
+    s+=`<circle cx="607" cy="300" r="12" fill="${C.sh}" opacity=".3" class="pulse"/>
+        <circle cx="607" cy="300" r="12" fill="${C.sh}" opacity=".22"
+        class="pulse" style="animation-delay:.8s"/>
+        <circle cx="607" cy="300" r="18" fill="none" stroke="${C.sh}"
+        stroke-width="2" opacity=".55" filter="url(#glow)"/>
+        <text x="607" y="305" text-anchor="middle" fill="${C.sh}"
+        font-size="12" font-weight="700">30°</text>`;
+    s+=tag(752,112,"地转偏向力 → 30°堆积下沉",C.sh,"subhigh",250);
+    s+=tx(500,556,"单圈环流碎裂 → 在 30°附近堆积下沉 → 重组为三圈环流","t small");
+    s+=`</g>`;
+    addStream(loopD(180,393,210,430,"upRight"),{n:7,k:.16,color:"#8fb8e0",r:3});
+    addStream(loopD(393,607,210,430,"downRight"),{n:7,k:.16,color:C.wd,r:3});
+    addStream(loopD(607,820,210,430,"upRight"),{n:8,k:.16,color:C.up,r:3});
+  }else{
+    s+=tx(500,584,"打开「地转偏向力」开关，观察单圈环流在 30° 附近碎裂并重组为三圈环流","t small");
+    addStream("M820,450 L820,215 Q820,198 802,198 L198,198 Q180,198 180,215 "+
+      "L180,445 Q180,462 198,462 L802,462 Q820,462 820,450",
+      {n:10,k:.12,color:C.wd,r:3.2});
+  }
+  return s;
+}
+
+/* ================= 7. 模块三：三圈环流 ================= */
+function rThree(){
+  let s=base()+head("三圈环流","低纬哈得来环流 · 中纬费雷尔环流 · 高纬极地环流（北半球剖面）");
+  s+=`<rect x="120" y="112" width="760" height="366" rx="18" fill="#0d1b29" stroke="#22384d"/>
+      <line x1="130" y1="180" x2="870" y2="180" stroke="#2d465e" stroke-dasharray="5 7"/>
+      <line x1="120" y1="465" x2="880" y2="465" stroke="#2b4257" stroke-width="3"/>`;
+  s+=tx(132,172,"对流层顶","t small",'text-anchor="start"');
+
+  const yT=205,yB=415;
+  const cells=[
+    {x1:180,x2:393,dir:"upRight",color:"#74a3d2",name:"极地环流",l2:"高纬 · 直接热力环流"},
+    {x1:393,x2:607,dir:"downRight",color:"#e0b155",name:"费雷尔环流",l2:"中纬 · 间接环流 / 逆环流"},
+    {x1:607,x2:820,dir:"upRight",color:"#f0564a",name:"哈得来环流",l2:"低纬 · 直接热力环流"}
+  ];
+  cells.forEach(function(c){
+    s+=`<path d="${loopD(c.x1,c.x2,yT,yB,c.dir)}" fill="none"
+      stroke="${c.color}" stroke-width="10" opacity=".14"/>
+      <path d="${loopD(c.x1,c.x2,yT,yB,c.dir)}" fill="none"
+      stroke="${c.color}" stroke-width="3" opacity=".92"/>`;
+    s+=loopArrows(c.x1,c.x2,yT,yB,c.dir,c.color);
+    s+=`<text x="${(c.x1+c.x2)/2}" y="308" text-anchor="middle" fill="${c.color}"
+      font-size="14.5" font-weight="700">${c.name}</text>
+      <text x="${(c.x1+c.x2)/2}" y="329" text-anchor="middle" class="t small">${c.l2}</text>`;
+  });
+
+  const belts=[
+    {x:820,color:C.low,name:"赤道低压带",key:"eqlow"},
+    {x:607,color:C.sh,name:"副热带高压带",key:"subhigh"},
+    {x:393,color:C.sl,name:"副极地低压带",key:"sublow"},
+    {x:180,color:C.ph,name:"极地高压带",key:"polarhigh"}
+  ];
+  belts.forEach(function(b){
+    s+=`<g class="clickable label" data-tip="${b.key}">
+      <rect x="${b.x-60}" y="430" width="120" height="25" rx="12.5"
+        fill="${b.color}" fill-opacity=".26" stroke="${b.color}" stroke-opacity=".75"/>
+      <text x="${b.x}" y="447" text-anchor="middle" fill="${b.color}"
+        font-size="11.5" font-weight="600">${b.name}</text></g>`;
+  });
+  s+=tx(180,500,"90°")+tx(393,500,"60°")+tx(607,500,"30°")+tx(820,500,"0°");
+
+  s+=`<circle cx="607" cy="268" r="10" fill="${C.sh}" opacity=".35" class="pulse"/>
+      <circle cx="607" cy="268" r="10" fill="${C.sh}" opacity=".28"
+      class="pulse" style="animation-delay:.9s"/>
+      <circle cx="607" cy="268" r="24" fill="none" stroke="${C.sh}"
+      stroke-width="2" stroke-dasharray="5 5" opacity=".6" class="label"/>`;
+  s+=tag(790,118,"副高：30°附近堆积下沉",C.sh,"subhigh",218);
+  s+=`<path d="M740,136 L640,240" stroke="${C.sh}" stroke-width="1.2"
+      stroke-dasharray="4 5" opacity=".5" fill="none"/>`;
+  s+=tx(705,164,"高空堆积 → 动力下沉","t small",'fill="'+C.sh+'"');
+
+  if(S.focus30){
+    s+=`<g class="label">
+      <circle cx="607" cy="268" r="52" fill="none" stroke="${C.sh}"
+        stroke-width="2.5" stroke-dasharray="8 7" opacity=".85" filter="url(#glow)"/>
+      <text x="607" y="212" text-anchor="middle" fill="${C.sh}"
+        font-size="13" font-weight="700">慢放高亮：动力成因</text></g>`;
+  }
+
+  s+=`<g class="clickable label" data-action="polarfront">
+      <circle cx="393" cy="360" r="11" fill="#0b1220" stroke="#9fd0ff" stroke-width="2"/>
+      <text x="393" y="364" text-anchor="middle" fill="#cfe8ff" font-size="10.5">❄</text></g>`;
+  s+=tag(393,542,"❄ 极锋：暖西风爬升（点击展开）","#9fd0ff","",246,"polarfront");
+
+  addStream(loopD(607,820,yT,yB,"upRight"),{n:9,k:.15,color:C.up,r:3});
+  addStream(loopD(393,607,yT,yB,"downRight"),{n:9,k:.15,color:C.wd,r:3});
+  addStream(loopD(180,393,yT,yB,"upRight"),{n:8,k:.15,color:"#8fb8e0",r:3});
+  return s;
+}
+
+/* ===== 第 3 段继续：模块四到模块八、知识卡、交互、初始化 ===== */
+/* ================= 8. 模块四：七压六风 ================= */
+function rBelts(){
+  const yTop=110,yBot=530;
+  let s=base()+head("七压六风","七个气压带 · 六个风带｜北半球风向已按地转偏向力偏转");
+  s+=`<rect x="100" y="104" width="800" height="436" rx="16" fill="#0c1a28" stroke="#22384d"/>`;
+
+  [60,30,0,-30,-60].forEach(function(lat){
+    const y=latY(lat,yTop,yBot);
+    s+=`<line x1="100" y1="${y}" x2="900" y2="${y}" stroke="#1f3448"
+      stroke-width="1" stroke-dasharray="4 8"/>`;
+  });
+
+  const belts=[
+    {lat:0,color:C.low,name:"赤道低压带",key:"eqlow"},
+    {lat:30,color:C.sh,name:"副热带高压带",key:"subhigh"},
+    {lat:-30,color:C.sh,name:"副热带高压带",key:"subhigh"},
+    {lat:60,color:C.sl,name:"副极地低压带",key:"sublow"},
+    {lat:-60,color:C.sl,name:"副极地低压带",key:"sublow"},
+    {lat:82,color:C.ph,name:"极地高压带",key:"polarhigh"},
+    {lat:-82,color:C.ph,name:"极地高压带",key:"polarhigh"}
+  ];
+  belts.forEach(function(b){
+    const y=latY(b.lat,yTop,yBot);
+    s+=`<g class="clickable label" data-tip="${b.key}">
+      <rect x="110" y="${y-13}" width="780" height="26" rx="13"
+        fill="${b.color}" fill-opacity=".20" stroke="${b.color}" stroke-opacity=".62"/>
+      <text x="500" y="${y+5}" text-anchor="middle" fill="${b.color}"
+        font-size="13.5" font-weight="600">${b.name}</text></g>`;
+  });
+
+  [90,60,30,0,-30,-60,-90].forEach(function(lat){
+    const y=latY(lat,yTop,yBot);
+    const lbl=lat===0?"0°":Math.abs(lat)+"°"+(lat>0?"N":"S");
+    s+=`<text x="88" y="${y+4}" class="t small" text-anchor="end">${lbl}</text>`;
+  });
+
+  function wa(y1,y2,o1,o2){
+    let out="";
+    [250,750].forEach(function(x){
+      const x1=x+o1,x2=x+o2,cx=x+(o1+o2)/2,cy=(y1+y2)/2;
+      out+=`<path d="M${x1},${y1} Q${cx},${cy+10} ${x2},${y2}"
+        fill="none" stroke="${C.wd}" stroke-width="2.4" opacity=".85"
+        marker-end="url(#mWind)"/>`;
+    });
+    return out;
+  }
+
+  s+=wa(latY(80,yTop,yBot)+12,latY(60,yTop,yBot)-12,55,-55);
+  s+=`<text x="500" y="${latY(70,yTop,yBot)+4}" class="windlab">极地东风（东北风）</text>`;
+
+  s+=wa(latY(30,yTop,yBot)-12,latY(60,yTop,yBot)+12,-55,55);
+  s+=`<text x="500" y="${latY(45,yTop,yBot)+4}" class="windlab">盛行西风（西南风）</text>`;
+
+  s+=wa(latY(30,yTop,yBot)+12,latY(0,yTop,yBot)-12,55,-55);
+  s+=`<text x="500" y="${latY(15,yTop,yBot)+4}" class="windlab">东北信风</text>`;
+
+  s+=wa(latY(-30,yTop,yBot)-12,latY(0,yTop,yBot)+12,55,-55);
+  s+=`<text x="500" y="${latY(-15,yTop,yBot)+4}" class="windlab">东南信风</text>`;
+
+  s+=wa(latY(-30,yTop,yBot)+12,latY(-60,yTop,yBot)-12,-55,55);
+  s+=`<text x="500" y="${latY(-45,yTop,yBot)+4}" class="windlab">盛行西风（西北风）</text>`;
+
+  s+=wa(latY(-80,yTop,yBot)-12,latY(-60,yTop,yBot)+12,55,-55);
+  s+=`<text x="500" y="${latY(-70,yTop,yBot)+4}" class="windlab">极地东风（东南风）</text>`;
+
+  s+=tx(500,570,"北半球向右偏：东北信风 · 西南西风 · 东北极地东风","t small");
+  return s;
+}
+
+/* ================= 9. 模块五：季节移动 ================= */
+function rSeason(){
+  const yTop=120,yBot=520;
+  const sh=beltShift(S.season),dc=declOf(S.season);
+
+  let s=base()+head("气压带风带的季节移动",
+    "随太阳直射点移动：幅度约 5—10 个纬度，滞后约一个月");
+  s+=`<rect x="100" y="100" width="800" height="446" rx="16" fill="#0c1a28" stroke="#22384d"/>`;
+
+  [90,60,30,0,-30,-60,-90].forEach(function(lat){
+    const y=latY(lat,yTop,yBot);
+    s+=`<line x1="100" y1="${y}" x2="900" y2="${y}" stroke="#1b2f42"
+      stroke-width="1" stroke-dasharray="3 9"/>`;
+    const lbl=lat===0?"0°":Math.abs(lat)+"°"+(lat>0?"N":"S");
+    s+=`<text x="88" y="${y+4}" class="t small" text-anchor="end">${lbl}</text>`;
+  });
+
+  const belts=[
+    {lat:0,color:C.low,name:"赤道低压带"},
+    {lat:30,color:C.sh,name:"副热带高压带"},
+    {lat:-30,color:C.sh,name:"副热带高压带"},
+    {lat:60,color:C.sl,name:"副极地低压带"},
+    {lat:-60,color:C.sl,name:"副极地低压带"},
+    {lat:82,color:C.ph,name:"极地高压带"},
+    {lat:-82,color:C.ph,name:"极地高压带"}
+  ];
+
+  belts.forEach(function(b){
+    const y=latY(b.lat,yTop,yBot);
+    s+=`<rect x="100" y="${y-9}" width="800" height="18" rx="9"
+      fill="none" stroke="${b.color}" stroke-opacity=".22"
+      stroke-dasharray="5 7" class="label"/>`;
+  });
+
+  belts.forEach(function(b){
+    let lat=Math.max(-86,Math.min(86,b.lat+sh));
+    const y=latY(lat,yTop,yBot);
+    s+=`<g class="label">
+      <rect x="100" y="${y-12}" width="800" height="24" rx="12"
+        fill="${b.color}" fill-opacity=".26" stroke="${b.color}" stroke-opacity=".6"/>
+      <text x="500" y="${y+4}" text-anchor="middle" fill="${b.color}"
+        font-size="12" font-weight="600">${b.name}</text></g>`;
+  });
+
+  const ySolar=latY(Math.max(-84,Math.min(84,dc)),yTop,yBot);
+  s+=`<line x1="100" y1="${ySolar}" x2="900" y2="${ySolar}" stroke="#ffe066"
+      stroke-width="1.6" stroke-dasharray="10 7" opacity=".95"/>`;
+  s+=`<text x="110" y="${ySolar-7}" fill="#ffe066" font-size="11.5"
+      text-anchor="start" class="label">太阳直射点 ${fmtLat(dc)}</text>`;
+
+  const yItcz=latY(sh,yTop,yBot);
+  s+=`<line x1="100" y1="${yItcz}" x2="900" y2="${yItcz}" stroke="${C.sh}"
+      stroke-width="1.6" stroke-dasharray="6 6" opacity=".95"/>`;
+  s+=`<text x="890" y="${yItcz+16}" fill="${C.sh}" font-size="11.5"
+      text-anchor="end" class="label">赤道低压带实际位置 ${fmtLat(sh)}</text>`;
+
+  s+=tag(762,92,"不同步 · 不同幅 · 滞后约一个月",C.sh,"season",252);
+  s+=tx(500,590,"移动幅度约 5—10 个纬度（不是 23.5°）；气压带位置滞后太阳直射点约 1 个月","t small");
+  return s;
+}
+
+/* ================= 10. 模块六：海陆修正 ================= */
+function rLandSea(){
+  const summer=isSummer();
+  let s=base()+head("海陆修正 · 气压带由“带状”变“块状”",
+    summer?"7 月：大陆热低压切断副热带高压带":"1 月：大陆冷高压切断副极地低压带");
+
+  s+=`<rect x="100" y="100" width="800" height="440" rx="16" fill="url(#ocean)" stroke="#22405a"/>`;
+  s+=`<g>
+    <path d="M170,180 L300,165 L330,235 L305,300 L255,330 L210,300 L185,240 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+    <path d="M300,355 L365,350 L378,435 L340,510 L300,498 L285,420 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+    <path d="M470,180 L560,165 L600,215 L572,285 L545,360 L505,425 L475,360 L458,270 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+    <path d="M580,165 L835,155 L862,225 L820,275 L745,305 L665,285 L615,245 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+    <path d="M775,435 L855,430 L875,472 L822,497 L768,482 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+  </g>`;
+  s+=tx(250,340,"北美","t small")+tx(700,200,"亚欧大陆","t small");
+  s+=tx(520,400,"非洲","t small")+tx(330,470,"南美","t small");
+
+  function blob(cx,cy,rx,ry,color,label,sub){
+    return `<g class="clickable blob" data-tip="cut">
+      <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${color}"
+        fill-opacity=".32" stroke="${color}" stroke-opacity=".85"/>
+      <text x="${cx}" y="${cy+4}" text-anchor="middle" fill="${color}"
+        font-size="13" font-weight="700">${label}</text>
+      ${sub?`<text x="${cx}" y="${cy+22}" text-anchor="middle"
+        font-size="10.5" fill="${color}">${sub}</text>`:""}</g>`;
+  }
+  function ghostCell(cx,cy,label,color){
+    return `<g class="clickable label" data-tip="cut">
+      <ellipse cx="${cx}" cy="${cy}" rx="52" ry="21" fill="${color}"
+        fill-opacity=".1" stroke="${color}" stroke-dasharray="6 5" stroke-opacity=".8"/>
+      <text x="${cx}" y="${cy+4}" text-anchor="middle" fill="${color}"
+        font-size="11.5">${label}</text></g>`;
+  }
+
+  if(!S.landSeaOn){
+    [30,-30,60,-60].forEach(function(lat){
+      const y=latY(lat,100,540);
+      const col=Math.abs(lat)===30?C.sh:C.sl;
+      s+=`<rect x="100" y="${y-13}" width="800" height="26" rx="13"
+        fill="${col}" fill-opacity=".2" stroke="${col}" stroke-opacity=".55" class="label"/>`;
+    });
+    s+=tx(500,255,"副热带高压带","t small")+tx(500,325,"赤道低压带","t small");
+    s+=tx(500,185,"副极地低压带","t small");
+    s+=tag(500,585,"假设地表均匀：气压带呈带状",C.sh,"cut",250);
+  }else if(summer){
+    const y30=latY(30,100,540);
+    s+=`<g class="label">
+      <rect x="100" y="${y30-14}" width="800" height="28" rx="14"
+        fill="${C.sh}" fill-opacity=".1" stroke="${C.sh}" stroke-dasharray="8 8" stroke-opacity=".5"/>
+      <text x="230" y="${y30-20}" fill="${C.sh}" font-size="11">原副热带高压带（被切断）</text>
+    </g>`;
+    s+=blob(700,latY(32,100,540),78,36,C.up,"大陆热低压","切断副高");
+    s+=blob(255,latY(33,100,540),62,32,C.up,"大陆热低压","切断副高");
+    s+=ghostCell(140,latY(28,100,540),"夏威夷高压",C.sh);
+    s+=ghostCell(442,latY(31,100,540),"亚速尔高压",C.sh);
+    s+=`<rect x="100" y="${latY(-30,100,540)-10}" width="800" height="20" rx="10"
+      fill="${C.sh}" fill-opacity=".12" stroke="${C.sh}" stroke-dasharray="5 7" class="label"/>`;
+    s+=tx(500,latY(-38,100,540),"南半球海洋占优，气压带仍基本呈带状","t small");
+    s+=tag(500,585,"夏季：大陆热低压切断副热带高压带，海洋上保留高压残影",C.up,"cut",420);
+  }else{
+    const y60=latY(60,100,540);
+    s+=`<g class="label">
+      <rect x="100" y="${y60-14}" width="800" height="28" rx="14"
+        fill="${C.sl}" fill-opacity=".1" stroke="${C.sl}" stroke-dasharray="8 8" stroke-opacity=".5"/>
+      <text x="230" y="${y60-20}" fill="${C.sl}" font-size="11">原副极地低压带（被切断）</text>
+    </g>`;
+    s+=blob(700,latY(55,100,540),78,34,C.ph,"大陆冷高压","切断副极地低压");
+    s+=blob(255,latY(55,100,540),62,30,C.ph,"大陆冷高压","切断副极地低压");
+    s+=ghostCell(140,latY(58,100,540),"阿留申低压",C.sl);
+    s+=ghostCell(442,latY(60,100,540),"冰岛低压",C.sl);
+    s+=`<rect x="100" y="${latY(-30,100,540)-10}" width="800" height="20" rx="10"
+      fill="${C.sh}" fill-opacity=".12" stroke="${C.sh}" stroke-dasharray="5 7" class="label"/>`;
+    s+=tx(500,latY(-38,100,540),"南半球海洋占优，气压带仍基本呈带状","t small");
+    s+=tag(500,585,"冬季：大陆冷高压切断副极地低压带，海洋上保留低压残影",C.dn,"cut",420);
+  }
+  return s;
+}
+
+/* ================= 11. 模块七：季风环流 ================= */
+function rMonsoon(){
+  const summer=isSummer();
+  let s=base()+head("季风环流",
+    summer?"夏季：东亚东南季风 · 南亚西南季风":"冬季：东亚西北季风 · 南亚东北季风");
+
+  s+=`<rect x="70" y="100" width="860" height="460" rx="16" fill="#0b2237" stroke="#22405a"/>`;
+  s+=`<path d="M430,120 L900,115 L900,210 L850,240 L800,270 L740,270
+      L700,250 L660,240 L620,250 L575,240 L520,225 L470,200 Z"
+      fill="#223a2b" stroke="#3d5c43"/>`;
+  s+=`<path d="M560,255 L625,260 L610,335 L568,315 Z" fill="#223a2b" stroke="#3d5c43"/>`;
+  s+=`<path d="M505,260 L555,265 L545,315 L510,305 Z" fill="#223a2b" stroke="#3d5c43"/>`;
+  s+=`<path d="M70,330 L230,320 L290,420 L250,545 L70,545 Z" fill="#223a2b" stroke="#3d5c43"/>`;
+  s+=`<path d="M590,235 L690,240 L705,265 L600,265 Z" fill="#33452f" stroke="#4d6540"/>`;
+  s+=tx(720,190,"亚欧大陆","t small")+tx(592,300,"印度半岛","t small");
+  s+=tx(528,290,"阿拉伯半岛","t small")+tx(170,430,"非洲","t small");
+  s+=tx(852,400,"太平洋","t small")+tx(430,470,"印度洋","t small");
+
+  if(summer){
+    s+=`<path d="M300,520 C350,470 380,420 430,380 C475,345 520,325 570,315"
+        fill="none" stroke="${C.wd}" stroke-width="4" marker-end="url(#mWind)"/>
+        <path d="M850,420 C815,385 780,345 745,305"
+        fill="none" stroke="${C.wd}" stroke-width="4" marker-end="url(#mWind)"/>`;
+    s+=`<circle cx="592" cy="320" r="11" fill="${C.up}" opacity=".3" class="pulse"/>
+        <circle cx="592" cy="320" r="11" fill="${C.up}" opacity=".22"
+        class="pulse" style="animation-delay:.8s"/>
+        <text x="592" y="324" text-anchor="middle" fill="#ffd0c8" font-size="10.5"
+        font-weight="700">低压</text>`;
+    s+=tag(380,440,"西南季风",C.wd,"cross",110);
+    s+=tag(800,385,"东南季风",C.wd,"cross",110);
+    s+=tag(700,325,"印度低压（热低压）",C.up,"cross",170);
+    s+=tag(420,568,"南半球东南信风越赤道 → 右偏成西南风",C.sh,"cross",330);
+    addStream("M300,520 C350,470 380,420 430,380 C475,345 520,325 570,315",
+      {n:8,k:.14,color:C.wd,r:3});
+    addStream("M850,420 C815,385 780,345 745,305",
+      {n:6,k:.14,color:C.wd,r:3});
+  }else{
+    s+=`<path d="M690,175 C725,215 760,260 790,310"
+        fill="none" stroke="${C.wd}" stroke-width="4" marker-end="url(#mWind)"/>
+        <path d="M640,230 C615,275 590,315 575,350"
+        fill="none" stroke="${C.wd}" stroke-width="4" marker-end="url(#mWind)"/>`;
+    s+=`<circle cx="720" cy="190" r="11" fill="${C.ph}" opacity=".35" class="pulse"/>
+        <circle cx="720" cy="190" r="11" fill="${C.ph}" opacity=".25"
+        class="pulse" style="animation-delay:.8s"/>
+        <text x="720" y="194" text-anchor="middle" fill="#cfe0ff" font-size="10.5"
+        font-weight="700">高压</text>`;
+    s+=tag(745,240,"西北季风",C.wd,"cut",110);
+    s+=tag(655,300,"东北季风",C.wd,"cut",110);
+    s+=tag(770,160,"亚洲高压（冷高压）",C.ph,"cut",170);
+    s+=tag(430,568,"东亚季风以海陆热力差异为主；南亚冬季受东北季风控制",C.sh,"cut",390);
+    addStream("M690,175 C725,215 760,260 790,310",
+      {n:7,k:.14,color:C.wd,r:3});
+    addStream("M640,230 C615,275 590,315 575,350",
+      {n:6,k:.14,color:C.wd,r:3});
+  }
+
+  if(S.plateauOn){
+    s+=`<path d="M590,235 L690,240 L705,265 L600,265 Z" fill="${summer?C.up:C.ph}"
+        fill-opacity=".28" stroke="${summer?C.up:C.ph}" stroke-width="2"/>`;
+    s+=`<circle cx="648" cy="252" r="9" fill="${summer?C.up:C.ph}" opacity=".35"
+        class="pulse"/>`;
+    if(summer){
+      s+=`<line x1="648" y1="252" x2="648" y2="215" stroke="${C.up}"
+        stroke-width="4" marker-end="url(#mRed)"/>`;
+      s+=tag(760,300,"高原热低压 → 高原季风叠加",C.up,"plateau",220);
+    }else{
+      s+=`<line x1="648" y1="215" x2="648" y2="252" stroke="${C.dn}"
+        stroke-width="4" marker-end="url(#mBlue)"/>`;
+      s+=tag(760,300,"高原冷高压 → 增强冬季风",C.dn,"plateau",220);
+    }
+    s+=tag(648,590,"青藏高原与同高度自由大气热力差异 → 高原季风，叠加使亚洲季风更盛",C.sh,"plateau",450);
+  }
+  return s;
+}
+
+/* ================= 12. 模块八：气候落地 ================= */
+function rClimate(){
+  let s=base()+head("气候落地 · 环流控制与气候类型",
+    "终年赤道低压→热带雨林；赤道低压与信风交替→热带草原；副高/信风→热带沙漠");
+  s+=`<rect x="100" y="100" width="800" height="440" rx="16" fill="url(#ocean)" stroke="#22405a"/>`;
+
+  s+=`<g>
+    <path d="M180,180 L310,170 L330,235 L300,300 L250,325 L205,290 L180,235 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+    <path d="M300,345 L360,340 L375,430 L340,500 L300,490 L285,410 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+    <path d="M470,175 L560,165 L590,205 L560,240 L500,250 L470,225 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+    <path d="M490,255 L580,250 L600,320 L560,400 L520,430 L490,380 L475,310 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+    <path d="M590,165 L850,160 L870,215 L830,255 L760,275 L690,260 L630,235 L600,210 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+    <path d="M760,420 L850,415 L870,460 L815,485 L765,470 Z"
+      fill="#1b3144" stroke="#2d4d66"/>
+  </g>`;
+  s+=`<line x1="100" y1="${latY(0,120,520)}" x2="900" y2="${latY(0,120,520)}"
+      stroke="#3f6b8c" stroke-dasharray="6 8" opacity=".6"/>`;
+  s+=tx(500,latY(0,120,520)-6,"赤道","t small");
+
+  if(S.climateLayerOn){
+    s+=`<g id="zones" class="label">
+      <ellipse cx="325" cy="390" rx="72" ry="54" fill="#b7c95a" fill-opacity=".22"/>
+      <ellipse cx="535" cy="345" rx="66" ry="48" fill="#b7c95a" fill-opacity=".22"/>
+      <ellipse cx="790" cy="350" rx="70" ry="40" fill="#b7c95a" fill-opacity=".22"/>
+
+      <ellipse cx="325" cy="390" rx="43" ry="32" fill="#3fbf7f" fill-opacity=".5"/>
+      <ellipse cx="535" cy="345" rx="40" ry="30" fill="#3fbf7f" fill-opacity=".5"/>
+      <ellipse cx="790" cy="350" rx="46" ry="26" fill="#3fbf7f" fill-opacity=".5"/>
+
+      <ellipse cx="535" cy="285" rx="66" ry="28" fill="#e0b968" fill-opacity=".55"/>
+      <ellipse cx="617" cy="297" rx="34" ry="22" fill="#e0b968" fill-opacity=".55"/>
+      <ellipse cx="808" cy="448" rx="52" ry="22" fill="#e0b968" fill-opacity=".55"/>
+
+      <ellipse cx="525" cy="235" rx="48" ry="14" fill="#c98bd8" fill-opacity=".55"/>
+      <ellipse cx="196" cy="254" rx="20" ry="12" fill="#c98bd8" fill-opacity=".55"/>
+      <ellipse cx="311" cy="452" rx="13" ry="26" fill="#c98bd8" fill-opacity=".55"/>
+
+      <ellipse cx="500" cy="192" rx="28" ry="14" fill="#62c9c9" fill-opacity=".5"/>
+      <ellipse cx="185" cy="207" rx="22" ry="13" fill="#62c9c9" fill-opacity=".5"/>
+    </g>`;
+    s+=zoneLabel(325,394,"热带雨林","#7ef0b4");
+    s+=zoneLabel(300,462,"热带草原","#d5e58a");
+    s+=zoneLabel(535,289,"热带沙漠","#ffe0a0");
+    s+=zoneLabel(525,239,"地中海气候","#e8b6f5");
+    s+=zoneLabel(500,196,"温带海洋性气候","#9df0f0");
+    s+=zoneLabel(402,372,"东岸：信风迎风坡 → 热带雨林","#7ef0b4",11);
+    s+=zoneLabel(470,318,"西岸/内陆：信风控制 → 干燥","#ffe0a0",11);
+  }
+
+  // 信风示意箭头
+  s+=`<path d="M780,238 C690,228 600,248 520,238 C440,228 350,248 270,238"
+      fill="none" stroke="${C.wd}" stroke-width="2.6" opacity=".8" marker-end="url(#mWind)"/>
+      <path d="M780,400 C690,390 600,410 520,400 C440,390 350,410 270,400"
+      fill="none" stroke="${C.wd}" stroke-width="2.6" opacity=".8" marker-end="url(#mWind)"/>`;
+  s+=tx(690,222,"东北信风","windlab");
+  s+=tx(690,384,"东南信风","windlab");
+
+  s+=tag(690,335,"东岸：信风迎风坡可成热带雨林",C.wd,"trade",250);
+  s+=tag(430,300,"西岸/内部：多干燥",C.sh,"trade",180);
+  s+=tag(500,585,"信风并非一定干燥：大陆东岸迎风坡受地形抬升可形成热带雨林气候",C.sh,"trade",440);
+  return s;
+}
+
+/* ===== 第 4 段继续：知识卡、弹窗、事件、初始化与收尾 ===== */
+/* ================= 13. 知识卡内容 ================= */
+const CHIP_LABEL={
+  thermal:"气压性质",subhigh:"副高成因",season:"季节移动幅度",cut:"切断对象",
+  trade:"信风性质",ferrel:"费雷尔环流",polarfront:"极锋机制",
+  cross:"越赤道右偏",plateau:"青藏高原",
+  eqlow:"赤道低压",sublow:"副极地低压",polarhigh:"极地高压"
+};
+
+const KNOWLEDGE={
+  thermal:function(){
+    return {
+      title:"热力环流 · 母版",
+      sub:"地方性环流的共同原理",
+      pattern:"地面冷热不均 → 空气垂直运动（热上升、冷下沉）→ 同一水平面产生气压差 → 空气由高压流向低压，形成风。近地面与高空的气压性质相反。",
+      result:"当前示例：<b>"+TM[S.thermalMode].name+"</b>。"+TM[S.thermalMode].result,
+      tips:["thermal","subhigh","season"]
+    };
+  },
+  single:function(){
+    return {
+      title:"单圈环流",
+      sub:"假设：地球不自转、太阳直射赤道、地表均匀",
+      pattern:S.coriolisOn
+        ?"地转偏向力开启后，赤道高空气流向极地运动时不断偏转，在 30°附近偏成西风并堆积下沉，单圈环流无法维持，碎裂重组为三圈环流。"
+        :"赤道受热上升、极地冷却下沉：高空由赤道流向极地，近地面由极地流回赤道，形成闭合的单圈经向环流。",
+      result:S.coriolisOn
+        ?"30°附近出现动力下沉，副热带高压带形成；低纬哈得来环流、中纬费雷尔环流、高纬极地环流建立。"
+        :"这是理想化模型；现实中地球自转，单圈环流不能成立。",
+      tips:["subhigh","ferrel","season"]
+    };
+  },
+  three:function(){
+    return {
+      title:"三圈环流",
+      sub:"低纬·中纬·高纬三个经向环流圈",
+      pattern:"低纬哈得来环流：赤道上升、30°下沉；中纬费雷尔环流：30°下沉、60°上升；高纬极地环流：极地下沉、60°上升。费雷尔环流是间接环流（逆环流），依赖低纬和高纬环流机械驱动。",
+      result:"副热带高压带为动力型：30°附近高空堆积下沉形成，不是冷却下沉。60°附近暖西风与冷极地东风相遇形成极锋，是温带气旋和锋面雨带的重要机制。",
+      tips:["subhigh","ferrel","polarfront"]
+    };
+  },
+  belts:function(){
+    return {
+      title:"七压六风",
+      sub:"七个气压带、六个风带",
+      pattern:"赤道低压带（热力型）、副热带高压带（动力型）、副极地低压带（动力型）、极地高压带（热力型）；其间分布信风带、盛行西风带、极地东风带。北半球风向右偏：东北信风、西南西风、东北极地东风。",
+      result:"气压带与风带相间分布，是理解气候类型分布的基础框架。",
+      tips:["subhigh","eqlow","sublow","polarhigh"]
+    };
+  },
+  season:function(){
+    return {
+      title:"气压带风带的季节移动",
+      sub:"随太阳直射点移动，但不同步、不同幅",
+      pattern:"当前 "+S.season.toFixed(1)+" 月：太阳直射点约 "+fmtLat(declOf(S.season))+"，气压带整体偏移约 "
+        +(beltShift(S.season)>=0?"+":"")+beltShift(S.season).toFixed(1)+"°。移动幅度约 5—10 个纬度，滞后太阳直射点约一个月。",
+      result:"气压带风带南北移动，导致同一地区不同季节受不同环流控制，形成季风与气候的季节变化。",
+      tips:["season","cut","trade"]
+    };
+  },
+  landsea:function(){
+    const summer=isSummer();
+    return {
+      title:"海陆修正 · 带状变块状",
+      sub:summer?"7 月（夏季）":"1 月（冬季）",
+      pattern:summer
+        ?"夏季大陆升温快，形成热低压，切断副热带高压带；海洋上保留夏威夷高压、亚速尔高压等高压中心。"
+        :"冬季大陆降温快，形成冷高压，切断副极地低压带；海洋上保留阿留申低压、冰岛低压等低压中心。",
+      result:"南半球海洋占优，气压带仍基本呈带状；北半球海陆相间，气压带被切断成块状。",
+      tips:["cut","subhigh","trade"]
+    };
+  },
+  monsoon:function(){
+    const summer=isSummer();
+    return {
+      title:"季风环流",
+      sub:summer?"夏季风":"冬季风",
+      pattern:summer
+        ?"东亚：海陆热力差异主导，盛行东南季风；南亚：南半球东南信风随气压带北移越过赤道，受北半球地转偏向力右偏成西南季风。"
+        :"东亚：亚洲高压与太平洋之间形成西北季风；南亚：受亚洲高压影响盛行东北季风。",
+      result:S.plateauOn
+        ?"青藏高原夏季为热低压、冬季为冷高压，高原季风与东亚、南亚季风叠加，使亚洲季风更加强盛；地形阻挡也有动力影响。"
+        :"亚洲季风以海陆热力差异为基础，南亚夏季风还依赖气压带风带的季节移动。",
+      tips:["cross","plateau","cut"]
+    };
+  },
+  climate:function(){
+    return {
+      title:"气候落地",
+      sub:"环流控制 → 气候类型",
+      pattern:"终年赤道低压→热带雨林；赤道低压与信风交替→热带草原；副高或信风控制→热带沙漠；副高与西风交替→地中海气候；终年西风→温带海洋性气候。",
+      result:"信风并非一律干燥：大陆东岸信风迎风坡受地形抬升可形成热带雨林气候；大陆西岸和内部信风控制多干燥。",
+      tips:["trade","subhigh","season"]
+    };
+  }
+};
+
+/* ================= 14. 易错点弹窗 ================= */
+const TIPS={
+  thermal:{t:"近地面与高空气压性质相反",
+    b:"<p>近地面受热处空气上升，形成低气压；同一地点高空空气堆积，形成高气压。冷却处相反。</p><p class='warn'>易错：不要把高低空的气压性质画成相同；风总是由高压流向低压。</p>"},
+  subhigh:{t:"副高成因：动力型，不是冷却下沉",
+    b:"<p>赤道高空气流向极地运动，受地转偏向力影响不断偏转，到 30°附近已偏成西风，空气无法继续北流而堆积、下沉，形成副热带高压带。</p><p class='warn'>易错：副高不是“冷却下沉”。赤道低压带、极地高压带才是热力型；副热带高压带、副极地低压带是动力型。</p>"},
+  season:{t:"季节移动幅度：约 5—10 个纬度",
+    b:"<p>气压带风带随太阳直射点南北移动，但移动幅度只有约 5—10 个纬度，并不是 23.5°；而且气压带位置滞后太阳直射点约一个月。</p><p class='warn'>易错：不要认为气压带跟着直射点同步、同幅移动。</p>"},
+  cut:{t:"海陆切断对象不能混淆",
+    b:"<p>夏季：大陆热低压切断<b>副热带高压带</b>；冬季：大陆冷高压切断<b>副极地低压带</b>。</p><p>被切断的气压带在海洋上空以残影保留，如夏威夷高压、亚速尔高压、阿留申低压、冰岛低压。</p><p class='warn'>易错：南半球海洋占优，气压带仍基本呈带状。</p>"},
+  trade:{t:"信风并非一律干燥",
+    b:"<p>大陆东岸信风迎风坡受地形抬升，多地形雨，可形成热带雨林气候；大陆西岸和内部受信风控制或处于背风侧，多干燥。</p><p class='warn'>易错：不能把“信风控制”直接等同于“干旱”。</p>"},
+  ferrel:{t:"费雷尔环流是间接环流",
+    b:"<p>中纬环流在 30°下沉、60°上升，与直接热力环流方向相反，属于间接环流（逆环流）。</p><p>它依赖低纬哈得来环流和高纬极地环流的机械驱动，不是单纯热力直接驱动。</p>"},
+  polarfront:{t:"极锋：60°附近的锋面",
+    b:"<p>60°附近，暖而轻的盛行西风沿冷而重的极地气流爬升，形成极锋。</p><p>极锋是温带气旋和锋面雨带的重要机制，也是中纬地区降水丰富的重要原因。</p><svg class='tip-svg' viewBox='0 0 420 150'><rect width='420' height='150' fill='#08131f'/><path d='M25,120 L395,120' stroke='#39536b'/><path d='M25,35 L395,35' stroke='#39536b' stroke-dasharray='4 6'/><path d='M60,118 C120,95 170,62 235,50 C300,40 345,70 385,105' fill='none' stroke='#ff9a8a' stroke-width='5' opacity='.85'/><path d='M60,118 C90,80 130,55 175,45' fill='none' stroke='#8fc0ff' stroke-width='3' opacity='.8'/><text x='95' y='92' fill='#ff9a8a' font-size='12'>暖西风</text><text x='95' y='132' fill='#8fc0ff' font-size='12'>冷极地空气</text><text x='300' y='90' fill='#ffd873' font-size='12'>抬升 → 云雨</text></svg><p class='warn'>易错：极锋不是“冷空气下沉形成的锋”，而是暖空气被迫抬升。</p>"},
+  cross:{t:"南亚夏季西南风的路径",
+    b:"<p>南半球东南信风随气压带北移越过赤道，进入北半球后受地转偏向力向右偏转，转为西南季风，影响南亚。</p><p class='warn'>易错：西南季风不是北半球本地信风，而是南半球东南信风越赤道右偏形成。</p>"},
+  plateau:{t:"青藏高原的叠加作用",
+    b:"<p>高原面与周围同高度自由大气存在热力差异：夏季高原面形成热低压，冬季形成冷高压，形成高原季风。</p><p>高原季风与东亚、南亚季风叠加，使亚洲季风更加强盛；高原地形阻挡也有动力影响。</p>"},
+  eqlow:{t:"赤道低压带：热力型",
+    b:"<p>赤道地区终年受太阳直射或近直射，气温高，空气受热上升，近地面形成低压带。</p><p>它属于热力型气压带，与副热带高压带的动力成因不同。</p>"},
+  sublow:{t:"副极地低压带：动力型",
+    b:"<p>60°附近，来自低纬的暖西风与来自极地的冷空气相遇，暖空气被迫抬升，近地面形成低压带。</p><p>它属于动力型气压带，与极锋和温带气旋活动密切相关。</p>"},
+  polarhigh:{t:"极地高压带：热力型",
+    b:"<p>极地终年寒冷，空气冷却收缩下沉，近地面形成高压带。</p><p>它属于热力型气压带，与赤道低压带同属热力成因。</p>"}
+};
+
+/* ================= 15. 渲染调度 ================= */
+function buildNav(){
+  const nav=document.getElementById("moduleNav");
+  nav.innerHTML=MODULES.map(function(m){
+    return `<button class="mbtn" data-module="${m.id}">
+      <span class="no">${m.n}</span>
+      <span><span class="nm">${m.name}</span><span class="ds">${m.desc}</span></span>
+    </button>`;
+  }).join("");
+}
+
+function render(){
+  pending=[];
+  let svg="";
+
+  switch(S.currentModule){
+    case "thermal": svg=rThermal(); break;
+    case "single":  svg=rSingle(); break;
+    case "three":   svg=rThree(); break;
+    case "belts":   svg=rBelts(); break;
+    case "season":  svg=rSeason(); break;
+    case "landsea": svg=rLandSea(); break;
+    case "monsoon": svg=rMonsoon(); break;
+    case "climate": svg=rClimate(); break;
+    default: svg=rThermal();
+  }
+
+  stage.innerHTML=svg+
+    '<g id="particleLayer"></g><g id="pathCache" style="visibility:hidden"></g>';
+
+  stage.classList.toggle("hide-labels",!S.showLabels);
+  stage.classList.toggle("paused",S.paused);
+  stage.classList.toggle("focus30",S.focus30);
+
+  finalizeStreams();
+  updateFooter();
+  syncControls();
+  updateKnowledge();
+  renderModuleControls();
+}
+
+let renderQueued=false;
+function scheduleRender(){
+  if(renderQueued)return;
+  renderQueued=true;
+  requestAnimationFrame(function(){
+    renderQueued=false;
+    render();
+  });
+}
+
+function updateFooter(){
+  const m=S.season;
+  document.getElementById("monthVal").textContent=m.toFixed(1)+" 月";
+  document.getElementById("declVal").textContent=fmtLat(declOf(m));
+  const sh=beltShift(m);
+  document.getElementById("shiftVal").textContent=(sh>=0?"+":"")+sh.toFixed(1)+"°";
+  document.getElementById("month").value=m;
+}
+
+function updateKnowledge(){
+  const mod=MODULES.filter(function(x){return x.id===S.currentModule;})[0];
+  const info=KNOWLEDGE[S.currentModule]();
+  const chips=info.tips.map(function(k){
+    return `<button class="chip" data-tip="${k}">${CHIP_LABEL[k]||k}</button>`;
+  }).join("");
+
+  document.getElementById("know").innerHTML=`
+    <div class="khead">
+      <span class="kno">${mod.n}</span>
+      <div><h2>${info.title}</h2><p class="ksub">${info.sub}</p></div>
+    </div>
+    <div class="kb"><h3>当前环流控制格局</h3><p>${info.pattern}</p></div>
+    <div class="kb"><h3>气候 / 结果</h3><p>${info.result}</p></div>
+    <div class="kstatus">${S.season.toFixed(1)} 月 · 地转偏向力 ${S.coriolisOn?"开":"关"} ·
+      海陆 ${S.landSeaOn?"开":"关"} · 高原 ${S.plateauOn?"开":"关"} ·
+      信风层 ${S.climateLayerOn?"开":"关"}</div>
+    <div class="kb"><h3>易错提醒 · 点击查看</h3><div class="chips">${chips}</div></div>`;
+}
+
+function renderModuleControls(){
+  const box=document.getElementById("moduleControls");
+  let h="";
+
+  switch(S.currentModule){
+    case "thermal":
+      h='<div class="grid2">'+Object.keys(TM).map(function(k){
+        return `<button class="btn sm ${S.thermalMode===k?"active":""}" data-thermal="${k}">${TM[k].btn}</button>`;
+      }).join("")+'</div><p class="hint">'+TM[S.thermalMode].hint+'</p>';
+      break;
+    case "single":
+      h=`<button class="btn wide ${S.coriolisOn?"active":""}" data-toggle="coriolisOn">地转偏向力：${S.coriolisOn?"开":"关"}</button>
+        <p class="hint">${S.coriolisOn?"观察单圈环流在 30°附近碎裂、重组为三圈环流。":"关闭时气流“直来直去”，形成单圈环流。"}</p>`;
+      break;
+    case "three":
+      h=`<button class="btn wide ${S.focus30?"active":""}" data-action="focus30">30°堆积下沉 · 慢放高亮</button>
+        <button class="btn wide" data-action="polarfront">极锋界面 · 展开说明</button>`;
+      break;
+    case "season":
+      h='<p class="hint">拖动底部时间轴，观察气压带风带整体南北移动，以及太阳直射点参考线与气压带实际位置线的错位。</p>';
+      break;
+    case "landsea":
+    case "monsoon":
+      h=`<div class="grid2">
+        <button class="btn sm ${isSummer()?"active":""}" data-month="7">7 月（夏）</button>
+        <button class="btn sm ${!isSummer()?"active":""}" data-month="1">1 月（冬）</button></div>`;
+      if(S.currentModule==="monsoon"){
+        h+=`<button class="btn wide ${S.plateauOn?"active":""}" data-toggle="plateauOn">青藏高原热力叠加：${S.plateauOn?"开":"关"}</button>`;
+      }
+      break;
+    case "climate":
+      h=`<button class="btn wide ${S.climateLayerOn?"active":""}" data-toggle="climateLayerOn">气候带示意层：${S.climateLayerOn?"显示":"隐藏"}</button>`;
+      break;
+    default:
+      h='<p class="hint">切换模块查看不同阶段。</p>';
+  }
+  box.innerHTML=h;
+}
+
+function syncControls(){
+  document.querySelectorAll(".mbtn").forEach(function(b){
+    b.classList.toggle("active",b.dataset.module===S.currentModule);
+  });
+  document.querySelectorAll(".switch[data-toggle]").forEach(function(b){
+    b.classList.toggle("on",!!S[b.dataset.toggle]);
+  });
+  document.getElementById("btnPause").textContent=S.paused?"继续":"暂停";
+  document.getElementById("btnPauseTop").textContent=S.paused?"继续":"暂停";
+  document.getElementById("btnSlow").textContent="慢放 "+S.speed+"x";
+  const lb=document.getElementById("btnLabels");
+  lb.textContent="标注 "+(S.showLabels?"开":"关");
+  lb.classList.toggle("active",S.showLabels);
+}
+
+/* ================= 16. 弹窗与交互 ================= */
+function openTip(key){
+  const t=TIPS[key];
+  if(!t)return;
+  document.getElementById("modalTitle").textContent=t.t;
+  document.getElementById("modalBody").innerHTML=t.b;
+  document.getElementById("modal").classList.add("open");
+}
+function closeTip(){
+  document.getElementById("modal").classList.remove("open");
+}
+
+function handleAction(action){
+  if(action==="polarfront"){
+    openTip("polarfront");
+  }else if(action==="focus30"){
+    S.focus30=!S.focus30;
+    if(S.focus30){S.speed=0.5;S.paused=false;}
+    render();
+  }
+}
+
+document.addEventListener("click",function(e){
+  const tipEl=e.target.closest?e.target.closest("[data-tip]"):null;
+  if(tipEl){openTip(tipEl.dataset.tip);return;}
+
+  const actEl=e.target.closest?e.target.closest("[data-action]"):null;
+  if(actEl){handleAction(actEl.dataset.action);return;}
+
+  const togEl=e.target.closest?e.target.closest("[data-toggle]"):null;
+  if(togEl){
+    const k=togEl.dataset.toggle;
+    S[k]=!S[k];
+    render();
+    return;
+  }
+
+  const thEl=e.target.closest?e.target.closest("[data-thermal]"):null;
+  if(thEl){S.thermalMode=thEl.dataset.thermal;render();return;}
+
+  const moEl=e.target.closest?e.target.closest("[data-month]"):null;
+  if(moEl){S.season=parseFloat(moEl.dataset.month);render();return;}
+
+  const navEl=e.target.closest?e.target.closest("[data-module]"):null;
+  if(navEl){
+    S.currentModule=navEl.dataset.module;
+    S.focus30=false;
+    render();
+    closeDrawer();
+  }
+});
+
+function closeDrawer(){
+  document.getElementById("leftPanel").classList.remove("open");
+  document.getElementById("backdrop").style.display="none";
+}
+
+document.getElementById("btnDrawer").addEventListener("click",function(){
+  document.getElementById("leftPanel").classList.add("open");
+  document.getElementById("backdrop").style.display="block";
+});
+document.getElementById("btnCloseDrawer").addEventListener("click",closeDrawer);
+document.getElementById("backdrop").addEventListener("click",closeDrawer);
+
+document.getElementById("btnPause").addEventListener("click",function(){
+  S.paused=!S.paused;
+  stage.classList.toggle("paused",S.paused);
+  syncControls();
+});
+document.getElementById("btnPauseTop").addEventListener("click",function(){
+  S.paused=!S.paused;
+  stage.classList.toggle("paused",S.paused);
+  syncControls();
+});
+
+document.getElementById("btnReset").addEventListener("click",function(){
+  Object.assign(S,DEF);
+  stage.classList.remove("paused","focus30");
+  stage.classList.toggle("hide-labels",!S.showLabels);
+  render();
+});
+
+document.getElementById("btnSlow").addEventListener("click",function(){
+  const arr=[0.5,1,2];
+  const i=arr.indexOf(S.speed);
+  S.speed=arr[(i+1)%arr.length];
+  syncControls();
+});
+
+document.getElementById("btnLabels").addEventListener("click",function(){
+  S.showLabels=!S.showLabels;
+  stage.classList.toggle("hide-labels",!S.showLabels);
+  syncControls();
+});
+
+document.getElementById("month").addEventListener("input",function(e){
+  S.season=parseFloat(e.target.value);
+  updateFooter();
+  scheduleRender();
+});
+
+document.getElementById("modalClose").addEventListener("click",closeTip);
+document.getElementById("modal").addEventListener("click",function(e){
+  if(e.target===this)closeTip();
+});
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape")closeTip();
+});
+
+/* ================= 17. 动画循环与初始化 ================= */
+function animationLoop(now){
+  const dt=Math.min(60,now-lastT)/1000;
+  lastT=now;
+  if(!S.paused&&!document.hidden){
+    animTime+=dt*S.speed;
+  }
+  updateParticles();
+  requestAnimationFrame(animationLoop);
+}
+
+buildNav();
+render();
+requestAnimationFrame(animationLoop);
+
+})();
+</script>
+</body>
+</html>
