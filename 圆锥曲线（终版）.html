@@ -1,0 +1,4137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>高中圆、椭圆、双曲线、抛物线及圆锥曲线综合交互演示</title>
+<style>
+:root{
+  --bg:#f4f6fb; --panel:#ffffff; --ink:#0f172a; --muted:#64748b;
+  --line:#e3e8f0; --line-2:#cbd5e1;
+  --primary:#2f5bea; --primary-soft:#eef2ff; --primary-line:#c7d2fe;
+  --accent:#0ea5e9;
+  --danger:#dc2626; --danger-soft:#fef2f2;
+  --ok:#059669;
+  --r:12px; --r-sm:9px; --sp:12px;
+  --shadow:0 2px 12px rgba(15,23,42,.06);
+  --shadow-soft:0 1px 4px rgba(15,23,42,.05);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%}
+body{padding:10px 10px 36px;max-width:1600px;margin:0 auto}
+
+h1{font-size:18px;line-height:1.35;margin:2px 0 10px;text-align:center;font-weight:700;letter-spacing:.2px}
+h2{font-size:13px;margin:0 0 8px;color:var(--muted);font-weight:600;letter-spacing:.3px}
+
+/* ---------- 顶部标题与帮助 ---------- */
+.app-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.app-header h1{flex:1;margin:0;text-align:center}
+#btnHelp{flex:0 0 auto;min-width:40px;min-height:40px;border-radius:50%;
+  border:1px solid var(--line);background:#fff;color:var(--muted);font-size:15px;font-weight:700;
+  cursor:pointer;box-shadow:var(--shadow-soft)}
+#btnHelp:active{background:#eef2f7}
+
+/* ---------- 一级 / 二级按钮 ---------- */
+#modules,#submodes{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;padding:2px 1px 6px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#modules::-webkit-scrollbar,#submodes::-webkit-scrollbar{height:4px}
+#modules::-webkit-scrollbar-thumb,#submodes::-webkit-scrollbar-thumb{background:#dbe3ee;border-radius:2px}
+.btn{flex:0 0 auto;min-height:44px;padding:8px 12px;border:1px solid var(--line);background:#fff;
+  border-radius:var(--r-sm);font-size:15px;color:var(--ink);cursor:pointer;
+  touch-action:manipulation;display:inline-flex;align-items:center;justify-content:center;
+  white-space:nowrap;transition:background .15s,border-color .15s,color .15s}
+.btn:active{background:#eef2f7}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* 一级模块：更强的视觉权重 */
+.btn.module{font-size:15px;font-weight:600;background:#fff;color:#334155;border-color:var(--line)}
+.btn.module.sel{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(47,91,234,.25)}
+/* 二级子模式：次级、轻量 */
+.btn.sub{min-height:40px;font-size:13.5px;font-weight:500;background:#fff;color:#475569;border-color:var(--line)}
+.btn.sub.sel{background:var(--primary-soft);border-color:var(--primary-line);color:var(--primary);font-weight:600}
+
+/* ---------- 页面布局：手机单列，桌面两栏 ---------- */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:8px}
+.stage{min-width:0;display:flex;flex-direction:column;gap:10px}
+.side{min-width:0;display:flex;flex-direction:column;gap:10px}
+
+.card-box{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:12px;box-shadow:var(--shadow-soft)}
+
+/* ---------- 画布与错误提示 ---------- */
+.canvas-wrap{position:relative;background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--r);padding:8px;box-shadow:var(--shadow)}
+canvas{display:block;width:100%;height:clamp(260px,45vh,420px);background:#fff;
+  border-radius:var(--r-sm);touch-action:none;-webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none}
+#errBox{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  max-width:84%;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.94);
+  border:1px solid #fca5a5;color:#b91c1c;font-size:13px;line-height:1.5;text-align:center;
+  display:none;pointer-events:none;box-shadow:0 6px 20px rgba(15,23,42,.10);z-index:3}
+
+/* ---------- 工具栏 ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.toolbar .btn{min-height:40px;font-size:13.5px;padding:6px 11px;background:#fff;color:#334155}
+.toolbar .btn.strong{background:var(--primary);color:#fff;border-color:var(--primary)}
+.toolbar .btn.strong:active{background:#224bd0}
+
+/* ---------- 参数行 ---------- */
+.prow{display:flex;align-items:center;gap:6px;min-height:46px;flex-wrap:wrap;padding:2px 0}
+.prow .plab{flex:0 0 64px;font-size:12px;color:var(--muted);line-height:1.2}
+.prow input[type=range]{flex:1 1 96px;min-width:56px;height:34px;accent-color:var(--primary)}
+.prow .pnum{flex:0 0 68px;height:36px;font-size:13px;text-align:right;
+  border:1px solid var(--line-2);border-radius:8px;padding:0 6px;background:#fff;color:var(--ink);
+  font-variant-numeric:tabular-nums;transition:border-color .15s,box-shadow .15s}
+.prow .pnum:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.prow.err .pnum{border-color:var(--danger);background:var(--danger-soft);box-shadow:0 0 0 3px #fee2e2}
+.prow .pstep{flex:0 0 30px;height:34px;padding:0;font-size:16px;line-height:1;border-radius:8px;
+  border:1px solid var(--line);background:#fff;color:#475569;cursor:pointer;touch-action:manipulation}
+.prow .pstep:active{background:#eef2f7}
+.prow .pstep:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.prow .perr{flex:1 1 100%;font-size:11.5px;color:var(--danger);display:none;padding-left:2px;line-height:1.4}
+.prow.err .perr{display:block}
+
+/* ---------- 选项按钮组 ---------- */
+.choice-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:4px 0;min-height:42px}
+.choice-row .plab{flex:0 0 64px;font-size:12px;color:var(--muted)}
+.choice-row .btn{min-height:38px;font-size:13px;padding:6px 10px;background:#fff;color:#475569}
+.choice-row .btn.sel{background:var(--primary-soft);border-color:var(--primary-line);color:var(--primary);font-weight:600}
+
+/* ---------- 开关 ---------- */
+.toggle-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tgl{display:inline-flex;align-items:center;gap:6px;min-height:40px;font-size:12.5px;background:#fff;
+  border:1px solid var(--line);border-radius:9px;padding:5px 10px;cursor:pointer;
+  color:#475569;touch-action:manipulation}
+.tgl input{width:17px;height:17px;accent-color:var(--primary);margin:0}
+.tgl:focus-within{outline:2px solid var(--accent);outline-offset:1px}
+
+/* ---------- 数值面板 ---------- */
+#panel{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.vchip{background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:5px 7px;min-width:0}
+.vchip .l{color:var(--muted);display:block;font-size:11px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vchip b{font-weight:600;font-variant-numeric:tabular-nums;word-break:break-all;font-size:12.5px}
+
+/* ---------- 知识卡片 ---------- */
+details.card{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  overflow:hidden;box-shadow:var(--shadow-soft)}
+details.card summary{padding:11px 12px;font-weight:600;cursor:pointer;background:#f8fafc;
+  list-style:none;font-size:13.5px;color:#334155}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary::before{content:"▸ ";color:var(--primary);font-weight:700}
+details.card[open] summary::before{content:"▾ "}
+details.card .body{padding:12px;font-size:13px;color:#334155;border-top:1px solid var(--line);line-height:1.65}
+details.card .body table{border-collapse:collapse;width:100%;font-size:12px}
+details.card .body td,details.card .body th{border:1px solid var(--line);padding:4px 6px;text-align:center}
+details.card .body b{color:var(--primary)}
+
+/* ---------- 参数导入导出 ---------- */
+details.io{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-soft)}
+details.io summary{padding:10px 12px;font-size:12.5px;font-weight:600;cursor:pointer;list-style:none;background:#f8fafc;color:#475569}
+details.io summary::-webkit-details-marker{display:none}
+details.io .body{padding:10px 12px;border-top:1px solid var(--line)}
+details.io textarea{width:100%;min-height:60px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;
+  border:1px solid var(--line-2);border-radius:8px;padding:6px;margin-top:6px;resize:vertical;background:#fff;color:var(--ink)}
+details.io textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+details.io .msg{font-size:12px;color:var(--danger);margin-top:4px;min-height:16px}
+details.io .btn{min-height:38px;font-size:12.5px}
+
+/* ---------- 图例 ---------- */
+#legend{display:flex;flex-wrap:wrap;gap:6px}
+#legend .li{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:#fff;
+  border:1px solid var(--line);border-radius:8px;padding:4px 8px;color:#475569}
+#legend .sw{width:11px;height:11px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.15)}
+#legend .ln{width:16px;height:0;border-top:2px solid;display:inline-block}
+
+/* ---------- 快捷键帮助 ---------- */
+.kbd{display:inline-block;min-width:20px;padding:1px 5px;border:1px solid var(--line-2);
+  border-bottom-width:2px;border-radius:5px;background:#f8fafc;font-size:11px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;color:#475569;margin-right:4px}
+.help-table{width:100%;font-size:12px;border-collapse:collapse}
+.help-table td{padding:4px 2px;border-bottom:1px dashed var(--line);color:#475569}
+.help-table tr:last-child td{border-bottom:none}
+
+.hidden{display:none!important}
+
+/* ---------- 平板：两栏 ---------- */
+@media (min-width:768px){
+  body{padding:14px 16px 40px}
+  h1{font-size:20px;text-align:left;margin:0}
+  .app-header{margin-bottom:10px}
+  .layout{grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start;margin-top:10px}
+  .side{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;padding-right:2px}
+  canvas{height:clamp(420px,60vh,720px)}
+  #panel{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .toolbar .btn{min-height:36px;font-size:13px}
+  .btn.module{font-size:14.5px}
+}
+/* ---------- 宽屏：更大绘图区 ---------- */
+@media (min-width:1280px){
+  .layout{grid-template-columns:minmax(0,1fr) 390px;gap:16px}
+  #panel{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .stage{gap:12px}
+}
+/* ---------- 手机横屏：压缩 Canvas ---------- */
+@media (max-height:520px) and (orientation:landscape){
+  canvas{height:clamp(220px,55vh,360px)}
+  h1{font-size:16px}
+  body{padding:8px 10px 24px}
+}
+/* ---------- 减弱动效 ---------- */
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+}
+/* ---------- 桌面端 hover 轻微反馈 ---------- */
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{border-color:var(--line-2);background:#fafbfe}
+  .btn.module.sel:hover{background:#2a51d6}
+  .btn.sub.sel:hover{background:#e4eafe}
+  .pstep:hover{background:#f1f5f9}
+  .tgl:hover{border-color:var(--line-2)}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>高中圆、椭圆、双曲线、抛物线及圆锥曲线综合交互演示</h1>
+  <button id="btnHelp" title="快捷键说明" aria-label="快捷键说明">?</button>
+</header>
+
+<nav id="modules" aria-label="一级模块"></nav>
+<nav id="submodes" aria-label="二级子模式"></nav>
+
+<main class="layout">
+  <section class="stage">
+    <div class="canvas-wrap">
+      <canvas id="cv"></canvas>
+      <div id="errBox" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <aside class="side">
+    <div class="card-box">
+      <h2>参数控制</h2>
+      <div class="toolbar" id="toolbar">
+        <button id="btnPlay" class="btn strong">▶ 播放</button>
+        <button id="btnStepBack" class="btn">◀ 单步</button>
+        <button id="btnStepFwd" class="btn">单步 ▶</button>
+        <button id="btnReset" class="btn">重置</button>
+        <button id="btnZoomIn" class="btn">＋</button>
+        <button id="btnZoomOut" class="btn">－</button>
+        <button id="btnZoomView" class="btn">复位视图</button>
+      </div>
+      <div id="params"></div>
+      <div class="toggle-row">
+        <label class="tgl"><input type="checkbox" id="tgAux" checked>辅助线</label>
+        <label class="tgl"><input type="checkbox" id="tgCard" checked>知识卡片</label>
+        <label class="tgl"><input type="checkbox" id="tgLegend" checked>图例</label>
+        <label class="tgl"><input type="checkbox" id="tgGrid" checked>网格</label>
+        <label class="tgl"><input type="checkbox" id="tgTicks" checked>刻度</label>
+        <label class="tgl"><input type="checkbox" id="tgFill" checked>填充</label>
+        <label class="tgl"><input type="checkbox" id="tgCoord">坐标</label>
+      </div>
+      <details class="io">
+        <summary>参数导入 / 导出</summary>
+        <div class="body">
+          <button id="btnCopyParams" class="btn">复制当前参数</button>
+          <textarea id="pasteBox" placeholder="在此粘贴参数文本，然后点击“应用粘贴”"></textarea>
+          <button id="btnApplyPaste" class="btn" style="margin-top:6px">应用粘贴</button>
+          <div class="msg" id="ioMsg"></div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card-box">
+      <h2>数值面板</h2>
+      <div id="panel"></div>
+    </div>
+
+    <details class="card" id="cardBox">
+      <summary id="cardTitle">知识卡片</summary>
+      <div class="body" id="cardBody"></div>
+    </details>
+
+    <div class="card-box" id="legendBox">
+      <h2>图例</h2>
+      <div id="legend"></div>
+    </div>
+
+    <details class="card" id="helpBox">
+      <summary>键盘快捷键</summary>
+      <div class="body">
+        <table class="help-table">
+          <tr><td><span class="kbd">Space</span>播放 / 暂停</td><td><span class="kbd">R</span>重置</td></tr>
+          <tr><td><span class="kbd">←</span><span class="kbd">→</span>单步后退 / 前进</td><td><span class="kbd">+</span><span class="kbd">−</span>放大 / 缩小</td></tr>
+          <tr><td><span class="kbd">0</span>复位视图</td><td><span class="kbd">1</span>~<span class="kbd">5</span>切换模块</td></tr>
+          <tr><td><span class="kbd">Enter</span>应用输入</td><td><span class="kbd">Esc</span>取消输入</td></tr>
+        </table>
+      </div>
+    </details>
+  </aside>
+</main>
+
+<script>
+"use strict";
+/* =========================================================
+   第一段：基础工具 / 画布坐标 / 颜色图例 / 绘制基础
+   ========================================================= */
+
+/* ---------- 通用工具 ---------- */
+function $(id){return document.getElementById(id);}
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+function isNum(v){return typeof v==="number"&&isFinite(v);}
+/* 数值格式化：非有限值统一显示“—” */
+function fmt(v,d){
+  if(!isNum(v))return"—";
+  if(Math.abs(v)<1e-12)v=0;
+  d=(d===undefined)?2:d;
+  return (+v.toFixed(d)).toString();
+}
+/* 安全除法：分母为 0 或非有限返回 null */
+function safeDiv(a,b){
+  if(!isNum(a)||!isNum(b)||Math.abs(b)<1e-12)return null;
+  const r=a/b;
+  return isFinite(r)?r:null;
+}
+/* 解析数字输入：空、非数字、Infinity 均返回 NaN */
+function parseNum(str){
+  const t=String(str==null?"":str).trim();
+  if(t===""||t==="+"||t==="-")return NaN;
+  if(!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(t))return NaN;
+  const v=parseFloat(t);
+  return isFinite(v)?v:NaN;
+}
+
+/* ---------- 画布与坐标变换 ---------- */
+const cv=$("cv"),ctx=cv.getContext("2d");
+let W=0,H=0,DPR=1,cx=0,cy=0;
+const view={ox:0,oy:0,ext:5,scale:40};
+
+function resize(){
+  DPR=window.devicePixelRatio||1;
+  const r=cv.getBoundingClientRect();
+  W=r.width;H=r.height;
+  if(W<=0||H<=0)return;
+  cv.width=Math.round(W*DPR);
+  cv.height=Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  cx=W/2;cy=H/2;
+  if(typeof requestRender==="function")requestRender();
+}
+/* 使用 ResizeObserver 监听容器尺寸（窗口缩放/分栏/浏览器缩放） */
+function observeCanvasSize(){
+  if(typeof ResizeObserver!=="undefined"){
+    try{
+      const ro=new ResizeObserver(()=>resize());
+      ro.observe(cv.parentElement);
+    }catch(e){}
+  }
+  window.addEventListener("resize",resize);
+  window.addEventListener("orientationchange",()=>setTimeout(resize,120));
+}
+
+function X(x){return cx+(x-view.ox)*view.scale;}
+function Y(y){return cy-(y-view.oy)*view.scale;}
+function MX(px){return (px-cx)/view.scale+view.ox;}
+function MY(py){return (cy-py)/view.scale+view.oy;}
+/* 自动取景 + 用户缩放/平移叠加 */
+function setView(ox,oy,ext){
+  const st=(typeof state!=="undefined")?state:null;
+  const z=(st&&isNum(st.zoom)&&st.zoom>0)?st.zoom:1;
+  const px=(st&&isNum(st.panX))?st.panX:0;
+  const py=(st&&isNum(st.panY))?st.panY:0;
+  view.ext=ext/z;
+  view.ox=ox+px;
+  view.oy=oy+py;
+  const m=Math.min(W,H);
+  view.scale=Math.max(6,(m/2-18)/view.ext);
+}
+
+/* ---------- 颜色与图例 ---------- */
+const COL={
+  circle:"#2563eb",ellipse:"#16a34a",hyperbola:"#7c3aed",parabola:"#db2777",
+  focus:"#dc2626",directrix:"#64748b",asymptote:"#9333ea",chord:"#0d9488",
+  tangent:"#ea580c",aux:"#94a3b8",pointP:"#e11d48",center:"#475569",
+  grid:"#eef2f7",axis:"#0f172a",area:"rgba(250,204,21,.16)"
+};
+const LEGEND=[
+  ["圆",COL.circle],["椭圆",COL.ellipse],["双曲线",COL.hyperbola],["抛物线",COL.parabola],
+  ["焦点",COL.focus],["准线",COL.directrix],["渐近线",COL.asymptote],["弦",COL.chord],
+  ["切线",COL.tangent],["辅助线",COL.aux],["动点P",COL.pointP]
+];
+function buildLegend(){
+  $("legend").innerHTML=LEGEND.map(function(l){
+    return '<span class="li"><span class="sw" style="background:'+l[1]+'"></span>'+l[0]+'</span>';
+  }).join("");
+}
+
+/* ---------- 绘制基础 ---------- */
+function dash(b){ctx.setLineDash(b?[6,5]:[]);}
+function seg(x1,y1,x2,y2,col,w,d){
+  if(!isNum(x1)||!isNum(y1)||!isNum(x2)||!isNum(y2))return;
+  ctx.strokeStyle=col;ctx.lineWidth=w||1.5;dash(d);
+  ctx.beginPath();ctx.moveTo(X(x1),Y(y1));ctx.lineTo(X(x2),Y(y2));ctx.stroke();
+}
+/* 过两点无限延伸：斜率无穷时走竖直线分支，避免 NaN */
+function lineThru(x1,y1,x2,y2,col,w,d){
+  if(!isNum(x1)||!isNum(y1)||!isNum(x2)||!isNum(y2))return;
+  const xL=view.ox-view.ext*1.7, xR=view.ox+view.ext*1.7;
+  if(Math.abs(x2-x1)<1e-9){
+    seg(x1,view.oy-view.ext*1.7,x1,view.oy+view.ext*1.7,col,w,d);
+    return;
+  }
+  const m=(y2-y1)/(x2-x1);
+  if(!isFinite(m)){
+    seg(x1,view.oy-view.ext*1.7,x1,view.oy+view.ext*1.7,col,w,d);
+    return;
+  }
+  const b=y1-m*x1;
+  seg(xL,m*xL+b,xR,m*xR+b,col,w,d);
+}
+function vline(x,col,w,d){
+  if(!isNum(x))return;
+  seg(x,view.oy-view.ext*1.7,x,view.oy+view.ext*1.7,col,w,d);
+}
+function hline(y,col,w,d){
+  if(!isNum(y))return;
+  seg(view.ox-view.ext*1.7,y,view.ox+view.ext*1.7,y,col,w,d);
+}
+function dot(x,y,col,r){
+  if(!isNum(x)||!isNum(y))return;
+  ctx.fillStyle=col;
+  ctx.beginPath();ctx.arc(X(x),Y(y),r||5,0,Math.PI*2);ctx.fill();
+}
+function txt(s,x,y,col,size,align,off){
+  if(!isNum(x)||!isNum(y))return;
+  ctx.fillStyle=col||"#334155";ctx.font=(size||12)+"px sans-serif";
+  ctx.textAlign=align||"center";ctx.textBaseline="middle";
+  ctx.fillText(String(s),X(x)+(off?off[0]:0),Y(y)-(off?off[1]:0));
+}
+function labelP(s,x,y,col,dx,dy){txt(s,x,y,col||COL.pointP,12,"center",[dx||0,dy||0]);}
+function fillTriangle(a,b,c,col){
+  if(!a||!b||!c)return;
+  if(!isNum(a.x)||!isNum(a.y)||!isNum(b.x)||!isNum(b.y)||!isNum(c.x)||!isNum(c.y))return;
+  ctx.beginPath();
+  ctx.moveTo(X(a.x),Y(a.y));ctx.lineTo(X(b.x),Y(b.y));ctx.lineTo(X(c.x),Y(c.y));
+  ctx.closePath();ctx.fillStyle=col||COL.area;ctx.fill();
+}
+/* 自适应刻度间隔 */
+function niceStep(ext){
+  if(!isNum(ext)||ext<=0)return 1;
+  const raw=ext/4,p=Math.pow(10,Math.floor(Math.log10(raw))),r=raw/p;
+  if(r<1.5)return p;
+  if(r<3.5)return 2*p;
+  if(r<7.5)return 5*p;
+  return 10*p;
+}
+/* 坐标轴 / 网格 / 刻度，受开关控制 */
+function drawAxes(){
+  const st=(typeof state!=="undefined")?state:{showGrid:true,showTicks:true};
+  const xL=view.ox-view.ext*1.5,xR=view.ox+view.ext*1.5;
+  const yD=view.oy-view.ext*1.3,yU=view.oy+view.ext*1.3;
+  const step=niceStep(view.ext);
+
+  if(st.showGrid){
+    ctx.strokeStyle=COL.grid;ctx.lineWidth=1;dash(false);
+    for(let g=Math.ceil(xL/step)*step;g<=xR;g+=step){
+      if(!isNum(g))continue;
+      ctx.beginPath();ctx.moveTo(X(g),Y(yD));ctx.lineTo(X(g),Y(yU));ctx.stroke();
+    }
+    for(let g=Math.ceil(yD/step)*step;g<=yU;g+=step){
+      if(!isNum(g))continue;
+      ctx.beginPath();ctx.moveTo(X(xL),Y(g));ctx.lineTo(X(xR),Y(g));ctx.stroke();
+    }
+  }
+
+  seg(xL,0,xR,0,COL.axis,1.5);
+  seg(0,yD,0,yU,COL.axis,1.5);
+  txt("x",xR,0,"#475569",11,"left",[4,10]);
+  txt("y",0,yU,"#475569",11,"center",[10,-8]);
+  txt("O",0,0,"#94a3b8",10,"right",[-4,-6]);
+
+  if(st.showTicks){
+    for(let g=Math.ceil(xL/step)*step;g<=xR;g+=step){
+      if(Math.abs(g)<1e-9)continue;
+      txt(fmt(g,1),g,0,"#94a3b8",9,"center",[0,-8]);
+    }
+    for(let g=Math.ceil(yD/step)*step;g<=yU;g+=step){
+      if(Math.abs(g)<1e-9)continue;
+      txt(fmt(g,1),0,g,"#94a3b8",9,"right",[-5,0]);
+    }
+  }
+}
+</script>
+
+<!-- ===== 第一段结束（请在此下方粘贴第二段） ===== -->
+<script>
+/* =========================================================
+   第二段：曲线绘制 / 二次方程求解 / 直线与圆锥曲线交点
+   ========================================================= */
+
+/* ---------- 圆的绘制 ---------- */
+function drawCircle(h,k,r,col,w){
+  if(!isNum(h)||!isNum(k)||!isNum(r)||r<=0)return;
+  ctx.strokeStyle=col||COL.circle;ctx.lineWidth=w||2.5;dash(false);
+  ctx.beginPath();ctx.arc(X(h),Y(k),r*view.scale,0,Math.PI*2);ctx.stroke();
+}
+
+/* ---------- 椭圆的绘制（t ∈ [0,2π]，完整闭合） ---------- */
+function drawEllipse(a,b,col,w){
+  if(!isNum(a)||!isNum(b)||a<=0||b<=0)return;
+  ctx.strokeStyle=col||COL.ellipse;ctx.lineWidth=w||2.5;dash(false);
+  ctx.beginPath();
+  const N=180;
+  for(let i=0;i<=N;i++){
+    const t=i/N*Math.PI*2;
+    const x=a*Math.cos(t), y=b*Math.sin(t);
+    if(i===0)ctx.moveTo(X(x),Y(y)); else ctx.lineTo(X(x),Y(y));
+  }
+  ctx.closePath();
+  ctx.stroke();
+}
+
+/* ---------- 双曲线的绘制（左右两支，cosh/sinh 参数） ---------- */
+function drawHyperbola(a,b,col,w){
+  if(!isNum(a)||!isNum(b)||a<=0||b<=0)return;
+  ctx.strokeStyle=col||COL.hyperbola;ctx.lineWidth=w||2.5;dash(false);
+  const bound=view.ext*2.2;
+  /* 反解 u 的采样上限：a·cosh(u) = bound */
+  let U=Math.acosh(Math.max(bound/a,1.0001));
+  if(!isNum(U))U=3;
+  U=Math.min(U,6);
+  for(const s of [1,-1]){
+    ctx.beginPath();
+    let started=false;
+    const N=90;
+    for(let i=-N;i<=N;i++){
+      const u=U*i/N;
+      const x=s*a*Math.cosh(u), y=b*Math.sinh(u);
+      if(!isNum(x)||!isNum(y)){started=false;continue;}
+      if(Math.abs(x)>view.ext*2.3||Math.abs(y)>view.ext*2.3){started=false;continue;}
+      if(!started){ctx.moveTo(X(x),Y(y));started=true;}
+      else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.stroke();
+  }
+}
+
+/* ---------- 抛物线的绘制（四种开口方向） ----------
+   form 0: y²= 2px   1: y²=-2px   2: x²= 2py   3: x²=-2py
+----------------------------------------------------- */
+function paraPoint(p,t,form){
+  if(!isNum(p)||!isNum(t))return {x:NaN,y:NaN};
+  switch(form){
+    case 0: return {x: 2*p*t*t, y: 2*p*t};
+    case 1: return {x:-2*p*t*t, y: 2*p*t};
+    case 2: return {x: 2*p*t,   y: 2*p*t*t};
+    case 3: return {x: 2*p*t,   y:-2*p*t*t};
+  }
+  return {x:NaN,y:NaN};
+}
+function paraFocus(p,form){
+  if(!isNum(p))return {x:NaN,y:NaN};
+  switch(form){
+    case 0: return {x: p/2, y:0};
+    case 1: return {x:-p/2, y:0};
+    case 2: return {x:0, y: p/2};
+    case 3: return {x:0, y:-p/2};
+  }
+  return {x:NaN,y:NaN};
+}
+function paraDirectrix(p,form){
+  if(!isNum(p))return {x:NaN};
+  switch(form){
+    case 0: return {x:-p/2};
+    case 1: return {x: p/2};
+    case 2: return {y:-p/2};
+    case 3: return {y: p/2};
+  }
+  return {x:NaN};
+}
+/* 由图坐标反推参数 t（拖动吸附用） */
+function paraSnapT(mx,my,p,form){
+  if(!isNum(mx)||!isNum(my)||!isNum(p)||p<=0)return 0;
+  return (form===0||form===1) ? my/(2*p) : mx/(2*p);
+}
+function drawParabola(p,form,col,w){
+  if(!isNum(p)||p<=0)return;
+  ctx.strokeStyle=col||COL.parabola;ctx.lineWidth=w||2.5;dash(false);
+  ctx.beginPath();
+  let started=false;
+  const T=2.6, N=320;
+  for(let i=-N;i<=N;i++){
+    const t=T*i/N;
+    const pt=paraPoint(p,t,form);
+    if(!isNum(pt.x)||!isNum(pt.y)){started=false;continue;}
+    if(Math.abs(pt.x)>view.ext*2.1||Math.abs(pt.y)>view.ext*2.1){started=false;continue;}
+    if(!started){ctx.moveTo(X(pt.x),Y(pt.y));started=true;}
+    else ctx.lineTo(X(pt.x),Y(pt.y));
+  }
+  ctx.stroke();
+}
+
+/* ---------- 抛物线在某点的切线 ----------
+   返回 {vertical:true,x} 或 {vertical:false,m,n}
+----------------------------------------------------- */
+function paraTangent(p,form,x0,y0){
+  if(!isNum(p)||!isNum(x0)||!isNum(y0))return null;
+  if(form===0||form===1){
+    if(Math.abs(y0)<1e-9)return {vertical:true,x:x0};
+    const m=(form===0? p : -p)/y0;
+    return {vertical:false,m:m,n:y0-m*x0};
+  }
+  const m=(form===2? x0 : -x0)/p;
+  return {vertical:false,m:m,n:y0-m*x0};
+}
+
+/* ---------- 统一定义曲线：r = e·d/(1−e·cosθ)，焦点在原点 ----------
+   e=0 退化为圆；e=1 抛物线；其余椭圆/双曲线
+   对分母趋近 0 的 θ 跳过，避免巨大坐标
+----------------------------------------------------- */
+function drawUnified(e,d0,col,w){
+  if(!isNum(e)||!isNum(d0)||e<0||d0<=0)return;
+  if(e<0.02){
+    drawCircle(0,0,d0,col||COL.circle,w||2.5);
+    return;
+  }
+  ctx.strokeStyle=col||COL.hyperbola;ctx.lineWidth=w||2.5;dash(false);
+  ctx.beginPath();
+  let started=false;
+  const N=520, RMAX=view.ext*2.2;
+  for(let i=0;i<=N;i++){
+    const t=i/N*Math.PI*2;
+    const den=1-e*Math.cos(t);
+    if(Math.abs(den)<1e-4){started=false;continue;}
+    const r=e*d0/den;
+    if(!isNum(r)||Math.abs(r)>RMAX){started=false;continue;}
+    const x=r*Math.cos(t), y=r*Math.sin(t);
+    if(!isNum(x)||!isNum(y)){started=false;continue;}
+    if(Math.abs(x)>RMAX||Math.abs(y)>RMAX){started=false;continue;}
+    if(!started){ctx.moveTo(X(x),Y(y));started=true;}
+    else ctx.lineTo(X(x),Y(y));
+  }
+  ctx.stroke();
+}
+
+/* ---------- 一元二次方程求根（过滤非有限根） ---------- */
+function solveQuad(A,B,C){
+  if(!isNum(A)||!isNum(B)||!isNum(C))return [];
+  if(Math.abs(A)<1e-12){
+    if(Math.abs(B)<1e-12)return [];
+    const x=-C/B;
+    return isNum(x)?[x]:[];
+  }
+  const d=B*B-4*A*C;
+  if(!isNum(d)||d<0)return [];
+  if(Math.abs(d)<1e-9){
+    const x=-B/(2*A);
+    return isNum(x)?[x]:[];
+  }
+  const s=Math.sqrt(d);
+  const x1=(-B-s)/(2*A), x2=(-B+s)/(2*A);
+  const out=[];
+  if(isNum(x1))out.push(x1);
+  if(isNum(x2))out.push(x2);
+  out.sort(function(a,b){return a-b;});
+  return out;
+}
+
+/* 判别式 → 位置关系 */
+function positionFromDisc(disc,eps){
+  if(!isNum(disc))return"—";
+  eps=eps||1e-8;
+  if(disc>eps)return"相交";
+  if(Math.abs(disc)<=eps)return"相切";
+  return"相离";
+}
+
+/* ---------- 直线与圆 ---------- */
+function circleLine(h,k,r,m,n){
+  if(!isNum(h)||!isNum(k)||!isNum(r)||r<=0||!isNum(m)||!isNum(n))
+    return {roots:[],d:NaN,disc:NaN};
+  const A=1+m*m;
+  const B=2*m*(n-k)-2*h;
+  const C=h*h+(n-k)*(n-k)-r*r;
+  const disc=B*B-4*A*C;
+  /* 圆心到直线距离 d=|m·h - k + n|/√(m²+1) */
+  const d=Math.abs(m*h-k+n)/Math.sqrt(m*m+1);
+  return {roots:solveQuad(A,B,C),d:d,disc:disc};
+}
+
+/* ---------- 直线与椭圆 x²/a² + y²/b² = 1 ---------- */
+function ellipseLine(a,b,m,n){
+  if(!isNum(a)||!isNum(b)||a<=0||b<=0||!isNum(m)||!isNum(n))
+    return {roots:[],disc:NaN};
+  const A=b*b+a*a*m*m;
+  const B=2*a*a*m*n;
+  const C=a*a*(n*n-b*b);
+  const disc=B*B-4*A*C;
+  return {roots:solveQuad(A,B,C),disc:disc};
+}
+
+/* ---------- 直线与双曲线 x²/a² - y²/b² = 1 ----------
+   A≈0 表示直线与渐近线平行，此时只有一个交点
+--------------------------------------------------- */
+function hyperbolaLine(a,b,m,n){
+  if(!isNum(a)||!isNum(b)||a<=0||b<=0||!isNum(m)||!isNum(n))
+    return {roots:[],disc:NaN,parallel:false,A:NaN};
+  const A=b*b-a*a*m*m;
+  const B=-2*a*a*m*n;
+  const C=-a*a*(n*n+b*b);
+  const disc=B*B-4*A*C;
+  return {roots:solveQuad(A,B,C),disc:disc,parallel:Math.abs(A)<1e-9,A:A};
+}
+
+/* ---------- 直线与抛物线（四种开口方向通用） ----------
+   全部以 x 为未知量；返回 x 的根与判别式
+--------------------------------------------------- */
+function parabolaLineForm(p,m,n,form){
+  if(!isNum(p)||p<=0||!isNum(m)||!isNum(n))
+    return {roots:[],disc:NaN,A:NaN};
+  let A,B,C;
+  if(form===0){        /* y²=2px：m²x²+(2mn-2p)x+n²=0 */
+    A=m*m; B=2*m*n-2*p; C=n*n;
+  }else if(form===1){  /* y²=-2px：m²x²+(2mn+2p)x+n²=0 */
+    A=m*m; B=2*m*n+2*p; C=n*n;
+  }else if(form===2){  /* x²=2py：x²-2pmx-2pn=0 */
+    A=1; B=-2*p*m; C=-2*p*n;
+  }else{               /* x²=-2py：x²+2pmx+2pn=0 */
+    A=1; B=2*p*m; C=2*p*n;
+  }
+  const disc=B*B-4*A*C;
+  return {roots:solveQuad(A,B,C),disc:disc,A:A};
+}
+
+/* 由 x 的根生成交点（直线 y=mx+n） */
+function pointsFromRoots(roots,m,n){
+  if(!roots||roots.length===0)return [];
+  const out=[];
+  for(const x of roots){
+    const y=m*x+n;
+    if(isNum(x)&&isNum(y))out.push({x:x,y:y});
+  }
+  return out;
+}
+
+/* 弦长：|x₂-x₁|·√(1+m²) */
+function chordLen(roots,m){
+  if(!roots||roots.length!==2)return null;
+  if(!isNum(roots[0])||!isNum(roots[1])||!isNum(m))return null;
+  const L=Math.abs(roots[1]-roots[0])*Math.sqrt(1+m*m);
+  return isNum(L)?L:null;
+}
+</script>
+
+<!-- ===== 第二段结束（请在此下方粘贴第三段） ===== -->
+<script>
+/* =========================================================
+   第三段：数据 / 状态 / 动点 / 校验 / 视图 / 交互 / 渲染
+   ========================================================= */
+
+/* ---------- 集中演示常量（避免图形与面板不一致） ---------- */
+const DEMO={
+  ellA:3, ellB:2.2,
+  hypA:1.8, hypB:1.3,
+  parP:2, circR:2,
+  synC:2, synEllA:3, synHypA:1.5,
+  unifiedD:2
+};
+
+/* ---------- 模块与子模式 ---------- */
+const MODULES={
+  circle:{name:"圆",subs:[
+    ["c_def","定义"],["c_std","标准方程"],["c_gen","一般方程"],["c_par","参数方程"],
+    ["c_pq","点与圆"],["c_lc","直线与圆"],["c_chord","弦长公式"],["c_diam","垂径定理"],
+    ["c_tan","切线"],["c_ang","圆周角"],["c_arc","弧长扇形"],["c_cc","圆与圆"],
+    ["c_common","公共弦"],["c_ctan","公切线"],["c_sys","圆系方程"],["c_sym","对称性"]]},
+  ellipse:{name:"椭圆",subs:[
+    ["e_def1","第一定义"],["e_def2","第二定义"],["e_def3","第三定义"],["e_std","标准方程"],
+    ["e_par","参数方程"],["e_elem","几何元素"],["e_fr","焦半径"],["e_ftri","焦点三角形"],
+    ["e_fchord","焦点弦通径"],["e_mid","中点弦"],["e_ecc","离心率"],["e_dir","准线"],
+    ["e_line","直线与椭圆"],["e_tan","切线"],["e_circle","圆↔椭圆"]]},
+  hyperbola:{name:"双曲线",subs:[
+    ["h_def1","第一定义"],["h_def2","第二定义"],["h_def3","第三定义"],["h_std","标准方程"],
+    ["h_par","参数方程"],["h_elem","几何元素"],["h_asy","渐近线"],["h_conj","共轭双曲线"],
+    ["h_fr","焦半径"],["h_ftri","焦点三角形"],["h_fchord","焦点弦通径"],["h_mid","中点弦"],
+    ["h_ecc","离心率"],["h_dir","准线"],["h_line","直线与双曲线"],["h_tan","切线"],["h_ell","双曲线↔椭圆"]]},
+  parabola:{name:"抛物线",subs:[
+    ["p_def","定义"],["p_std","标准方程"],["p_fd","焦点准线"],["p_par","参数方程"],
+    ["p_fr","焦半径"],["p_lr","通径"],["p_fchord","焦点弦"],["p_ecc","离心率"],
+    ["p_line","直线与抛物线"],["p_tan","切线"],["p_mid","中点弦"],["p_app","实际应用"],
+    ["p_rel","与其他曲线"]]},
+  synthesis:{name:"圆锥曲线综合",subs:[
+    ["s_uni","统一定义"],["s_disc","统一判别"],["s_compare","参数对比"],["s_table","统一对比"],
+    ["s_line","直线与圆锥"],["s_chord","弦长中点弦"],["s_polar","切线极线"],["s_fchord","焦点弦对比"],
+    ["s_ftri","焦点三角形"],["s_ecc","离心率变化"],["s_circ","圆↔椭圆"],["s_ellhyp","椭圆↔双曲线"],
+    ["s_hypPara","双曲线↔抛物线"],["s_optics","光学性质"],["s_extreme","轨迹与最值"],["s_card","综合卡片"]]}
+};
+
+/* ---------- 全局状态 ---------- */
+const state={
+  module:"circle",
+  submode:"c_def",
+  params:{},
+  anim:{playing:false,dir:1},
+  drag:null,
+  showAux:true,
+  showCard:true,
+  showLegend:true,
+  showGrid:true,
+  showTicks:true,
+  showFill:true,
+  showCoord:false,
+  zoom:1,
+  panX:0,
+  panY:0
+};
+let needRender=true, lastTs=0;
+
+function P(){return state.params;}
+
+/* ---------- 默认参数 ---------- */
+function resetParams(){
+  const p=state.params;
+  p.t=0;
+  /* 圆 */
+  p.h=0;p.k=0;p.r=2.5;
+  p.qx=3.6;p.qy=1.6;
+  p.px=4.6;p.py=2.6;
+  p.lm=0.6;p.ln=0.9;
+  p.h2=4.6;p.k2=0;p.r2=1.6;
+  p.ang=42;
+  p.lam=0.5;
+  p.Dg=0;p.Eg=0;p.Fg=-6.25;
+  /* 椭圆 */
+  p.a=3;p.c=1.8;
+  /* 双曲线 */
+  p.b=1.5;
+  /* 抛物线 */
+  p.p=2;p.pform=0;
+  /* 综合 */
+  p.e=0.6;p.d0=2;p.ctype=0;p.discCase=0;
+  p.bSlide=1.4;
+  /* 视图与动画 */
+  state.anim.dir=1;
+  state.zoom=1;state.panX=0;state.panY=0;
+}
+
+/* ---------- 派生量 ---------- */
+function eb(){                                     /* 椭圆短半轴 */
+  const p=P();
+  const v=p.a*p.a-p.c*p.c;
+  return v>0?Math.sqrt(v):NaN;
+}
+function hc(){                                     /* 双曲线半焦距 */
+  const p=P();
+  const v=p.a*p.a+p.b*p.b;
+  return v>0?Math.sqrt(v):NaN;
+}
+function he(){                                     /* 双曲线离心率 */
+  const c=hc();
+  return (isNum(c)&&P().a>0)?c/P().a:NaN;
+}
+
+/* ---------- 动点 P ---------- */
+function getP(){
+  const p=state.params;
+  if(state.module==="circle"){
+    if(!isNum(p.h)||!isNum(p.k)||!isNum(p.r)||p.r<=0)return {x:NaN,y:NaN};
+    return {x:p.h+p.r*Math.cos(p.t), y:p.k+p.r*Math.sin(p.t)};
+  }
+  if(state.module==="ellipse"){
+    const b=(state.submode==="e_circle")?clamp(p.bSlide,1e-6,p.a):eb();
+    if(!isNum(p.a)||!isNum(b))return {x:NaN,y:NaN};
+    return {x:p.a*Math.cos(p.t), y:b*Math.sin(p.t)};
+  }
+  if(state.module==="hyperbola"){
+    /* cosh/sinh 参数：连续、无 π/2 奇点 */
+    if(!isNum(p.a)||!isNum(p.b))return {x:NaN,y:NaN};
+    const u=1.3*Math.sin(p.t);
+    const right=Math.cos(p.t)>=0;
+    return {x:(right?1:-1)*p.a*Math.cosh(u), y:p.b*Math.sinh(u)};
+  }
+  if(state.module==="parabola"){
+    return paraPoint(p.p,p.t,p.pform);
+  }
+  return uniPoint(p.e,p.d0,p.t);
+}
+
+/* 焦点—准线统一形式：r = e·d/(1−e·cosθ) */
+function uniPoint(e,d0,t){
+  if(!isNum(e)||!isNum(d0))return {x:NaN,y:NaN};
+  if(e<0.02)return {x:d0*Math.cos(t), y:d0*Math.sin(t)};
+  if(Math.abs(e-1)<0.02){
+    const pp=d0;
+    return {x:2*pp*t*t-pp/2, y:2*pp*t};
+  }
+  const den=1-e*Math.cos(t);
+  if(Math.abs(den)<1e-4)return {x:NaN,y:NaN};
+  const r=e*d0/den;
+  return {x:r*Math.cos(t), y:r*Math.sin(t)};
+}
+
+/* =========================================================
+   参数校验器：返回 {ok, msg}
+   ========================================================= */
+function circleBase(p){
+  if(!isNum(p.h)||!isNum(p.k))return {ok:false,msg:"圆心坐标必须是有限数"};
+  if(!isNum(p.r)||p.r<=0)return {ok:false,msg:"半径 r 必须大于 0"};
+  return {ok:true,msg:""};
+}
+function twoCircleBase(p){
+  const b=circleBase(p);
+  if(!b.ok)return b;
+  if(!isNum(p.h2)||!isNum(p.k2))return {ok:false,msg:"第二个圆心坐标必须是有限数"};
+  if(!isNum(p.r2)||p.r2<=0)return {ok:false,msg:"半径 r₂ 必须大于 0"};
+  return {ok:true,msg:""};
+}
+function ellipseBase(p){
+  if(!isNum(p.a)||p.a<=0)return {ok:false,msg:"a 必须大于 0"};
+  if(!isNum(p.c)||p.c<=0)return {ok:false,msg:"c 必须大于 0"};
+  if(p.c>=p.a)return {ok:false,msg:"a 必须大于 c，否则 b²=a²−c² 不为正，椭圆不存在"};
+  return {ok:true,msg:""};
+}
+function hyperBase(p){
+  if(!isNum(p.a)||p.a<=0)return {ok:false,msg:"实半轴 a 必须大于 0"};
+  if(!isNum(p.b)||p.b<=0)return {ok:false,msg:"虚半轴 b 必须大于 0"};
+  return {ok:true,msg:""};
+}
+function parabolaBase(p){
+  if(!isNum(p.p)||p.p<=0)return {ok:false,msg:"参数 p 必须大于 0"};
+  return {ok:true,msg:""};
+}
+function unifiedBase(p){
+  if(!isNum(p.e)||p.e<0)return {ok:false,msg:"离心率 e 必须大于或等于 0"};
+  if(!isNum(p.d0)||p.d0<=0)return {ok:false,msg:"准线距离 d 必须大于 0"};
+  return {ok:true,msg:""};
+}
+
+const VALIDATORS={
+  circle:{
+    c_def:circleBase,c_std:circleBase,c_par:circleBase,c_pq:circleBase,
+    c_lc:circleBase,c_chord:circleBase,c_diam:circleBase,c_tan:circleBase,
+    c_ang:circleBase,c_arc:circleBase,c_sym:circleBase,
+    c_gen:function(p){
+      if(!isNum(p.Dg)||!isNum(p.Eg)||!isNum(p.Fg))
+        return {ok:false,msg:"D、E、F 必须是有限数"};
+      const disc=p.Dg*p.Dg+p.Eg*p.Eg-4*p.Fg;
+      if(!(disc>0))return {ok:false,msg:"D²+E²−4F ≤ 0，该方程不表示圆"};
+      if(!isNum(p.r)||p.r<=0)return {ok:false,msg:"半径 r 必须大于 0"};
+      return {ok:true,msg:""};
+    },
+    c_cc:twoCircleBase,c_common:twoCircleBase,c_ctan:twoCircleBase,c_sys:twoCircleBase
+  },
+  ellipse:{
+    e_def1:ellipseBase,e_def2:ellipseBase,e_def3:ellipseBase,e_std:ellipseBase,
+    e_par:ellipseBase,e_elem:ellipseBase,e_fr:ellipseBase,e_ftri:ellipseBase,
+    e_fchord:ellipseBase,e_mid:ellipseBase,e_ecc:ellipseBase,e_dir:ellipseBase,
+    e_line:ellipseBase,e_tan:ellipseBase,
+    e_circle:function(p){
+      if(!isNum(p.a)||p.a<=0)return {ok:false,msg:"半长轴 a 必须大于 0"};
+      if(!isNum(p.bSlide)||p.bSlide<=0)return {ok:false,msg:"半短轴 b 必须大于 0"};
+      return {ok:true,msg:""};
+    }
+  },
+  hyperbola:{
+    h_def1:hyperBase,h_def2:hyperBase,h_def3:hyperBase,h_std:hyperBase,h_par:hyperBase,
+    h_elem:hyperBase,h_asy:hyperBase,h_conj:hyperBase,h_fr:hyperBase,h_ftri:hyperBase,
+    h_fchord:hyperBase,h_mid:hyperBase,h_ecc:hyperBase,h_dir:hyperBase,h_line:hyperBase,
+    h_tan:hyperBase,h_ell:hyperBase
+  },
+  parabola:{
+    p_def:parabolaBase,p_std:parabolaBase,p_fd:parabolaBase,p_par:parabolaBase,
+    p_fr:parabolaBase,p_lr:parabolaBase,p_fchord:parabolaBase,p_ecc:parabolaBase,
+    p_line:parabolaBase,p_tan:parabolaBase,p_mid:parabolaBase,p_app:parabolaBase,p_rel:parabolaBase
+  },
+  synthesis:{
+    s_uni:unifiedBase,s_ecc:unifiedBase,
+    s_circ:function(p){
+      if(!isNum(p.a)||p.a<=0)return {ok:false,msg:"半长轴 a 必须大于 0"};
+      if(!isNum(p.bSlide)||p.bSlide<=0)return {ok:false,msg:"半短轴 b 必须大于 0"};
+      return {ok:true,msg:""};
+    }
+  }
+};
+
+function validateCurrent(){
+  const m=state.module,s=state.submode;
+  const f=VALIDATORS[m]&&VALIDATORS[m][s];
+  if(typeof f!=="function")return {ok:true,msg:""};
+  try{
+    const r=f(state.params);
+    if(r&&typeof r.ok==="boolean")return r;
+  }catch(e){}
+  return {ok:true,msg:""};
+}
+
+/* =========================================================
+   视图范围
+   ========================================================= */
+function computeView(){
+  const p=state.params, m=state.module, s=state.submode;
+
+  if(m==="circle"){
+    const r=(isNum(p.r)&&p.r>0)?p.r:2.5;
+    const h=isNum(p.h)?p.h:0, k=isNum(p.k)?p.k:0;
+    if(s==="c_cc"||s==="c_common"||s==="c_ctan"||s==="c_sys"){
+      const h2=isNum(p.h2)?p.h2:h, k2=isNum(p.k2)?p.k2:k;
+      const r2=(isNum(p.r2)&&p.r2>0)?p.r2:1.6;
+      const d=Math.hypot(h2-h,k2-k);
+      setView((h+h2)/2,(k+k2)/2,Math.max(3,(d+r+r2)/2*1.35));
+      return;
+    }
+    if(s==="c_pq"){
+      const qx=isNum(p.qx)?p.qx:h+r, qy=isNum(p.qy)?p.qy:k;
+      setView(h,k,Math.max(r*1.5,Math.hypot(qx-h,qy-k)*1.3,2));
+      return;
+    }
+    if(s==="c_tan"){
+      const px=isNum(p.px)?p.px:h+r*2, py=isNum(p.py)?p.py:k;
+      setView(h,k,Math.max(r*1.7,Math.hypot(px-h,py-k)*1.2,2));
+      return;
+    }
+    if(s==="c_lc"||s==="c_chord"||s==="c_diam"){
+      const ln=isNum(p.ln)?p.ln:k;
+      setView(h,k,Math.max(r*1.7,Math.abs(ln-k)+r,2));
+      return;
+    }
+    setView(h,k,Math.max(r*1.7,2));
+    return;
+  }
+
+  if(m==="ellipse"){
+    const a=(isNum(p.a)&&p.a>0)?p.a:3;
+    if(s==="e_circle"){
+      const bb=(isNum(p.bSlide)&&p.bSlide>0)?p.bSlide:a*0.6;
+      setView(0,0,Math.max(a,bb,2)*1.45);
+      return;
+    }
+    const b=(isNum(p.a)&&isNum(p.c)&&p.a>p.c)?Math.sqrt(p.a*p.a-p.c*p.c):a*0.6;
+    if(s==="e_def2"||s==="e_dir"){
+      const c=(isNum(p.c)&&p.c>0)?p.c:a*0.6;
+      const d=a*a/c;
+      setView(0,0,clamp(Math.max(a*1.5,d*0.8),a*1.3,a*4));
+      return;
+    }
+    setView(0,0,Math.max(a,b,2)*1.45);
+    return;
+  }
+
+  if(m==="hyperbola"){
+    const a=(isNum(p.a)&&p.a>0)?p.a:2;
+    const b=(isNum(p.b)&&p.b>0)?p.b:1.5;
+    const c=Math.sqrt(a*a+b*b);
+    if(s==="h_def2"||s==="h_dir"){
+      const d=a*a/c;
+      setView(0,0,clamp(Math.max(a*1.5,d*0.8),a*1.3,a*4));
+      return;
+    }
+    if(s==="h_line"){setView(0,0,Math.max(a*1.9,3));return;}
+    setView(0,0,Math.max(a*1.4,b*1.2,2.5));
+    return;
+  }
+
+  if(m==="parabola"){
+    const pp=(isNum(p.p)&&p.p>0)?p.p:2;
+    setView(0,0,Math.max(2*pp*1.7,2*pp,2.5)*1.25);
+    return;
+  }
+
+  if(m==="synthesis"){
+    if(s==="s_uni"||s==="s_ecc"){
+      const e=(isNum(p.e)&&p.e>=0)?p.e:0.6;
+      const d0=(isNum(p.d0)&&p.d0>0)?p.d0:2;
+      const b=uniBounds(e,d0);
+      setView((b.xmin+b.xmax)/2,(b.ymin+b.ymax)/2,
+        Math.max(2.2,Math.max(b.xmax-b.xmin,b.ymax-b.ymin)/2*1.3));
+      return;
+    }
+    if(s==="s_ellhyp"||s==="s_hypPara"){setView(0,0,4.6);return;}
+    setView(0,0,4.5);
+    return;
+  }
+}
+
+/* 统一定义的包络范围（半径封顶，避免巨大坐标） */
+function uniBounds(e,d0){
+  let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+  if(!isNum(e)||e<0)e=0;
+  if(!isNum(d0)||d0<=0)d0=2;
+  if(e<0.02)return {xmin:-d0,xmax:d0,ymin:-d0,ymax:d0};
+  for(let i=0;i<=360;i++){
+    const t=i/360*Math.PI*2;
+    let r;
+    if(Math.abs(e-1)<0.02){
+      const c=1-Math.cos(t);
+      r=Math.abs(c)<0.01?20:d0/c;
+    }else{
+      const den=1-e*Math.cos(t);
+      r=Math.abs(den)<1e-4?20:e*d0/den;
+    }
+    if(!isNum(r)||Math.abs(r)>20)r=(r>0?20:-20);
+    const x=r*Math.cos(t), y=r*Math.sin(t);
+    if(isNum(x)){if(x<xmin)xmin=x;if(x>xmax)xmax=x;}
+    if(isNum(y)){if(y<ymin)ymin=y;if(y>ymax)ymax=y;}
+  }
+  if(xmin>xmax){xmin=-3;xmax=3;ymin=-3;ymax=3;}
+  return {xmin,xmax,ymin,ymax};
+}
+
+/* ---------- 错误占位提示 ---------- */
+function showError(msg){
+  const box=$("errBox");
+  box.textContent="当前参数无法构成有效图形："+msg;
+  box.style.display="block";
+}
+function hideError(){
+  const box=$("errBox");
+  box.style.display="none";
+  box.textContent="";
+}
+
+/* =========================================================
+   可拖动点
+   ========================================================= */
+function getDragPoints(){
+  const p=state.params, m=state.module, s=state.submode, list=[];
+
+  function snapCircle(mx,my){p.t=Math.atan2(my-p.k,mx-p.h);}
+  function snapEllipse(mx,my){
+    const b=(s==="e_circle")?clamp(p.bSlide,1e-6,p.a):eb();
+    if(!isNum(p.a)||!isNum(b)||b<=0)return;
+    p.t=Math.atan2(my/b,mx/p.a);
+  }
+  function snapHyperbola(mx,my){
+    if(!isNum(p.a)||!isNum(p.b)||p.a<=0||p.b<=0)return;
+    /* 与 cosh/sinh 参数配套的反解 */
+    const u=Math.asinh(clamp(my/p.b,-2.5,2.5));
+    const sn=clamp(u/1.3,-1,1);
+    let t=Math.asin(sn);
+    if(mx<0)t=Math.PI-t;
+    t=((t%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
+    p.t=t;
+  }
+  function snapParabola(mx,my){
+    p.t=clamp(paraSnapT(mx,my,p.p,p.pform),-1.7,1.7);
+  }
+
+  if(m==="circle"){
+    if(s==="c_pq"){
+      list.push({get:function(){return {x:p.qx,y:p.qy};},onDrag:function(mx,my){p.qx=mx;p.qy=my;}});
+    }else if(s==="c_tan"){
+      list.push({get:function(){return {x:p.px,y:p.py};},onDrag:function(mx,my){p.px=mx;p.py=my;}});
+    }else if(s==="c_cc"||s==="c_common"||s==="c_ctan"||s==="c_sys"){
+      list.push({get:function(){return {x:p.h2,y:p.k2};},onDrag:function(mx,my){p.h2=mx;p.k2=my;}});
+    }else if(s!=="c_sym"){
+      list.push({get:getP,onDrag:snapCircle});
+    }
+  }else if(m==="ellipse"){
+    list.push({get:getP,onDrag:snapEllipse});
+  }else if(m==="hyperbola"){
+    list.push({get:getP,onDrag:snapHyperbola});
+  }else if(m==="parabola"){
+    list.push({get:getP,onDrag:snapParabola});
+  }else if(m==="synthesis"){
+    if(s==="s_uni"||s==="s_ecc"){
+      list.push({get:getP,onDrag:function(mx,my){p.t=Math.atan2(my,mx);}});
+    }
+  }
+  return list;
+}
+
+/* =========================================================
+   指针事件：拖点 / 单指平移 / 双指缩放 / 滚轮缩放
+   ========================================================= */
+function evPos(e){
+  const r=cv.getBoundingClientRect();
+  return {px:e.clientX-r.left, py:e.clientY-r.top};
+}
+const _ptrs=new Map();
+let _mode=null,_pan0=null,_pinch0=null;
+
+cv.addEventListener("pointerdown",function(e){
+  const q=evPos(e);
+  _ptrs.set(e.pointerId,{x:q.px,y:q.py});
+  try{cv.setPointerCapture(e.pointerId);}catch(err){}
+
+  if(_ptrs.size===2){
+    const vals=Array.from(_ptrs.values());
+    const a=vals[0], b=vals[1];
+    _mode="pinch"; state.drag=null;
+    _pinch0={
+      dist:Math.max(1,Math.hypot(a.x-b.x,a.y-b.y)),
+      zoom:state.zoom,
+      cx:(a.x+b.x)/2, cy:(a.y+b.y)/2,
+      panX:state.panX, panY:state.panY
+    };
+    e.preventDefault();
+    return;
+  }
+
+  if(_ptrs.size===1){
+    const pts=getDragPoints();
+    let best=null,bd=1e9;
+    for(const pt of pts){
+      const g=pt.get();
+      if(!isNum(g.x)||!isNum(g.y))continue;
+      const d=Math.hypot(q.px-X(g.x),q.py-Y(g.y));
+      if(d<bd){bd=d;best=pt;}
+    }
+    if(bd<32&&best){
+      _mode="drag"; state.drag=best;
+    }else{
+      _mode="pan"; state.drag=null;
+      _pan0={x:q.px,y:q.py,panX:state.panX,panY:state.panY};
+    }
+    e.preventDefault();
+  }
+});
+
+cv.addEventListener("pointermove",function(e){
+  if(!_ptrs.has(e.pointerId))return;
+  const q=evPos(e);
+  _ptrs.set(e.pointerId,{x:q.px,y:q.py});
+
+  if(_mode==="pinch"&&_ptrs.size>=2&&_pinch0){
+    const vals=Array.from(_ptrs.values());
+    const a=vals[0], b=vals[1];
+    const dist=Math.hypot(a.x-b.x,a.y-b.y);
+    state.zoom=clamp(_pinch0.zoom*dist/_pinch0.dist,0.4,6);
+    const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+    const sc=view.scale||40;
+    state.panX=_pinch0.panX+(mx-_pinch0.cx)/sc;
+    state.panY=_pinch0.panY-(my-_pinch0.cy)/sc;
+    e.preventDefault();requestRender();return;
+  }
+
+  if(_mode==="pan"&&_pan0){
+    const sc=view.scale||40;
+    state.panX=_pan0.panX+(q.px-_pan0.x)/sc;
+    state.panY=_pan0.panY-(q.py-_pan0.y)/sc;
+    e.preventDefault();requestRender();return;
+  }
+
+  if(_mode==="drag"&&state.drag){
+    state.drag.onDrag(MX(q.px),MY(q.py));
+    e.preventDefault();requestRender();
+  }
+});
+
+function _endPointer(e){
+  _ptrs.delete(e.pointerId);
+  if(_ptrs.size===0){
+    _mode=null;state.drag=null;_pan0=null;_pinch0=null;
+  }else if(_ptrs.size===1){
+    const p=Array.from(_ptrs.values())[0];
+    _mode="pan";state.drag=null;
+    _pan0={x:p.x,y:p.y,panX:state.panX,panY:state.panY};
+    _pinch0=null;
+  }
+}
+cv.addEventListener("pointerup",_endPointer);
+cv.addEventListener("pointercancel",_endPointer);
+
+cv.addEventListener("wheel",function(e){
+  e.preventDefault();
+  const f=e.deltaY<0?1.12:1/1.12;
+  state.zoom=clamp(state.zoom*f,0.4,6);
+  requestRender();
+},{passive:false});
+
+/* =========================================================
+   动画推进与单步
+   ========================================================= */
+function advance(dt){
+  const p=state.params, m=state.module;
+  if(m==="parabola"){
+    p.t+=dt*1.1*state.anim.dir;
+    if(p.t>1.7){p.t=1.7;state.anim.dir=-1;}
+    if(p.t<-1.7){p.t=-1.7;state.anim.dir=1;}
+  }else{
+    const speed=(m==="hyperbola")?0.9:1.3;
+    p.t=(p.t+dt*speed)%(Math.PI*2);
+  }
+}
+function stepT(dir){
+  const p=state.params, m=state.module;
+  if(m==="parabola"){
+    p.t=clamp(p.t+dir*0.12,-1.7,1.7);
+  }else{
+    p.t=((p.t+dir*0.12)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+  }
+}
+
+/* =========================================================
+   主渲染
+   ========================================================= */
+function requestRender(){needRender=true;}
+
+let panelTick=0;
+function render(){
+  if(W<=0||H<=0)return;
+  ctx.clearRect(0,0,W,H);
+  computeView();
+  drawAxes();
+
+  const v=validateCurrent();
+  if(v.ok){
+    hideError();
+    drawScene();
+  }else{
+    showError(v.msg||"参数不合法");
+  }
+
+  panelTick++;
+  if(!state.anim.playing||panelTick%4===0)updatePanel();
+}
+
+function loop(ts){
+  if(!lastTs)lastTs=ts;
+  const dt=Math.min(0.05,(ts-lastTs)/1000);
+  lastTs=ts;
+  if(state.anim.playing){advance(dt);needRender=true;}
+  if(needRender){render();needRender=false;}
+  requestAnimationFrame(loop);
+}
+</script>
+
+<!-- ===== 第三段结束（请在此下方粘贴第四段） ===== -->
+<script>
+/* =========================================================
+   第四段：圆模块场景绘制
+   ========================================================= */
+
+/* 从圆外一点求两切点（返回 null 表示无切线） */
+function tangentPointsFromPoint(ox,oy,r,px,py){
+  const d=Math.hypot(px-ox,py-oy);
+  if(!isNum(d)||d<=r+1e-9)return null;
+  const al=Math.atan2(py-oy,px-ox);
+  const phi=Math.acos(clamp(r/d,-1,1));
+  return [
+    {x:ox+r*Math.cos(al+phi), y:oy+r*Math.sin(al+phi)},
+    {x:ox+r*Math.cos(al-phi), y:oy+r*Math.sin(al-phi)}
+  ];
+}
+
+function drawCircleScene(s){
+  const p=state.params;
+  const h=p.h, k=p.k, r=p.r;
+  const aux=state.showAux, fill=state.showFill;
+  const Pp=getP();
+
+  /* 基础圆与圆心 */
+  drawCircle(h,k,r,COL.circle,2.5);
+  dot(h,k,COL.center,4);
+
+  switch(s){
+
+    /* ---------- 定义 ---------- */
+    case "c_def":{
+      if(aux)seg(h,k,Pp.x,Pp.y,COL.aux,1.5,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,10,-10);
+      txt("r",(h+Pp.x)/2,(k+Pp.y)/2,"#475569",11,"left",[4,0]);
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      break;
+    }
+
+    /* ---------- 标准方程 ---------- */
+    case "c_std":{
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,10,-10);
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      if(aux){
+        seg(h,k,h+r,k,COL.focus,1.8);
+        dot(h+r,k,COL.focus,3);
+        txt("r",h+r/2,k,"#b91c1c",11,"center",[0,-10]);
+        seg(h,k,Pp.x,Pp.y,COL.aux,1.4,true);
+      }
+      break;
+    }
+
+    /* ---------- 一般方程 ---------- */
+    case "c_gen":{
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      if(aux){
+        seg(h,k,h+r,k,COL.aux,1.4,true);
+        seg(h,k,h,k+r,COL.aux,1.4,true);
+      }
+      break;
+    }
+
+    /* ---------- 参数方程 ---------- */
+    case "c_par":{
+      seg(h,k,Pp.x,Pp.y,COL.aux,1.5,true);
+      ctx.strokeStyle=COL.chord;ctx.lineWidth=1.6;dash(false);
+      ctx.beginPath();ctx.arc(X(h),Y(k),Math.min(0.7,0.45*r)*view.scale,0,-p.t,true);ctx.stroke();
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P(θ)",Pp.x,Pp.y,COL.pointP,14,-12);
+      txt("θ",h+0.55*r*Math.cos(p.t/2),k+0.55*r*Math.sin(p.t/2),COL.chord,12);
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      break;
+    }
+
+    /* ---------- 点与圆 ---------- */
+    case "c_pq":{
+      const d=Math.hypot(p.qx-h,p.qy-k);
+      let col="#0ea5e9", rel="圆内";
+      if(Math.abs(d-r)<0.05){col="#16a34a";rel="圆上";}
+      else if(d>r){col="#ef4444";rel="圆外";}
+      dot(p.qx,p.qy,col,6);
+      labelP("Q",p.qx,p.qy,"#0f172a",12,-12);
+      txt(rel,p.qx,p.qy,col,11,"center",[0,16]);
+      if(aux){
+        seg(h,k,p.qx,p.qy,COL.aux,1.4,true);
+        seg(h,k,h+r,k,COL.focus,1.4,true);
+        txt("r",h+r/2,k,"#b91c1c",10,"center",[0,-9]);
+      }
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      break;
+    }
+
+    /* ---------- 直线与圆 ---------- */
+    case "c_lc":{
+      const m=p.lm, n=p.ln;
+      lineThru(-1,m*(-1)+n,1,m*1+n,COL.chord,2);
+      const res=circleLine(h,k,r,m,n);
+      if(res.roots.length===2){
+        const pts=pointsFromRoots(res.roots,m,n);
+        if(pts.length===2){
+          seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,3.5);
+          dot(pts[0].x,pts[0].y,"#0d9488",4);
+          dot(pts[1].x,pts[1].y,"#0d9488",4);
+          if(aux){
+            const mx=(pts[0].x+pts[1].x)/2, my=(pts[0].y+pts[1].y)/2;
+            seg(h,k,mx,my,COL.aux,1.5,true);
+            dot(mx,my,"#64748b",3);
+            txt("d",(h+mx)/2,(k+my)/2,"#64748b",10,"left",[3,0]);
+          }
+        }
+      }else if(Math.abs(res.disc)<1e-8&&res.roots.length===1){
+        const pts=pointsFromRoots(res.roots,m,n);
+        if(pts.length===1){
+          dot(pts[0].x,pts[0].y,COL.tangent,5);
+          labelP("切点",pts[0].x,pts[0].y,COL.tangent,16,-12);
+        }
+      }
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      break;
+    }
+
+    /* ---------- 弦长公式 ---------- */
+    case "c_chord":{
+      const m=p.lm, n=p.ln;
+      lineThru(-1,m*(-1)+n,1,m*1+n,COL.chord,2);
+      const res=circleLine(h,k,r,m,n);
+      if(res.roots.length===2){
+        const pts=pointsFromRoots(res.roots,m,n);
+        if(pts.length===2){
+          seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,3.5);
+          const mid={x:(pts[0].x+pts[1].x)/2, y:(pts[0].y+pts[1].y)/2};
+          /* 直角三角形：圆心—弦中点—端点 */
+          seg(h,k,mid.x,mid.y,COL.tangent,1.8,true);
+          seg(h,k,pts[0].x,pts[0].y,COL.focus,1.8,true);
+          seg(mid.x,mid.y,pts[0].x,pts[0].y,COL.chord,2.2);
+          dot(pts[0].x,pts[0].y,"#0d9488",4);
+          dot(pts[1].x,pts[1].y,"#0d9488",4);
+          dot(mid.x,mid.y,"#475569",3);
+          txt("d",(h+mid.x)/2,(k+mid.y)/2,"#64748b",10,"center",[0,-10]);
+          txt("r",(h+pts[0].x)/2,(k+pts[0].y)/2,"#b91c1c",10,"center",[8,4]);
+          txt("半弦",(mid.x+pts[0].x)/2,(mid.y+pts[0].y)/2,"#0d9488",10,"center",[0,12]);
+        }
+      }
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      break;
+    }
+
+    /* ---------- 垂径定理 ---------- */
+    case "c_diam":{
+      const m=p.lm, n=p.ln;
+      lineThru(-1,m*(-1)+n,1,m*1+n,COL.chord,2);
+      const res=circleLine(h,k,r,m,n);
+      if(res.roots.length===2){
+        const pts=pointsFromRoots(res.roots,m,n);
+        if(pts.length===2){
+          seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,3.5);
+          const mid={x:(pts[0].x+pts[1].x)/2, y:(pts[0].y+pts[1].y)/2};
+          /* 过圆心且垂直于弦的直径 */
+          if(Math.abs(m)<1e-9){
+            seg(h,mid.y-2*r,h,mid.y+2*r,COL.tangent,2.2);
+          }else{
+            const dm=-1/m;
+            lineThru(mid.x-1,mid.y-dm,mid.x+1,mid.y+dm,COL.tangent,2.2);
+          }
+          dot(mid.x,mid.y,"#ea580c",4);
+          txt("垂直平分",mid.x,mid.y,"#ea580c",10,"center",[0,14]);
+          dot(pts[0].x,pts[0].y,"#0d9488",4);
+          dot(pts[1].x,pts[1].y,"#0d9488",4);
+        }
+      }
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      break;
+    }
+
+    /* ---------- 切线 ---------- */
+    case "c_tan":{
+      const d=Math.hypot(p.px-h,p.py-k);
+      dot(p.px,p.py,"#0f172a",5);
+      labelP("Q",p.px,p.py,"#0f172a",12,-12);
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      const T=tangentPointsFromPoint(h,k,r,p.px,p.py);
+      if(T){
+        for(const t of T){
+          lineThru(p.px,p.py,t.x,t.y,COL.tangent,2);
+          dot(t.x,t.y,COL.tangent,4);
+          if(aux)seg(h,k,t.x,t.y,COL.aux,1.3,true);
+        }
+        /* 切点弦 */
+        if(aux){
+          seg(T[0].x,T[0].y,T[1].x,T[1].y,COL.chord,1.8,true);
+          txt("切点弦",(T[0].x+T[1].x)/2,(T[0].y+T[1].y)/2,"#0d9488",10,"center",[0,-12]);
+        }
+        txt("切点",T[0].x,T[0].y,COL.tangent,10,"center",[10,-10]);
+      }else{
+        txt(d<r?"点在圆内，无切线":"点在圆上",p.px,p.py,"#b91c1c",11,"center",[0,-16]);
+      }
+      break;
+    }
+
+    /* ---------- 圆周角与圆心角 ---------- */
+    case "c_ang":{
+      const a1=p.t, a2=p.t+p.ang*Math.PI/180;
+      const A={x:h+r*Math.cos(a1),y:k+r*Math.sin(a1)};
+      const B={x:h+r*Math.cos(a2),y:k+r*Math.sin(a2)};
+      const am=(a1+a2)/2+Math.PI;
+      const C={x:h+r*Math.cos(am),y:k+r*Math.sin(am)};
+      seg(h,k,A.x,A.y,COL.focus,1.8,true);
+      seg(h,k,B.x,B.y,COL.focus,1.8,true);
+      seg(C.x,C.y,A.x,A.y,COL.chord,1.8);
+      seg(C.x,C.y,B.x,B.y,COL.chord,1.8);
+      seg(A.x,A.y,B.x,B.y,COL.chord,2);
+      if(fill)fillTriangle({x:h,y:k},A,B,"rgba(37,99,235,.10)");
+      dot(A.x,A.y,"#0d9488",4);
+      dot(B.x,B.y,"#0d9488",4);
+      dot(C.x,C.y,COL.pointP,5);
+      labelP("C",C.x,C.y,COL.pointP,12,-10);
+      txt("A",A.x,A.y,"#334155",11,"center",[10,-8]);
+      txt("B",B.x,B.y,"#334155",11,"center",[-10,-8]);
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      break;
+    }
+
+    /* ---------- 弧长与扇形 ---------- */
+    case "c_arc":{
+      const th=p.ang*Math.PI/180;
+      if(fill){
+        ctx.beginPath();ctx.moveTo(X(h),Y(k));
+        ctx.arc(X(h),Y(k),r*view.scale,0,-th,true);
+        ctx.closePath();ctx.fillStyle=COL.area;ctx.fill();
+      }
+      ctx.strokeStyle=COL.chord;ctx.lineWidth=2;dash(false);
+      ctx.beginPath();ctx.arc(X(h),Y(k),r*view.scale,0,-th,true);ctx.stroke();
+      seg(h,k,h+r,k,COL.chord,1.6);
+      seg(h,k,h+r*Math.cos(th),k+r*Math.sin(th),COL.chord,1.6);
+      txt("θ",h+0.8*r*Math.cos(th/2),k+0.8*r*Math.sin(th/2),COL.chord,12);
+      txt("r",h+r/2,k,"#475569",10,"center",[0,-9]);
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      break;
+    }
+
+    /* ---------- 圆与圆 ---------- */
+    case "c_cc":{
+      drawCircle(p.h2,p.k2,p.r2,"#f59e0b",2.5);
+      dot(p.h2,p.k2,"#f59e0b",4);
+      txt("O₂",p.h2,p.k2,"#b45309",12,"right",[-6,-6]);
+      if(aux)seg(h,k,p.h2,p.k2,COL.aux,1.5,true);
+      txt("O₁",h,k,"#475569",12,"right",[-6,-6]);
+      break;
+    }
+
+    /* ---------- 公共弦 ---------- */
+    case "c_common":{
+      drawCircle(p.h2,p.k2,p.r2,"#f59e0b",2.5);
+      dot(p.h2,p.k2,"#f59e0b",4);
+      txt("O₂",p.h2,p.k2,"#b45309",12,"right",[-6,-6]);
+      txt("O₁",h,k,"#475569",12,"right",[-6,-6]);
+      const d=Math.hypot(p.h2-h,p.k2-k);
+      const R1=r, R2=p.r2;
+      if(d>1e-9&&d<R1+R2-1e-6&&d>Math.abs(R1-R2)+1e-6){
+        /* 两圆相交：求公共弦 */
+        const ax=(d*d+R1*R1-R2*R2)/(2*d);
+        const hh=Math.sqrt(Math.max(R1*R1-ax*ax,0));
+        const ux=(p.h2-h)/d, uy=(p.k2-k)/d;
+        const mx=h+ux*ax, my=k+uy*ax;
+        const A={x:mx-uy*hh,y:my+ux*hh};
+        const B={x:mx+uy*hh,y:my-ux*hh};
+        seg(A.x,A.y,B.x,B.y,COL.chord,3.5);
+        dot(A.x,A.y,"#0d9488",4);
+        dot(B.x,B.y,"#0d9488",4);
+        txt("公共弦",(A.x+B.x)/2,(A.y+B.y)/2,"#0d9488",10,"center",[0,-12]);
+        if(aux)seg(h,k,p.h2,p.k2,COL.aux,1.3,true);
+      }else{
+        txt("两圆无公共弦",h,k,"#b91c1c",11,"center",[0,-r-16]);
+      }
+      break;
+    }
+
+    /* ---------- 公切线 ---------- */
+    case "c_ctan":{
+      drawCircle(p.h2,p.k2,p.r2,"#f59e0b",2.5);
+      dot(p.h2,p.k2,"#f59e0b",4);
+      txt("O₂",p.h2,p.k2,"#b45309",12,"right",[-6,-6]);
+      txt("O₁",h,k,"#475569",12,"right",[-6,-6]);
+      const d=Math.hypot(p.h2-h,p.k2-k);
+      const r1=r, r2=p.r2;
+      if(aux&&d>1e-9)seg(h,k,p.h2,p.k2,COL.aux,1.2,true);
+
+      const rB=Math.max(r1,r2), rS=Math.min(r1,r2);
+      const big = (rB===r1)?{x:h,y:k}:{x:p.h2,y:p.k2};
+      const small=(rS===r1)?{x:h,y:k}:{x:p.h2,y:p.k2};
+
+      /* 外公切线（d > |r1−r2|） */
+      if(d>Math.abs(r1-r2)+1e-6){
+        if(Math.abs(rB-rS)<1e-6){
+          /* 等半径：外公切线平行于连心线 */
+          const ux=(p.h2-h)/d, uy=(p.k2-k)/d;
+          const nx=-uy, ny=ux;
+          for(const sg of [1,-1]){
+            seg(h+nx*r1*sg,k+ny*r1*sg, p.h2+nx*r2*sg,p.k2+ny*r2*sg, COL.tangent,1.8);
+          }
+        }else{
+          const dx=(small.x-big.x)/d, dy=(small.y-big.y)/d;
+          const D=d*rB/(rB-rS);
+          const H={x:big.x+dx*D, y:big.y+dy*D};
+          const T=tangentPointsFromPoint(big.x,big.y,rB,H.x,H.y);
+          if(T){
+            lineThru(H.x,H.y,T[0].x,T[0].y,COL.tangent,1.8);
+            dot(T[0].x,T[0].y,COL.tangent,3.5);
+            txt("外公切线",(H.x+T[0].x)/2,(H.y+T[0].y)/2,"#ea580c",10,"center",[0,-10]);
+          }
+        }
+      }
+
+      /* 内公切线（d > r1+r2） */
+      if(d>r1+r2+1e-6){
+        const ux=(p.h2-h)/d, uy=(p.k2-k)/d;
+        const D=d*r1/(r1+r2);
+        const H={x:h+ux*D, y:k+uy*D};
+        const T=tangentPointsFromPoint(h,k,r1,H.x,H.y);
+        if(T){
+          lineThru(H.x,H.y,T[0].x,T[0].y,COL.asymptote,1.6);
+          dot(T[0].x,T[0].y,COL.asymptote,3.2);
+          txt("内公切线",(H.x+T[0].x)/2,(H.y+T[0].y)/2,"#9333ea",10,"center",[0,12]);
+        }
+      }
+      break;
+    }
+
+    /* ---------- 圆系方程 ---------- */
+    case "c_sys":{
+      drawCircle(p.h2,p.k2,p.r2,"#f59e0b",1.8);
+      dot(p.h2,p.k2,"#f59e0b",3.5);
+      txt("O₂",p.h2,p.k2,"#b45309",11,"right",[-5,-5]);
+      txt("O₁",h,k,"#475569",11,"right",[-5,-5]);
+      const d=Math.hypot(p.h2-h,p.k2-k);
+      const R1=r, R2=p.r2;
+
+      if(d>1e-9&&d<R1+R2-1e-6&&d>Math.abs(R1-R2)+1e-6){
+        /* 两圆相交：以公共弦为标尺作过两交点的圆系 */
+        const ax=(d*d+R1*R1-R2*R2)/(2*d);
+        const hh=Math.sqrt(Math.max(R1*R1-ax*ax,0));
+        const ux=(p.h2-h)/d, uy=(p.k2-k)/d;
+        const mx=h+ux*ax, my=k+uy*ax;
+        const A={x:mx-uy*hh,y:my+ux*hh};
+        const B={x:mx+uy*hh,y:my-ux*hh};
+        const half=Math.hypot(A.x-B.x,A.y-B.y)/2;
+        const nx=-uy, ny=ux;  /* 公共弦的垂直方向 */
+        /* 圆系：圆心在中垂线上移动 */
+        for(let i=-3;i<=3;i++){
+          const tt=i*0.9;
+          const cc={x:mx+nx*tt, y:my+ny*tt};
+          const rr=Math.sqrt(half*half+tt*tt);
+          if(!isNum(rr)||rr<=0)continue;
+          ctx.strokeStyle=(i===0)?"rgba(37,99,235,.20)":"rgba(37,99,235,.18)";
+          ctx.lineWidth=1.2;dash(false);
+          ctx.beginPath();ctx.arc(X(cc.x),Y(cc.y),rr*view.scale,0,Math.PI*2);ctx.stroke();
+        }
+        /* 当前 λ 对应圆：用 lam 控制偏移量 */
+        const tt=p.lam*2.2;
+        const cc={x:mx+nx*tt, y:my+ny*tt};
+        const rr=Math.sqrt(half*half+tt*tt);
+        if(isNum(rr)&&rr>0){
+          ctx.strokeStyle="rgba(37,99,235,.85)";ctx.lineWidth=2.2;
+          ctx.beginPath();ctx.arc(X(cc.x),Y(cc.y),rr*view.scale,0,Math.PI*2);ctx.stroke();
+        }
+        dot(A.x,A.y,"#0d9488",3.5);
+        dot(B.x,B.y,"#0d9488",3.5);
+        /* 公共弦直线（λ=−1 时） */
+        seg(A.x,A.y,B.x,B.y,COL.chord,1.6,true);
+        txt("λ=−1：公共弦",(A.x+B.x)/2,(A.y+B.y)/2,"#0d9488",10,"center",[0,-12]);
+      }else{
+        txt("两圆无交点，圆系退化",h,k,"#b91c1c",11,"center",[0,-r-16]);
+      }
+      break;
+    }
+
+    /* ---------- 对称性 ---------- */
+    case "c_sym":{
+      /* 原圆，以及关于 x 轴、y 轴、直线 y=x 的对称圆 */
+      drawCircle(h,-k,r,"rgba(14,165,233,.55)",1.5);
+      drawCircle(-h,k,r,"rgba(14,165,233,.55)",1.5);
+      drawCircle(k,h,r,"rgba(16,185,129,.55)",1.5);
+      if(aux){
+        vline(0,COL.aux,1.3,true);
+        hline(0,COL.aux,1.3,true);
+        lineThru(-1,-1,1,1,COL.aux,1.2,true);
+      }
+      dot(-h,k,"#0ea5e9",3.5);
+      dot(h,-k,"#0ea5e9",3.5);
+      dot(k,h,"#10b981",3.5);
+      txt("O",h,k,"#475569",12,"right",[-6,-6]);
+      txt("y 轴对称",-h,k,"#0284c7",10,"center",[0,12]);
+      txt("x 轴对称",h,-k,"#0284c7",10,"center",[0,-12]);
+      txt("y=x 对称",k,h,"#059669",10,"center",[12,0]);
+      break;
+    }
+  }
+}
+
+/* 补充：c_pq 拖动时 |d−r|<0.15 自动吸附到圆上 */
+(function patchCircleDrag(){
+  const _orig=getDragPoints;
+  getDragPoints=function(){
+    const list=_orig();
+    if(state.module==="circle"&&state.submode==="c_pq"&&list.length===1){
+      const od=list[0].onDrag;
+      list[0].onDrag=function(mx,my){
+        od(mx,my);
+        const p=state.params;
+        const d=Math.hypot(p.qx-p.h,p.qy-p.k);
+        if(isNum(d)&&d>1e-9&&Math.abs(d-p.r)<0.15){
+          const ux=(p.qx-p.h)/d, uy=(p.qy-p.k)/d;
+          p.qx=p.h+ux*p.r;
+          p.qy=p.k+uy*p.r;
+        }
+      };
+    }
+    return list;
+  };
+})();
+</script>
+
+<!-- ===== 第四段结束（请在此下方粘贴第五段） ===== -->
+<script>
+/* =========================================================
+   第五段：椭圆模块 与 双曲线模块 场景绘制
+   ========================================================= */
+
+/* ================= 椭圆 ================= */
+function drawEllipseScene(s){
+  const p=state.params;
+  const a=p.a, c=p.c, b=eb();
+  const aux=state.showAux, fill=state.showFill;
+  const Pp=getP();
+
+  function common(){
+    drawEllipse(a,b,COL.ellipse,2.5);
+    dot(-c,0,COL.focus,4);txt("F₁",-c,0,"#b91c1c",11,"center",[0,-13]);
+    dot(c,0,COL.focus,4);txt("F₂",c,0,"#b91c1c",11,"center",[0,-13]);
+    dot(-a,0,"#15803d",4);txt("A₁",-a,0,"#166534",11,"center",[0,13]);
+    dot(a,0,"#15803d",4);txt("A₂",a,0,"#166534",11,"center",[0,13]);
+  }
+
+  switch(s){
+
+    case "e_def1":{
+      common();
+      seg(-c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      seg(c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "e_def2":{
+      drawEllipse(a,b,COL.ellipse,2.5);
+      dot(c,0,COL.focus,4);txt("F",c,0,"#b91c1c",11,"center",[0,-13]);
+      if(c>1e-6){
+        const dir=a*a/c;
+        vline(dir,COL.directrix,1.8,true);
+        vline(-dir,COL.directrix,1.4,true);
+        txt("准线 x=a²/c",dir,view.oy+view.ext*0.9,"#475569",11);
+        seg(Pp.x,Pp.y,dir,Pp.y,COL.aux,1.4,true);
+        txt("d",(Pp.x+dir)/2,Pp.y,"#64748b",10,"center",[0,12]);
+      }
+      seg(c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "e_def3":{
+      drawEllipse(a,b,COL.ellipse,2.5);
+      dot(-a,0,"#15803d",4);dot(a,0,"#15803d",4);
+      txt("A₁",-a,0,"#166534",11,"center",[0,13]);
+      txt("A₂",a,0,"#166534",11,"center",[0,13]);
+      seg(-a,0,Pp.x,Pp.y,COL.aux,1.4,true);
+      seg(a,0,Pp.x,Pp.y,COL.aux,1.4,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "e_std":{
+      common();
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      if(aux){
+        seg(0,0,a,0,COL.aux,1.4,true);
+        seg(0,0,0,b,COL.aux,1.4,true);
+        txt("a",a/2,0,"#166534",11,"center",[0,-11]);
+        txt("b",0,b/2,"#166534",11,"right",[-5,0]);
+        txt("c",c/2,0,"#b91c1c",11,"center",[0,13]);
+      }
+      break;
+    }
+
+    case "e_par":{
+      common();
+      seg(0,0,Pp.x,Pp.y,COL.aux,1.4,true);
+      ctx.strokeStyle=COL.chord;ctx.lineWidth=1.6;dash(false);
+      ctx.beginPath();ctx.arc(X(0),Y(0),Math.min(0.7,0.5*Math.min(a,b))*view.scale,0,-p.t,true);ctx.stroke();
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P(t)",Pp.x,Pp.y,COL.pointP,16,-12);
+      txt("t",0.55*Math.min(a,b)*Math.cos(p.t/2),0.55*Math.min(a,b)*Math.sin(p.t/2),COL.chord,12);
+      break;
+    }
+
+    case "e_elem":{
+      common();
+      dot(0,b,"#15803d",4);txt("B₂",0,b,"#166534",11,"right",[-5,0]);
+      dot(0,-b,"#15803d",4);txt("B₁",0,-b,"#166534",11,"right",[-5,0]);
+      if(aux){
+        seg(-a,0,a,0,COL.aux,1.2,true);
+        seg(0,-b,0,b,COL.aux,1.2,true);
+      }
+      break;
+    }
+
+    case "e_fr":{
+      common();
+      seg(-c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      seg(c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "e_ftri":{
+      common();
+      if(fill)fillTriangle({x:-c,y:0},{x:c,y:0},Pp);
+      seg(-c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      seg(c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      seg(-c,0,c,0,COL.focus,1.8);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "e_fchord":{
+      common();
+      const lr=b*b/a;
+      /* 通径：过 F₂ 且垂直长轴 */
+      seg(c,-lr,c,lr,COL.chord,2.6);
+      dot(c,lr,"#0d9488",4);dot(c,-lr,"#0d9488",4);
+      txt("通径",c+0.15,lr,"#0d9488",10,"left",[4,0]);
+      /* 过 F₂ 的一般焦点弦 */
+      if(isNum(p.lm)){
+        const m=p.lm, n=-m*c;
+        lineThru(c-1,m*(c-1-c),c+1,m*(c+1-c),COL.chord,1.6,true);
+        const res=ellipseLine(a,b,m,n);
+        if(res.roots.length===2){
+          const pts=pointsFromRoots(res.roots,m,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,2.6);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);
+            dot(pts[1].x,pts[1].y,"#0d9488",4);
+          }
+        }
+      }
+      break;
+    }
+
+    case "e_mid":{
+      drawEllipse(a,b,COL.ellipse,2.5);
+      const x0=Pp.x, y0=Pp.y;
+      dot(x0,y0,COL.pointP,5);
+      labelP("M",x0,y0,COL.pointP,12,-12);
+      if(Math.abs(y0)>0.05){
+        /* 点差法：k = −b²x₀/(a²y₀) */
+        const k=-b*b*x0/(a*a*y0);
+        const n=y0-k*x0;
+        const res=ellipseLine(a,b,k,n);
+        if(res.roots.length===2){
+          const pts=pointsFromRoots(res.roots,k,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,2.6);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);
+            dot(pts[1].x,pts[1].y,"#0d9488",4);
+          }
+        }
+      }else{
+        txt("中点弦为竖直方向",x0,y0,"#b91c1c",10,"center",[0,16]);
+      }
+      break;
+    }
+
+    case "e_ecc":{
+      drawEllipse(a,b,COL.ellipse,2.5);
+      if(c>0){dot(-c,0,COL.focus,4);dot(c,0,COL.focus,4);}
+      dot(Pp.x,Pp.y,COL.pointP,4);
+      break;
+    }
+
+    case "e_dir":{
+      drawEllipse(a,b,COL.ellipse,2.5);
+      if(c>1e-6){
+        const d2=a*a/c;
+        vline(d2,COL.directrix,1.8,true);
+        vline(-d2,COL.directrix,1.8,true);
+        txt("x=a²/c",d2,view.oy+view.ext*0.9,"#475569",10);
+        txt("x=−a²/c",-d2,view.oy+view.ext*0.9,"#475569",10);
+      }
+      dot(-c,0,COL.focus,4);dot(c,0,COL.focus,4);
+      break;
+    }
+
+    case "e_line":{
+      drawEllipse(a,b,COL.ellipse,2.5);
+      const m=p.lm, n=p.ln;
+      lineThru(-1,m*(-1)+n,1,m+n,COL.chord,2);
+      const res=ellipseLine(a,b,m,n);
+      if(res.roots.length===2){
+        const pts=pointsFromRoots(res.roots,m,n);
+        if(pts.length===2){
+          seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,3.2);
+          dot(pts[0].x,pts[0].y,"#0d9488",4);
+          dot(pts[1].x,pts[1].y,"#0d9488",4);
+        }
+      }else if(Math.abs(res.disc)<1e-8&&res.roots.length===1){
+        const pts=pointsFromRoots(res.roots,m,n);
+        if(pts.length===1){
+          dot(pts[0].x,pts[0].y,COL.tangent,5);
+          labelP("切点",pts[0].x,pts[0].y,COL.tangent,16,-12);
+        }
+      }
+      dot(-c,0,COL.focus,4);dot(c,0,COL.focus,4);
+      break;
+    }
+
+    case "e_tan":{
+      drawEllipse(a,b,COL.ellipse,2.5);
+      const x0=Pp.x, y0=Pp.y;
+      if(Math.abs(y0)>1e-6){
+        /* 切线斜率 k = −b²x₀/(a²y₀)，截距 n = b²/y₀ */
+        const k=-(b*b*x0)/(a*a*y0);
+        const n=b*b/y0;
+        lineThru(-1,k*(-1)+n,1,k+n,COL.tangent,2.2);
+      }else{
+        vline(x0,COL.tangent,2.2);
+      }
+      dot(x0,y0,COL.pointP,5);
+      labelP("P",x0,y0,COL.pointP,12,-12);
+      break;
+    }
+
+    case "e_circle":{
+      const bb=clamp(p.bSlide,1e-6,a);
+      drawEllipse(a,bb,COL.ellipse,2.5);
+      drawCircle(0,0,a,"rgba(37,99,235,.45)",1.5);
+      dot(0,0,"#475569",3);
+      txt("圆 b=a="+fmt(a,2),0,a,"#2563eb",10,"center",[0,-10]);
+      txt("b="+fmt(bb,2),a*0.7,-bb-0.3,"#16a34a",10,"left");
+      break;
+    }
+  }
+}
+
+/* ================= 双曲线 ================= */
+function drawHyperbolaScene(s){
+  const p=state.params;
+  const a=p.a, b=p.b, c=hc();
+  const aux=state.showAux, fill=state.showFill;
+  const Pp=getP();
+  const e=he();
+
+  function common(){
+    drawHyperbola(a,b,COL.hyperbola,2.5);
+    lineThru(-1,-(b/a),1,(b/a),COL.asymptote,1.5,true);
+    lineThru(-1,(b/a),1,-(b/a),COL.asymptote,1.5,true);
+    dot(-c,0,COL.focus,4);txt("F₁",-c,0,"#b91c1c",11,"center",[0,-13]);
+    dot(c,0,COL.focus,4);txt("F₂",c,0,"#b91c1c",11,"center",[0,-13]);
+    dot(-a,0,"#6d28d9",4);txt("A₁",-a,0,"#5b21b6",11,"center",[0,13]);
+    dot(a,0,"#6d28d9",4);txt("A₂",a,0,"#5b21b6",11,"center",[0,13]);
+  }
+
+  switch(s){
+
+    case "h_def1":{
+      common();
+      seg(-c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      seg(c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "h_def2":{
+      drawHyperbola(a,b,COL.hyperbola,2.5);
+      dot(c,0,COL.focus,4);txt("F",c,0,"#b91c1c",11,"center",[0,-13]);
+      const dir=a*a/c;
+      vline(dir,COL.directrix,1.8,true);
+      vline(-dir,COL.directrix,1.4,true);
+      seg(c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      seg(Pp.x,Pp.y,dir,Pp.y,COL.aux,1.4,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "h_def3":{
+      drawHyperbola(a,b,COL.hyperbola,2.5);
+      dot(-a,0,"#6d28d9",4);dot(a,0,"#6d28d9",4);
+      txt("A₁",-a,0,"#5b21b6",11,"center",[0,13]);
+      txt("A₂",a,0,"#5b21b6",11,"center",[0,13]);
+      seg(-a,0,Pp.x,Pp.y,COL.aux,1.4,true);
+      seg(a,0,Pp.x,Pp.y,COL.aux,1.4,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "h_std":{
+      common();
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    /* ---------- 新增：参数方程 ---------- */
+    case "h_par":{
+      drawHyperbola(a,b,COL.hyperbola,2.5);
+      lineThru(-1,-(b/a),1,(b/a),COL.asymptote,1.2,true);
+      lineThru(-1,(b/a),1,-(b/a),COL.asymptote,1.2,true);
+      dot(0,0,"#475569",3);
+      txt("O",0,0,"#475569",11,"right",[-4,-6]);
+      /* 连续参数点 P（cosh/sinh） */
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P(u)",Pp.x,Pp.y,COL.pointP,16,-12);
+      if(aux){
+        seg(0,0,Pp.x,Pp.y,COL.aux,1.3,true);
+        txt("x=±a·cosh u",0,view.oy+view.ext*0.82,"#7c3aed",11);
+        txt("y=b·sinh u  （连续）",0,view.oy+view.ext*0.95,"#7c3aed",10);
+        txt("对比：x=a·sec t, y=b·tan t（t=π/2 有奇点）",0,view.oy-view.ext*0.95,"#9333ea",10);
+      }
+      break;
+    }
+
+    case "h_elem":{
+      common();
+      dot(0,b,"#6d28d9",4);txt("B₂",0,b,"#5b21b6",11,"right",[-5,0]);
+      dot(0,-b,"#6d28d9",4);txt("B₁",0,-b,"#5b21b6",11,"right",[-5,0]);
+      if(aux){
+        seg(-a,0,a,0,COL.aux,1.2,true);
+        seg(0,-b,0,b,COL.aux,1.2,true);
+        txt("2a",0,0,"#5b21b6",10,"center",[0,-12]);
+        txt("2b",0,0,"#5b21b6",10,"center",[14,0]);
+      }
+      break;
+    }
+
+    case "h_asy":{
+      common();
+      dot(Pp.x,Pp.y,COL.pointP,4);
+      break;
+    }
+
+    case "h_conj":{
+      drawHyperbola(a,b,COL.hyperbola,2.5);
+      /* 共轭双曲线 y²/b²−x²/a²=1：x=a·sinh u, y=±b·cosh u */
+      ctx.strokeStyle="#f59e0b";ctx.lineWidth=2;dash(false);
+      const bound=view.ext*2.2;
+      let U=Math.acosh(Math.max(bound/b,1.0001));
+      if(!isNum(U))U=3; U=Math.min(U,6);
+      for(const sg of [1,-1]){
+        ctx.beginPath();let started=false;
+        const N=80;
+        for(let i=-N;i<=N;i++){
+          const u=U*i/N;
+          const x=a*Math.sinh(u), y=sg*b*Math.cosh(u);
+          if(!isNum(x)||!isNum(y)){started=false;continue;}
+          if(Math.abs(x)>view.ext*2.3||Math.abs(y)>view.ext*2.3){started=false;continue;}
+          if(!started){ctx.moveTo(X(x),Y(y));started=true;}else ctx.lineTo(X(x),Y(y));
+        }
+        ctx.stroke();
+      }
+      lineThru(-1,-(b/a),1,(b/a),COL.asymptote,1.4,true);
+      lineThru(-1,(b/a),1,-(b/a),COL.asymptote,1.4,true);
+      dot(-c,0,COL.focus,3.5);dot(c,0,COL.focus,3.5);
+      break;
+    }
+
+    case "h_fr":{
+      common();
+      seg(-c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      seg(c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "h_ftri":{
+      common();
+      if(fill)fillTriangle({x:-c,y:0},{x:c,y:0},Pp);
+      seg(-c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      seg(c,0,Pp.x,Pp.y,COL.focus,1.8,true);
+      seg(-c,0,c,0,COL.focus,1.8);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "h_fchord":{
+      common();
+      const lr=b*b/a;
+      seg(c,-lr,c,lr,COL.chord,2.6);
+      dot(c,lr,"#0d9488",4);dot(c,-lr,"#0d9488",4);
+      txt("通径",c+0.15,lr,"#0d9488",10,"left",[4,0]);
+      if(isNum(p.lm)){
+        const m=p.lm, n=-m*c;
+        lineThru(c-1,m*(c-1-c),c+1,m*(c+1-c),COL.chord,1.6,true);
+        const res=hyperbolaLine(a,b,m,n);
+        if(res.roots.length===2&&!res.parallel){
+          const pts=pointsFromRoots(res.roots,m,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,2.6);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);
+            dot(pts[1].x,pts[1].y,"#0d9488",4);
+          }
+        }
+      }
+      break;
+    }
+
+    case "h_mid":{
+      drawHyperbola(a,b,COL.hyperbola,2.5);
+      const x0=Pp.x, y0=Pp.y;
+      dot(x0,y0,COL.pointP,5);
+      labelP("M",x0,y0,COL.pointP,12,-12);
+      if(Math.abs(y0)>0.05){
+        /* 点差法：k = b²x₀/(a²y₀) */
+        const k=b*b*x0/(a*a*y0);
+        const n=y0-k*x0;
+        const res=hyperbolaLine(a,b,k,n);
+        if(res.roots.length===2&&!res.parallel){
+          const pts=pointsFromRoots(res.roots,k,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,2.6);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);
+            dot(pts[1].x,pts[1].y,"#0d9488",4);
+          }
+        }
+      }
+      break;
+    }
+
+    case "h_ecc":{
+      drawHyperbola(a,b,COL.hyperbola,2.5);
+      lineThru(-1,-(b/a),1,(b/a),COL.asymptote,1.4,true);
+      lineThru(-1,(b/a),1,-(b/a),COL.asymptote,1.4,true);
+      dot(-c,0,COL.focus,4);dot(c,0,COL.focus,4);
+      dot(Pp.x,Pp.y,COL.pointP,4);
+      break;
+    }
+
+    case "h_dir":{
+      drawHyperbola(a,b,COL.hyperbola,2.5);
+      const d2=a*a/c;
+      vline(d2,COL.directrix,1.8,true);
+      vline(-d2,COL.directrix,1.8,true);
+      txt("x=a²/c",d2,view.oy+view.ext*0.9,"#475569",10);
+      txt("x=−a²/c",-d2,view.oy+view.ext*0.9,"#475569",10);
+      dot(-c,0,COL.focus,4);dot(c,0,COL.focus,4);
+      break;
+    }
+
+    case "h_line":{
+      drawHyperbola(a,b,COL.hyperbola,2.5);
+      lineThru(-1,-(b/a),1,(b/a),COL.asymptote,1.1,true);
+      lineThru(-1,(b/a),1,-(b/a),COL.asymptote,1.1,true);
+      const m=p.lm, n=p.ln;
+      lineThru(-1,m*(-1)+n,1,m+n,COL.chord,2);
+      const res=hyperbolaLine(a,b,m,n);
+      if(res.parallel){
+        /* 与渐近线平行：只有一个交点 */
+        if(res.roots.length===1){
+          const pts=pointsFromRoots(res.roots,m,n);
+          if(pts.length===1){
+            dot(pts[0].x,pts[0].y,"#0d9488",5);
+            labelP("唯一交点",pts[0].x,pts[0].y,"#0d9488",26,-12);
+          }
+        }
+      }else if(res.roots.length===2){
+        const pts=pointsFromRoots(res.roots,m,n);
+        if(pts.length===2){
+          seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,3.2);
+          dot(pts[0].x,pts[0].y,"#0d9488",4);
+          dot(pts[1].x,pts[1].y,"#0d9488",4);
+        }
+      }else if(Math.abs(res.disc)<1e-8&&res.roots.length===1){
+        const pts=pointsFromRoots(res.roots,m,n);
+        if(pts.length===1){
+          dot(pts[0].x,pts[0].y,COL.tangent,5);
+          labelP("切点",pts[0].x,pts[0].y,COL.tangent,16,-12);
+        }
+      }
+      dot(-c,0,COL.focus,4);dot(c,0,COL.focus,4);
+      break;
+    }
+
+    case "h_tan":{
+      drawHyperbola(a,b,COL.hyperbola,2.5);
+      const x0=Pp.x, y0=Pp.y;
+      if(Math.abs(y0)>1e-6){
+        /* 切线斜率 k = b²x₀/(a²y₀)，截距 n = −b²/y₀ */
+        const k=b*b*x0/(a*a*y0);
+        const n=-b*b/y0;
+        lineThru(-1,k*(-1)+n,1,k+n,COL.tangent,2.2);
+      }else{
+        vline(x0,COL.tangent,2.2);
+      }
+      dot(x0,y0,COL.pointP,5);
+      labelP("P",x0,y0,COL.pointP,12,-12);
+      break;
+    }
+
+    /* ---------- 双曲线↔椭圆（共焦点对比） ---------- */
+    case "h_ell":{
+      /* 取同一 c，构造椭圆与双曲线 */
+      const c0=c;
+      const eE=0.6;
+      const aE=(c0>1e-9)?c0/eE:3;
+      const bE=Math.sqrt(Math.max(aE*aE-c0*c0,0));
+      if(isNum(bE)&&bE>0)drawEllipse(aE,bE,COL.ellipse,2);
+      drawHyperbola(a,b,COL.hyperbola,2.5);
+      dot(-c0,0,COL.focus,4);dot(c0,0,COL.focus,4);
+      txt("F₁",-c0,0,"#b91c1c",10,"center",[0,-13]);
+      txt("F₂",c0,0,"#b91c1c",10,"center",[0,-13]);
+      txt("椭圆 a="+fmt(aE,2)+", b="+fmt(bE,2)+", e="+fmt(eE,2),0,view.oy+view.ext*0.82,"#16a34a",10);
+      txt("双曲线 a="+fmt(a,2)+", b="+fmt(b,2)+", e="+fmt(e,2),0,view.oy+view.ext*0.95,"#7c3aed",10);
+      break;
+    }
+  }
+}
+</script>
+
+<!-- ===== 第五段结束（请在此下方粘贴第六段） ===== -->
+<script>
+/* =========================================================
+   第六段：抛物线模块 与 综合模块 场景绘制
+   ========================================================= */
+
+/* 场景总调度 */
+function drawScene(){
+  const m=state.module, s=state.submode;
+  if(m==="circle")drawCircleScene(s);
+  else if(m==="ellipse")drawEllipseScene(s);
+  else if(m==="hyperbola")drawHyperbolaScene(s);
+  else if(m==="parabola")drawParabolaScene(s);
+  else drawSynScene(s);
+}
+
+/* ================= 抛物线 ================= */
+function drawParabolaScene(s){
+  const p=state.params;
+  const pp=p.p, form=p.pform;
+  const aux=state.showAux, fill=state.showFill;
+  const Pp=getP();
+  const F=paraFocus(pp,form);
+  const D=paraDirectrix(pp,form);
+
+  function common(){
+    drawParabola(pp,form,COL.parabola,2.5);
+    dot(F.x,F.y,COL.focus,4);
+    txt("F",F.x,F.y,"#b91c1c",11,"center",[0,-13]);
+    if(D.x!==undefined)vline(D.x,COL.directrix,1.8,true);
+    else hline(D.y,COL.directrix,1.8,true);
+  }
+
+  switch(s){
+
+    case "p_def":{
+      common();
+      seg(F.x,F.y,Pp.x,Pp.y,COL.focus,1.8,true);
+      if(D.x!==undefined)seg(Pp.x,Pp.y,D.x,Pp.y,COL.aux,1.5,true);
+      else seg(Pp.x,Pp.y,Pp.x,D.y,COL.aux,1.5,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "p_std":{
+      common();
+      dot(Pp.x,Pp.y,COL.pointP,4);
+      break;
+    }
+
+    case "p_fd":{
+      common();
+      txt("准线",D.x!==undefined?D.x:0,D.x!==undefined?view.oy+view.ext*0.9:D.y,
+        "#475569",10,"center",[0,0]);
+      dot(Pp.x,Pp.y,COL.pointP,4);
+      break;
+    }
+
+    case "p_par":{
+      common();
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P(t)",Pp.x,Pp.y,COL.pointP,16,-12);
+      break;
+    }
+
+    case "p_fr":{
+      common();
+      seg(F.x,F.y,Pp.x,Pp.y,COL.focus,1.8,true);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "p_lr":{
+      common();
+      /* 通径 2p：过焦点且垂直对称轴 */
+      if(form===0||form===1){
+        seg(F.x,-pp,F.x,pp,COL.chord,2.6);
+        dot(F.x,pp,"#0d9488",4);dot(F.x,-pp,"#0d9488",4);
+        txt("通径 2p",F.x,pp,"#0d9488",10,"center",[0,-10]);
+      }else{
+        seg(-pp,F.y,pp,F.y,COL.chord,2.6);
+        dot(pp,F.y,"#0d9488",4);dot(-pp,F.y,"#0d9488",4);
+        txt("通径 2p",pp,F.y,"#0d9488",10,"center",[8,0]);
+      }
+      break;
+    }
+
+    case "p_fchord":{
+      common();
+      if(isNum(p.lm)){
+        const m=p.lm;
+        const n=F.y-m*F.x;             /* 过焦点的直线 y=mx+n */
+        lineThru(F.x-1,m*(F.x-1)+n,F.x+1,m*(F.x+1)+n,COL.chord,1.5,true);
+        const res=parabolaLineForm(pp,m,n,form);
+        if(res.roots.length===2){
+          const pts=pointsFromRoots(res.roots,m,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,3);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);
+            dot(pts[1].x,pts[1].y,"#0d9488",4);
+            txt("A",pts[0].x,pts[0].y,"#0d9488",10,"center",[8,-10]);
+            txt("B",pts[1].x,pts[1].y,"#0d9488",10,"center",[-8,-10]);
+          }
+        }
+      }
+      break;
+    }
+
+    case "p_ecc":{
+      common();
+      dot(Pp.x,Pp.y,COL.pointP,4);
+      txt("e = 1",0,view.oy-view.ext*0.92,"#db2777",12);
+      break;
+    }
+
+    case "p_line":{
+      drawParabola(pp,form,COL.parabola,2.5);
+      const m=p.lm,n=p.ln;
+      lineThru(-1,m*(-1)+n,1,m+n,COL.chord,2);
+      const res=parabolaLineForm(pp,m,n,form);
+      let pts=[];
+      if(res.roots.length===2)pts=pointsFromRoots(res.roots,m,n);
+      else if(res.roots.length===1)pts=pointsFromRoots(res.roots,m,n);
+      if(pts.length===2){
+        seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,3.2);
+        dot(pts[0].x,pts[0].y,"#0d9488",4);
+        dot(pts[1].x,pts[1].y,"#0d9488",4);
+      }else if(pts.length===1){
+        dot(pts[0].x,pts[0].y,COL.tangent,5);
+        labelP("交点",pts[0].x,pts[0].y,COL.tangent,16,-12);
+      }
+      dot(F.x,F.y,COL.focus,4);
+      break;
+    }
+
+    case "p_tan":{
+      drawParabola(pp,form,COL.parabola,2.5);
+      const x0=Pp.x,y0=Pp.y;
+      const t=paraTangent(pp,form,x0,y0);
+      if(t){
+        if(t.vertical)vline(t.x,COL.tangent,2.2);
+        else lineThru(-1,t.m*(-1)+t.n,1,t.m+t.n,COL.tangent,2.2);
+      }
+      dot(x0,y0,COL.pointP,5);
+      labelP("P",x0,y0,COL.pointP,12,-12);
+      break;
+    }
+
+    case "p_mid":{
+      drawParabola(pp,form,COL.parabola,2.5);
+      const x0=Pp.x,y0=Pp.y;
+      let k=null;
+      if(form===0||form===1){
+        if(Math.abs(y0)>0.05)k=(form===0?pp:-pp)/y0;
+      }else{
+        k=(form===2?x0:-x0)/pp;
+      }
+      dot(x0,y0,COL.pointP,5);
+      labelP("M",x0,y0,COL.pointP,12,-12);
+      if(k!==null&&isFinite(k)){
+        const n=y0-k*x0;
+        const res=parabolaLineForm(pp,k,n,form);
+        if(res.roots.length===2){
+          const pts=pointsFromRoots(res.roots,k,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,2.6);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);
+            dot(pts[1].x,pts[1].y,"#0d9488",4);
+          }
+        }
+      }
+      break;
+    }
+
+    case "p_app":{
+      /* 平行光经抛物面反射汇聚于焦点 */
+      drawParabola(pp,0,COL.parabola,2.5);
+      const F0=paraFocus(pp,0);
+      dot(F0.x,F0.y,COL.focus,4);
+      vline(-pp/2,COL.directrix,1.5,true);
+      const ty=1.4, px=ty*ty/(2*pp);
+      seg(view.ox-view.ext*1.3,ty,px,ty,"#3b82f6",1.8);
+      seg(px,ty,F0.x,F0.y,COL.tangent,2.2);
+      dot(px,ty,COL.pointP,4);
+      txt("平行光",view.ox-view.ext*0.9,ty,"#3b82f6",10,"left");
+      txt("反射",(px+F0.x)/2,ty/2,"#ea580c",10,"center");
+      break;
+    }
+
+    case "p_rel":{
+      drawEllipse(pp,pp*0.7,COL.ellipse,1.5);
+      drawHyperbola(pp*0.7,pp*0.5,COL.hyperbola,1.5);
+      drawParabola(pp,0,COL.parabola,2.5);
+      dot(Pp.x,Pp.y,COL.pointP,4);
+      txt("e=1 为临界",0,view.oy+view.ext*0.9,"#334155",10);
+      break;
+    }
+  }
+}
+
+/* ================= 综合模块 ================= */
+function drawSynScene(s){
+  const p=state.params;
+  const aux=state.showAux, fill=state.showFill;
+
+  switch(s){
+
+    case "s_uni":{
+      const e=p.e, d0=p.d0;
+      const col=(e<0.02)?COL.circle:(e<1?COL.ellipse:(Math.abs(e-1)<0.02?COL.parabola:COL.hyperbola));
+      drawUnified(e,d0,col,2.5);
+      dot(0,0,COL.focus,4);
+      txt("F",0,0,"#b91c1c",11,"center",[0,-13]);
+      if(e>=0.02){
+        vline(-d0,COL.directrix,1.7,true);
+        txt("准线 x=−d",-d0,view.oy+view.ext*0.9,"#475569",10);
+      }
+      const Pp=getP();
+      if(isNum(Pp.x)&&isNum(Pp.y)){
+        if(aux){
+          seg(0,0,Pp.x,Pp.y,COL.focus,1.7,true);
+          if(e>=0.02)seg(Pp.x,Pp.y,-d0,Pp.y,COL.aux,1.4,true);
+        }
+        dot(Pp.x,Pp.y,COL.pointP,5);
+        labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      }
+      const label=(e<0.02)?"圆 e=0（准线退化）":(e<1?"椭圆 0<e<1":(Math.abs(e-1)<0.02?"抛物线 e=1":"双曲线 e>1"));
+      txt(label,0,view.oy-view.ext*0.92,col,12);
+      break;
+    }
+
+    case "s_disc":{
+      const idx=clamp(Math.round(p.discCase),0,6);
+      const names=[
+        "圆：x²+y²=4",
+        "椭圆：4x²+9y²=36",
+        "双曲线：x²−y²=1",
+        "抛物线：y²=4x",
+        "两直线：x²−y²=0",
+        "一点：x²+y²=0",
+        "空集：x²+y²=−1"
+      ];
+      if(idx===0)drawCircle(0,0,2,COL.circle,2.5);
+      else if(idx===1)drawEllipse(3,2,COL.ellipse,2.5);
+      else if(idx===2)drawHyperbola(1,1,COL.hyperbola,2.5);
+      else if(idx===3)drawParabola(2,0,COL.parabola,2.5);
+      else if(idx===4){
+        lineThru(-1,-1,1,1,COL.ellipse,2);
+        lineThru(-1,1,1,-1,COL.ellipse,2);
+      }else if(idx===5){
+        dot(0,0,COL.focus,6);
+      }
+      txt(names[idx],0,view.oy+view.ext*0.9,"#334155",12);
+      break;
+    }
+
+    case "s_compare":{
+      drawCircle(0,0,1.6,COL.circle,1.7);
+      drawEllipse(3,2,COL.ellipse,1.7);
+      drawHyperbola(1.4,1.1,COL.hyperbola,1.7);
+      drawParabola(1.4,0,COL.parabola,1.7);
+      txt("圆 e=0｜椭圆 e<1｜抛物线 e=1｜双曲线 e>1",0,view.oy+view.ext*0.9,"#334155",11);
+      break;
+    }
+
+    case "s_table":{
+      drawCircle(0,0,1.3,COL.circle,1.4);
+      drawEllipse(3,2,COL.ellipse,1.5);
+      drawHyperbola(1.6,1.2,COL.hyperbola,1.5);
+      drawParabola(1.5,0,COL.parabola,1.5);
+      txt("详细对比见知识卡片",0,view.oy+view.ext*0.9,"#334155",11);
+      break;
+    }
+
+    case "s_line":{
+      const m=p.lm,n=p.ln;
+      if(p.ctype===0){
+        const a=DEMO.ellA, b=DEMO.ellB, c=Math.sqrt(a*a-b*b);
+        drawEllipse(a,b,COL.ellipse,2.5);
+        dot(-c,0,COL.focus,3.5);dot(c,0,COL.focus,3.5);
+        lineThru(-1,m*(-1)+n,1,m+n,COL.chord,2);
+        const res=ellipseLine(a,b,m,n);
+        if(res.roots.length===2){
+          const pts=pointsFromRoots(res.roots,m,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,3.2);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);dot(pts[1].x,pts[1].y,"#0d9488",4);
+          }
+        }else if(Math.abs(res.disc)<1e-8&&res.roots.length===1){
+          const pts=pointsFromRoots(res.roots,m,n);
+          if(pts.length===1){
+            dot(pts[0].x,pts[0].y,COL.tangent,5);
+            labelP("切点",pts[0].x,pts[0].y,COL.tangent,16,-12);
+          }
+        }
+      }else if(p.ctype===1){
+        const a=DEMO.hypA,b=DEMO.hypB,c=Math.sqrt(a*a+b*b);
+        drawHyperbola(a,b,COL.hyperbola,2.5);
+        lineThru(-1,-(b/a),1,(b/a),COL.asymptote,1.1,true);
+        lineThru(-1,(b/a),1,-(b/a),COL.asymptote,1.1,true);
+        dot(-c,0,COL.focus,3.5);dot(c,0,COL.focus,3.5);
+        lineThru(-1,m*(-1)+n,1,m+n,COL.chord,2);
+        const res=hyperbolaLine(a,b,m,n);
+        if(res.parallel){
+          if(res.roots.length===1){
+            const pts=pointsFromRoots(res.roots,m,n);
+            if(pts.length===1){dot(pts[0].x,pts[0].y,"#0d9488",5);labelP("唯一交点",pts[0].x,pts[0].y,"#0d9488",26,-12);}
+          }
+        }else if(res.roots.length===2){
+          const pts=pointsFromRoots(res.roots,m,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,3.2);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);dot(pts[1].x,pts[1].y,"#0d9488",4);
+          }
+        }
+      }else{
+        const pp=DEMO.parP;
+        drawParabola(pp,0,COL.parabola,2.5);
+        dot(pp/2,0,COL.focus,3.5);
+        vline(-pp/2,COL.directrix,1.1,true);
+        lineThru(-1,m*(-1)+n,1,m+n,COL.chord,2);
+        const res=parabolaLineForm(pp,m,n,0);
+        if(res.roots.length===2){
+          const pts=pointsFromRoots(res.roots,m,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,3.2);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);dot(pts[1].x,pts[1].y,"#0d9488",4);
+          }
+        }else if(res.roots.length===1){
+          const pts=pointsFromRoots(res.roots,m,n);
+          if(pts.length===1){dot(pts[0].x,pts[0].y,COL.tangent,5);labelP("交点",pts[0].x,pts[0].y,COL.tangent,16,-12);}
+        }
+      }
+      break;
+    }
+
+    case "s_chord":{
+      const a=DEMO.ellA, b=DEMO.ellB;
+      drawEllipse(a,b,COL.ellipse,2.5);
+      const x0=a*0.55*Math.cos(p.t), y0=b*0.55*Math.sin(p.t);
+      dot(x0,y0,COL.pointP,5);
+      labelP("M",x0,y0,COL.pointP,12,-12);
+      if(Math.abs(y0)>0.05){
+        const k=-b*b*x0/(a*a*y0);
+        const n=y0-k*x0;
+        const res=ellipseLine(a,b,k,n);
+        if(res.roots.length===2){
+          const pts=pointsFromRoots(res.roots,k,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,2.6);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);dot(pts[1].x,pts[1].y,"#0d9488",4);
+          }
+        }
+      }
+      break;
+    }
+
+    case "s_polar":{
+      const a=DEMO.ellA, b=DEMO.ellB;
+      drawEllipse(a,b,COL.ellipse,2.5);
+      const x0=a*Math.cos(p.t), y0=b*Math.sin(p.t);
+      dot(x0,y0,COL.pointP,5);
+      labelP("P",x0,y0,COL.pointP,12,-12);
+      if(Math.abs(y0)>1e-6){
+        const k=-(b*b*x0)/(a*a*y0);
+        const n=b*b/y0;
+        lineThru(-1,k*(-1)+n,1,k+n,COL.tangent,2.2);
+      }else{
+        vline(x0,COL.tangent,2.2);
+      }
+      break;
+    }
+
+    case "s_fchord":{
+      const a=DEMO.ellA, b=DEMO.ellB, c=Math.sqrt(a*a-b*b);
+      drawEllipse(a,b,COL.ellipse,2.4);
+      dot(-c,0,COL.focus,3.5);dot(c,0,COL.focus,3.5);
+      if(isNum(p.lm)){
+        const m=p.lm,n=-m*c;
+        lineThru(c-1,m*(c-1-c),c+1,m*(c+1-c),COL.chord,1.5,true);
+        const res=ellipseLine(a,b,m,n);
+        if(res.roots.length===2){
+          const pts=pointsFromRoots(res.roots,m,n);
+          if(pts.length===2){
+            seg(pts[0].x,pts[0].y,pts[1].x,pts[1].y,COL.chord,2.8);
+            dot(pts[0].x,pts[0].y,"#0d9488",4);dot(pts[1].x,pts[1].y,"#0d9488",4);
+          }
+        }
+      }
+      break;
+    }
+
+    case "s_ftri":{
+      const a=DEMO.ellA, b=DEMO.ellB, c=Math.sqrt(a*a-b*b);
+      drawEllipse(a,b,COL.ellipse,2.4);
+      const Pp={x:a*Math.cos(p.t),y:b*Math.sin(p.t)};
+      if(fill)fillTriangle({x:-c,y:0},{x:c,y:0},Pp);
+      seg(-c,0,Pp.x,Pp.y,COL.focus,1.7,true);
+      seg(c,0,Pp.x,Pp.y,COL.focus,1.7,true);
+      seg(-c,0,c,0,COL.focus,1.7);
+      dot(-c,0,COL.focus,4);dot(c,0,COL.focus,4);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      break;
+    }
+
+    case "s_ecc":{
+      const e=p.e, d0=p.d0;
+      const col=(e<0.02)?COL.circle:(e<1?COL.ellipse:(Math.abs(e-1)<0.02?COL.parabola:COL.hyperbola));
+      drawUnified(e,d0,col,2.5);
+      const Pp=getP();
+      if(isNum(Pp.x)&&isNum(Pp.y)){dot(Pp.x,Pp.y,COL.pointP,5);labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);}
+      dot(0,0,COL.focus,4);
+      break;
+    }
+
+    case "s_circ":{
+      const a=DEMO.ellA, b=clamp(p.bSlide,1e-3,a);
+      drawCircle(0,0,a,"rgba(37,99,235,.45)",1.5);
+      drawEllipse(a,b,COL.ellipse,2.5);
+      dot(0,0,"#475569",3);
+      txt("圆 b=a="+fmt(a,2),0,a,"#2563eb",10,"center",[0,-10]);
+      txt("b="+fmt(b,2),a*0.7,-b-0.3,"#16a34a",10,"left");
+      break;
+    }
+
+    case "s_ellhyp":{
+      const c=DEMO.synC;
+      const a1=DEMO.synEllA, b1=Math.sqrt(Math.max(a1*a1-c*c,0));
+      const a2=DEMO.synHypA, b2=Math.sqrt(Math.max(c*c-a2*a2,0));
+      if(b1>0)drawEllipse(a1,b1,COL.ellipse,2.2);
+      if(b2>0)drawHyperbola(a2,b2,COL.hyperbola,2.2);
+      lineThru(-1,-(b2/a2),1,b2/a2,"rgba(124,58,237,.45)",1.1,true);
+      lineThru(-1,b2/a2,1,-(b2/a2),"rgba(124,58,237,.45)",1.1,true);
+      dot(-c,0,COL.focus,4);dot(c,0,COL.focus,4);
+      txt("共焦点 c="+fmt(c,2),0,view.oy+view.ext*0.9,"#334155",11);
+      break;
+    }
+
+    case "s_hypPara":{
+      const a=DEMO.hypA,b=DEMO.hypB,c=Math.sqrt(a*a+b*b);
+      drawHyperbola(a,b,COL.hyperbola,2.2);
+      lineThru(-1,-(b/a),1,b/a,"rgba(124,58,237,.45)",1.1,true);
+      lineThru(-1,(b/a),1,-(b/a),"rgba(124,58,237,.45)",1.1,true);
+      drawParabola(DEMO.parP,0,COL.parabola,2.2);
+      dot(-c,0,COL.focus,3);dot(c,0,COL.focus,3);
+      dot(DEMO.parP/2,0,COL.focus,3);
+      txt("双曲线 e>1（有渐近线）",0,view.oy+view.ext*0.82,"#7c3aed",10);
+      txt("抛物线 e=1（无渐近线）",0,view.oy+view.ext*0.95,"#db2777",10);
+      break;
+    }
+
+    case "s_optics":{
+      const a=DEMO.ellA,b=DEMO.ellB,c=Math.sqrt(a*a-b*b);
+      drawEllipse(a,b,COL.ellipse,2.4);
+      const Pp={x:a*Math.cos(p.t),y:b*Math.sin(p.t)};
+      seg(-c,0,Pp.x,Pp.y,"#3b82f6",1.7);
+      seg(Pp.x,Pp.y,c,0,"#3b82f6",1.7);
+      dot(-c,0,COL.focus,4);dot(c,0,COL.focus,4);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      txt("F₁ → P → F₂ 反射",0,view.oy+view.ext*0.9,"#3b82f6",10);
+      break;
+    }
+
+    case "s_extreme":{
+      const a=DEMO.ellA,b=DEMO.ellB,c=Math.sqrt(a*a-b*b);
+      drawEllipse(a,b,COL.ellipse,2.4);
+      const Pp={x:a*Math.cos(p.t),y:b*Math.sin(p.t)};
+      seg(-c,0,Pp.x,Pp.y,COL.focus,1.6,true);
+      seg(c,0,Pp.x,Pp.y,COL.focus,1.6,true);
+      dot(-c,0,COL.focus,4);dot(c,0,COL.focus,4);
+      dot(Pp.x,Pp.y,COL.pointP,5);
+      labelP("P",Pp.x,Pp.y,COL.pointP,12,-12);
+      txt("a+c="+fmt(a+c,2)+"  a−c="+fmt(a-c,2),0,view.oy+view.ext*0.9,"#334155",10);
+      break;
+    }
+
+    case "s_card":{
+      drawCircle(0,0,1.2,COL.circle,1.4);
+      drawEllipse(3,2,COL.ellipse,1.5);
+      drawHyperbola(1.5,1.15,COL.hyperbola,1.5);
+      drawParabola(1.5,0,COL.parabola,1.5);
+      txt("圆 e=0｜椭圆 0<e<1｜抛物线 e=1｜双曲线 e>1",0,view.oy+view.ext*0.9,"#334155",10);
+      break;
+    }
+  }
+}
+</script>
+
+<!-- ===== 第六段结束（请在此下方粘贴第七段） ===== -->
+<script>
+/* =========================================================
+   第七段：数值面板 / 知识卡片
+   ========================================================= */
+
+/* ---------- 面板渲染：标签不变时只更新 textContent ---------- */
+let _panelKeys=[], _panelEls=[];
+function renderPanel(arr){
+  const box=$("panel");
+  const keys=arr.map(function(x){return x[0];});
+  let same=keys.length===_panelKeys.length;
+  if(same){
+    for(let i=0;i<keys.length;i++){if(keys[i]!==_panelKeys[i]){same=false;break;}}
+  }
+  if(!same){
+    box.innerHTML="";
+    _panelEls=[];
+    for(const it of arr){
+      const d=document.createElement("div");
+      d.className="vchip";
+      const l=document.createElement("span");
+      l.className="l"; l.textContent=it[0];
+      const b=document.createElement("b");
+      b.textContent=it[1];
+      d.appendChild(l); d.appendChild(b);
+      box.appendChild(d);
+      _panelEls.push(b);
+    }
+    _panelKeys=keys.slice();
+  }else{
+    for(let i=0;i<arr.length;i++){
+      if(_panelEls[i])_panelEls[i].textContent=arr[i][1];
+    }
+  }
+}
+
+function updatePanel(){
+  const m=state.module,s=state.submode;
+  let arr=[];
+  if(m==="circle")arr=panelCircle(s);
+  else if(m==="ellipse")arr=panelEllipse(s);
+  else if(m==="hyperbola")arr=panelHyperbola(s);
+  else if(m==="parabola")arr=panelParabola(s);
+  else arr=panelSyn(s);
+  renderPanel(arr);
+}
+
+/* =========================================================
+   圆
+   ========================================================= */
+function panelCircle(s){
+  const p=state.params;
+  const h=p.h,k=p.k,r=p.r;
+  const D=-2*h,E=-2*k,F=h*h+k*k-r*r;
+  const A=[];
+  const eqStd="(x"+(h>=0?"−":"+")+fmt(Math.abs(h),2)+")²+(y"+(k>=0?"−":"+")+fmt(Math.abs(k),2)+")²="+fmt(r*r,2);
+
+  if(s==="c_def"){
+    A.push(["圆心 O","("+fmt(h)+", "+fmt(k)+")"]);
+    A.push(["半径 r",fmt(r)]);
+    A.push(["|OP|",fmt(Math.hypot(getP().x-h,getP().y-k))]);
+    A.push(["标准方程",eqStd]);
+    A.push(["一般方程","x²+y²"+(D>=0?"+":"−")+fmt(Math.abs(D),2)+"x"+(E>=0?"+":"−")+fmt(Math.abs(E),2)+"y"+(F>=0?"+":"−")+fmt(Math.abs(F),2)+"=0"]);
+  }else if(s==="c_std"){
+    A.push(["圆心 a",fmt(h)]);
+    A.push(["圆心 b",fmt(k)]);
+    A.push(["半径 r",fmt(r)]);
+    A.push(["标准方程",eqStd]);
+    A.push(["D,E,F",fmt(D)+", "+fmt(E)+", "+fmt(F)]);
+  }else if(s==="c_gen"){
+    const Dg=p.Dg,Eg=p.Eg,Fg=p.Fg;
+    const disc=Dg*Dg+Eg*Eg-4*Fg;
+    A.push(["D",fmt(Dg)]);
+    A.push(["E",fmt(Eg)]);
+    A.push(["F",fmt(Fg)]);
+    A.push(["D²+E²−4F",fmt(disc)]);
+    A.push(["判定",disc>0?"表示圆":"不表示圆"]);
+    A.push(["圆心","("+fmt(-Dg/2)+", "+fmt(-Eg/2)+")"]);
+    A.push(["半径",disc>0?fmt(Math.sqrt(disc)/2):"—"]);
+    A.push(["方程","x²+y²"+(Dg>=0?"+":"−")+fmt(Math.abs(Dg),2)+"x"+(Eg>=0?"+":"−")+fmt(Math.abs(Eg),2)+"y"+(Fg>=0?"+":"−")+fmt(Math.abs(Fg),2)+"=0"]);
+  }else if(s==="c_par"){
+    const Pp=getP();
+    const deg=((p.t*180/Math.PI)%360+360)%360;
+    A.push(["θ（度）",fmt(deg,1)+"°"]);
+    A.push(["θ（弧度）",fmt(p.t,3)]);
+    A.push(["cosθ",fmt(Math.cos(p.t),3)]);
+    A.push(["sinθ",fmt(Math.sin(p.t),3)]);
+    A.push(["x",fmt(Pp.x)]);
+    A.push(["y",fmt(Pp.y)]);
+  }else if(s==="c_pq"){
+    const d=Math.hypot(p.qx-h,p.qy-k);
+    const rel=Math.abs(d-r)<0.05?"圆上":(d<r?"圆内":"圆外");
+    A.push(["|OQ|",fmt(d)]);
+    A.push(["半径 r",fmt(r)]);
+    A.push(["比较",fmt(d)+(d<r?" < ":Math.abs(d-r)<0.05?" = ":" > ")+fmt(r)]);
+    A.push(["位置关系",rel]);
+  }else if(s==="c_lc"){
+    const res=circleLine(h,k,r,p.lm,p.ln);
+    const rel=Math.abs(res.d-r)<0.03?"相切":(res.d<r?"相交":"相离");
+    A.push(["直线","y="+fmt(p.lm,2)+"x"+(p.ln>=0?"+":"−")+fmt(Math.abs(p.ln),2)]);
+    A.push(["圆心到直线 d",fmt(res.d)]);
+    A.push(["半径 r",fmt(r)]);
+    A.push(["位置关系",rel]);
+    A.push(["弦长",(res.d<r)?fmt(2*Math.sqrt(Math.max(r*r-res.d*res.d,0))):"—"]);
+    A.push(["判别式 Δ",fmt(res.disc)]);
+  }else if(s==="c_chord"){
+    const res=circleLine(h,k,r,p.lm,p.ln);
+    const d=res.d;
+    A.push(["弦心距 d",fmt(d)]);
+    A.push(["r²−d²",d<r?fmt(r*r-d*d):"—"]);
+    A.push(["半弦 √(r²−d²)",d<r?fmt(Math.sqrt(r*r-d*d)):"—"]);
+    A.push(["弦长 2√(r²−d²)",d<r?fmt(2*Math.sqrt(r*r-d*d)):"—"]);
+    A.push(["关系","r²=d²+(半弦)²"]);
+  }else if(s==="c_diam"){
+    const res=circleLine(h,k,r,p.lm,p.ln);
+    A.push(["弦心距 d",fmt(res.d)]);
+    A.push(["弦长",res.d<r?fmt(2*Math.sqrt(Math.max(r*r-res.d*res.d,0))):"—"]);
+    A.push(["结论","垂直于弦的直径平分弦"]);
+    A.push(["推论","且平分弦所对的两条弧"]);
+  }else if(s==="c_tan"){
+    const d=Math.hypot(p.px-h,p.py-k);
+    const tl=d>r?Math.sqrt(d*d-r*r):NaN;
+    A.push(["|OQ|",fmt(d)]);
+    A.push(["半径 r",fmt(r)]);
+    A.push(["切线长 √(d²−r²)",d>r?fmt(tl):"—"]);
+    A.push(["切线条数",d>r?"2":(Math.abs(d-r)<0.05?"1":"0")]);
+    if(d>r){
+      /* 切点弦方程：以 Q 为极点的极线 */
+      const dx=p.px-h, dy=p.py-k;
+      const C=-(dx*h+dy*k+r*r);
+      A.push(["切点弦","(x−h)(x_Q−h)+(y−k)(y_Q−k)=r²"]);
+      A.push(["切点弦系数","A="+fmt(dx)+", B="+fmt(dy)+", C="+fmt(C)]);
+    }else{
+      A.push(["切点弦","—"]);
+    }
+  }else if(s==="c_ang"){
+    A.push(["圆心角",fmt(p.ang,1)+"°"]);
+    A.push(["圆周角",fmt(p.ang/2,1)+"°"]);
+    A.push(["关系","圆周角 = ½ 圆心角"]);
+    A.push(["直径所对","90°"]);
+  }else if(s==="c_arc"){
+    const rad=p.ang*Math.PI/180;
+    A.push(["角度",fmt(p.ang,1)+"°"]);
+    A.push(["弧度",fmt(rad,3)+" rad"]);
+    A.push(["弧长 l=rθ",fmt(r*rad)]);
+    A.push(["扇形 S=½r²θ",fmt(0.5*r*r*rad)]);
+    A.push(["S=½lr",fmt(0.5*(r*rad)*r)]);
+    A.push(["换算","180° = π rad"]);
+  }else if(s==="c_cc"){
+    const d=Math.hypot(p.h2-h,p.k2-k),sum=r+p.r2,dif=Math.abs(r-p.r2);
+    let rel;
+    if(d<1e-6)rel="同心";
+    else if(d>sum+1e-6)rel="外离";
+    else if(Math.abs(d-sum)<1e-6)rel="外切";
+    else if(d<sum&&d>dif)rel="相交";
+    else if(Math.abs(d-dif)<1e-6)rel="内切";
+    else rel="内含";
+    A.push(["圆心距 d",fmt(d)]);
+    A.push(["r₁",fmt(r)]);
+    A.push(["r₂",fmt(p.r2)]);
+    A.push(["r₁+r₂",fmt(sum)]);
+    A.push(["|r₁−r₂|",fmt(dif)]);
+    A.push(["位置关系",rel]);
+  }else if(s==="c_common"){
+    const d=Math.hypot(p.h2-h,p.k2-k),R1=r,R2=p.r2;
+    let chord=null;
+    if(d>1e-9&&d<R1+R2-1e-6&&d>Math.abs(R1-R2)+1e-6){
+      const ax=(d*d+R1*R1-R2*R2)/(2*d);
+      chord=2*Math.sqrt(Math.max(R1*R1-ax*ax,0));
+    }
+    const Aco=2*(p.h2-h),Bco=2*(p.k2-p.k);
+    const Cco=h*h+k*k-R1*R1-(p.h2*p.h2+p.k2*p.k2-R2*R2);
+    A.push(["圆心距 d",fmt(d)]);
+    A.push(["公共弦长",chord===null?"无公共弦":fmt(chord)]);
+    A.push(["公共弦直线","2(h₂−h₁)x+2(k₂−k₁)y+C=0"]);
+    A.push(["A,B,C",fmt(Aco)+", "+fmt(Bco)+", "+fmt(Cco)]);
+  }else if(s==="c_ctan"){
+    const d=Math.hypot(p.h2-h,p.k2-k),sum=r+p.r2,dif=Math.abs(r-p.r2);
+    let ext=0,intn=0;
+    if(d>sum+1e-6){ext=2;intn=2;}
+    else if(Math.abs(d-sum)<1e-6){ext=2;intn=1;}
+    else if(d<sum&&d>dif+1e-6){ext=2;intn=0;}
+    else if(Math.abs(d-dif)<1e-6){ext=1;intn=0;}
+    A.push(["圆心距 d",fmt(d)]);
+    A.push(["外公切线条数",String(ext)]);
+    A.push(["内公切线条数",String(intn)]);
+    A.push(["外公切线长",d>Math.abs(r-p.r2)?fmt(Math.sqrt(Math.max(d*d-(r-p.r2)*(r-p.r2),0))):"—"]);
+    A.push(["内公切线长",d>r+p.r2?fmt(Math.sqrt(Math.max(d*d-(r+p.r2)*(r+p.r2),0))):"—"]);
+    A.push(["总条数",String(ext+intn)]);
+  }else if(s==="c_sys"){
+    A.push(["λ",fmt(p.lam,2)]);
+    A.push(["圆系","圆₁+λ(圆₁−圆₂)=0"]);
+    A.push(["λ=−1","公共弦所在直线"]);
+    A.push(["两圆 D₁,D₂",fmt(-2*h)+", "+fmt(-2*p.h2)]);
+    A.push(["两圆 E₁,E₂",fmt(-2*k)+", "+fmt(-2*p.k2)]);
+    A.push(["两圆 F₁,F₂",fmt(h*h+k*k-r*r)+", "+fmt(p.h2*p.h2+p.k2*p.k2-p.r2*p.r2)]);
+  }else if(s==="c_sym"){
+    A.push(["原圆心","("+fmt(h)+", "+fmt(k)+")"]);
+    A.push(["关于圆心对称","同圆"]);
+    A.push(["关于 x 轴对称","("+fmt(h)+", "+fmt(-k)+")"]);
+    A.push(["关于 y 轴对称","("+fmt(-h)+", "+fmt(k)+")"]);
+    A.push(["关于 y=x 对称","("+fmt(k)+", "+fmt(h)+")"]);
+  }
+  return A;
+}
+
+/* =========================================================
+   椭圆
+   ========================================================= */
+function panelEllipse(s){
+  const p=state.params;
+  const a=p.a,c=p.c,b=eb(),e=c/a;
+  const A=[];
+  const eq="x²/"+fmt(a*a,2)+" + y²/"+fmt(b*b,2)+" = 1";
+
+  if(s==="e_def1"){
+    const Pp=getP();
+    const pf1=Math.hypot(Pp.x+c,Pp.y),pf2=Math.hypot(Pp.x-c,Pp.y);
+    A.push(["PF₁",fmt(pf1)]);
+    A.push(["PF₂",fmt(pf2)]);
+    A.push(["PF₁+PF₂",fmt(pf1+pf2)]);
+    A.push(["2a",fmt(2*a)]);
+  }else if(s==="e_def2"){
+    const Pp=getP();
+    const pf=Math.hypot(Pp.x-c,Pp.y);
+    const dir=c>1e-6?a*a/c:NaN;
+    const d=isNum(dir)?Math.abs(Pp.x-dir):NaN;
+    A.push(["PF",fmt(pf)]);
+    A.push(["d（到准线）",fmt(d)]);
+    A.push(["PF/d",isNum(d)&&d>0?fmt(pf/d,3):"—"]);
+    A.push(["e=c/a",fmt(e,3)]);
+    A.push(["准线 x=a²/c",fmt(dir)]);
+    A.push(["左准线",isNum(dir)?fmt(-dir):"—"]);
+  }else if(s==="e_def3"){
+    const Pp=getP();
+    const k1=Math.abs(Pp.x+a)<0.05?null:Pp.y/(Pp.x+a);
+    const k2=Math.abs(Pp.x-a)<0.05?null:Pp.y/(Pp.x-a);
+    const prod=(k1!==null&&k2!==null)?k1*k2:null;
+    A.push(["k₁",k1===null?"不存在":fmt(k1,3)]);
+    A.push(["k₂",k2===null?"不存在":fmt(k2,3)]);
+    A.push(["k₁·k₂",prod===null?"—":fmt(prod,3)]);
+    A.push(["−b²/a²",fmt(-b*b/(a*a),3)]);
+  }else if(s==="e_std"){
+    A.push(["a",fmt(a)]);
+    A.push(["b",fmt(b)]);
+    A.push(["c",fmt(c)]);
+    A.push(["e",fmt(e,3)]);
+    A.push(["方程",eq]);
+    A.push(["b²=a²−c²",fmt(b*b,2)+" = "+fmt(a*a,2)+" − "+fmt(c*c,2)]);
+  }else if(s==="e_par"){
+    const Pp=getP();
+    A.push(["t（离心角）",fmt(p.t,3)]);
+    A.push(["x=a cos t",fmt(Pp.x)]);
+    A.push(["y=b sin t",fmt(Pp.y)]);
+    A.push(["tan t=(a/b)tanθ","t 不是极角"]);
+  }else if(s==="e_elem"){
+    A.push(["a",fmt(a)]);
+    A.push(["b",fmt(b)]);
+    A.push(["c",fmt(c)]);
+    A.push(["e",fmt(e,3)]);
+    A.push(["焦点","(±"+fmt(c)+", 0)"]);
+    A.push(["顶点","(±"+fmt(a)+",0), (0,±"+fmt(b)+")"]);
+  }else if(s==="e_fr"){
+    const Pp=getP();
+    A.push(["x_P",fmt(Pp.x)]);
+    A.push(["PF₁=a+ex",fmt(a+e*Pp.x)]);
+    A.push(["PF₂=a−ex",fmt(a-e*Pp.x)]);
+    A.push(["和",fmt((a+e*Pp.x)+(a-e*Pp.x))]);
+    A.push(["2a",fmt(2*a)]);
+  }else if(s==="e_ftri"){
+    const Pp=getP();
+    const v1={x:-c-Pp.x,y:-Pp.y},v2={x:c-Pp.x,y:-Pp.y};
+    const pf1=Math.hypot(v1.x,v1.y),pf2=Math.hypot(v2.x,v2.y);
+    const cosT=(v1.x*v2.x+v1.y*v2.y)/(pf1*pf2);
+    const th=Math.acos(clamp(cosT,-1,1));
+    A.push(["PF₁",fmt(pf1)]);
+    A.push(["PF₂",fmt(pf2)]);
+    A.push(["F₁F₂",fmt(2*c)]);
+    A.push(["θ",fmt(th*180/Math.PI,1)+"°"]);
+    A.push(["S=b²tan(θ/2)",fmt(b*b*Math.tan(th/2))]);
+    A.push(["实际面积",fmt(0.5*(2*c)*Math.abs(Pp.y))]);
+  }else if(s==="e_fchord"){
+    const lr=b*b/a;
+    A.push(["通径 2b²/a",fmt(2*lr)]);
+    if(isNum(p.lm)){
+      const m=p.lm,n=-m*c;
+      const res=ellipseLine(a,b,m,n);
+      if(res.roots.length===2){
+        const pts=pointsFromRoots(res.roots,m,n);
+        if(pts.length===2){
+          A.push(["焦点弦 |AB|",fmt(chordLen(res.roots,m))]);
+          A.push(["x₁x₂",fmt(pts[0].x*pts[1].x)]);
+          A.push(["y₁y₂",fmt(pts[0].y*pts[1].y)]);
+        }
+      }else{
+        A.push(["焦点弦 |AB|","—"]);
+        A.push(["x₁x₂","—"]);
+        A.push(["y₁y₂","—"]);
+      }
+    }
+    A.push(["|AB|min",fmt(2*lr)]);
+    A.push(["|AB|max",fmt(2*a)]);
+  }else if(s==="e_mid"){
+    const Pp=getP();
+    const k=Math.abs(Pp.y)<0.05?null:-b*b*Pp.x/(a*a*Pp.y);
+    A.push(["中点 M","("+fmt(Pp.x)+", "+fmt(Pp.y)+")"]);
+    A.push(["弦斜率 k",k===null?"不存在":fmt(k,3)]);
+    A.push(["点差法","k=−b²x₀/(a²y₀)"]);
+    A.push(["中点需在椭圆内","否则无弦"]);
+  }else if(s==="e_ecc"){
+    A.push(["e=c/a",fmt(e,3)]);
+    A.push(["范围","0<e<1"]);
+    A.push(["b/a",fmt(b/a,3)]);
+    A.push(["√(1−e²)",fmt(Math.sqrt(Math.max(1-e*e,0)),3)]);
+  }else if(s==="e_dir"){
+    const d=a*a/c;
+    A.push(["e",fmt(e,3)]);
+    A.push(["右准线 x=a²/c",fmt(d)]);
+    A.push(["左准线",fmt(-d)]);
+  }else if(s==="e_line"){
+    const res=ellipseLine(a,b,p.lm,p.ln);
+    A.push(["直线","y="+fmt(p.lm,2)+"x"+(p.ln>=0?"+":"−")+fmt(Math.abs(p.ln),2)]);
+    A.push(["判别式 Δ",fmt(res.disc)]);
+    A.push(["位置关系",positionFromDisc(res.disc)]);
+    A.push(["弦长",res.roots.length===2?fmt(chordLen(res.roots,p.lm)):"—"]);
+  }else if(s==="e_tan"){
+    const Pp=getP();
+    A.push(["切点 P","("+fmt(Pp.x)+", "+fmt(Pp.y)+")"]);
+    A.push(["切线","xx₀/a² + yy₀/b² = 1"]);
+    A.push(["代入",fmt(Pp.x,2)+"x/"+fmt(a*a,2)+" + "+fmt(Pp.y,2)+"y/"+fmt(b*b,2)+" = 1"]);
+    A.push(["斜率不存在","切线为竖直线"]);
+  }else if(s==="e_circle"){
+    const bb=clamp(p.bSlide,1e-6,a);
+    const ee=Math.sqrt(Math.max(a*a-bb*bb,0))/a;
+    A.push(["a",fmt(a)]);
+    A.push(["b",fmt(bb)]);
+    A.push(["e",fmt(ee,3)]);
+    A.push(["b=a 时","圆，e=0"]);
+  }
+  return A;
+}
+
+/* =========================================================
+   双曲线
+   ========================================================= */
+function panelHyperbola(s){
+  const p=state.params;
+  const a=p.a,b=p.b,c=hc(),e=he();
+  const A=[];
+  const eq="x²/"+fmt(a*a,2)+" − y²/"+fmt(b*b,2)+" = 1";
+  const asym="y = ±("+fmt(b/a,2)+")x";
+
+  if(s==="h_def1"){
+    const Pp=getP();
+    const pf1=Math.hypot(Pp.x+c,Pp.y),pf2=Math.hypot(Pp.x-c,Pp.y);
+    A.push(["PF₁",fmt(pf1)]);
+    A.push(["PF₂",fmt(pf2)]);
+    A.push(["|PF₁−PF₂|",fmt(Math.abs(pf1-pf2))]);
+    A.push(["2a",fmt(2*a)]);
+    A.push(["所在支",Pp.x>=0?"右支":"左支"]);
+  }else if(s==="h_def2"){
+    const Pp=getP();
+    const pf=Math.hypot(Pp.x-c,Pp.y);
+    const dir=a*a/c;
+    const d=Math.abs(Pp.x-dir);
+    A.push(["PF",fmt(pf)]);
+    A.push(["d（到准线）",fmt(d)]);
+    A.push(["PF/d",d>0?fmt(pf/d,3):"—"]);
+    A.push(["e=c/a",fmt(e,3)]);
+    A.push(["准线 x=a²/c",fmt(dir)]);
+  }else if(s==="h_def3"){
+    const Pp=getP();
+    const k1=Math.abs(Pp.x+a)<0.05?null:Pp.y/(Pp.x+a);
+    const k2=Math.abs(Pp.x-a)<0.05?null:Pp.y/(Pp.x-a);
+    const prod=(k1!==null&&k2!==null)?k1*k2:null;
+    A.push(["k₁",k1===null?"不存在":fmt(k1,3)]);
+    A.push(["k₂",k2===null?"不存在":fmt(k2,3)]);
+    A.push(["k₁·k₂",prod===null?"—":fmt(prod,3)]);
+    A.push(["b²/a²",fmt(b*b/(a*a),3)]);
+  }else if(s==="h_std"){
+    A.push(["a",fmt(a)]);
+    A.push(["b",fmt(b)]);
+    A.push(["c",fmt(c)]);
+    A.push(["e=c/a",fmt(e,3)]);
+    A.push(["方程",eq]);
+    A.push(["c²=a²+b²",fmt(c*c,2)]);
+  }else if(s==="h_par"){
+    const Pp=getP();
+    const u=1.3*Math.sin(p.t);
+    A.push(["连续参数 u",fmt(u,3)]);
+    A.push(["x=±a·cosh u",fmt(Pp.x)]);
+    A.push(["y=b·sinh u",fmt(Pp.y)]);
+    A.push(["sec/tan 形式","x=a·sec t, y=b·tan t"]);
+    A.push(["注意","t=π/2 处有奇点"]);
+    A.push(["离心率 e",fmt(e,3)]);
+  }else if(s==="h_elem"){
+    A.push(["实轴长 2a",fmt(2*a)]);
+    A.push(["虚轴长 2b",fmt(2*b)]);
+    A.push(["c",fmt(c)]);
+    A.push(["e",fmt(e,3)]);
+    A.push(["焦点","(±"+fmt(c)+",0)"]);
+    A.push(["顶点","(±"+fmt(a)+",0)"]);
+  }else if(s==="h_asy"){
+    A.push(["渐近线",asym]);
+    A.push(["b/a",fmt(b/a,3)]);
+    A.push(["e",fmt(e,3)]);
+    A.push(["等轴双曲线","a=b 时 e=√2≈1.414"]);
+  }else if(s==="h_conj"){
+    A.push(["原双曲线",eq]);
+    A.push(["共轭双曲线","y²/"+fmt(b*b,2)+" − x²/"+fmt(a*a,2)+" = 1"]);
+    A.push(["共同渐近线",asym]);
+  }else if(s==="h_fr"){
+    const Pp=getP();
+    const pf1=Math.hypot(Pp.x+c,Pp.y),pf2=Math.hypot(Pp.x-c,Pp.y);
+    const right=Pp.x>=0;
+    A.push(["所在支",right?"右支":"左支"]);
+    A.push(["PF₁",fmt(pf1)]);
+    A.push(["PF₂",fmt(pf2)]);
+    A.push(["差",fmt(Math.abs(pf1-pf2))]);
+    A.push(["2a",fmt(2*a)]);
+    A.push(["公式",right?"PF₁=ex+a, PF₂=ex−a":"PF₁=−ex−a, PF₂=−ex+a"]);
+  }else if(s==="h_ftri"){
+    const Pp=getP();
+    const v1={x:-c-Pp.x,y:-Pp.y},v2={x:c-Pp.x,y:-Pp.y};
+    const pf1=Math.hypot(v1.x,v1.y),pf2=Math.hypot(v2.x,v2.y);
+    const cosT=(v1.x*v2.x+v1.y*v2.y)/(pf1*pf2);
+    const th=Math.acos(clamp(cosT,-1,1));
+    A.push(["PF₁",fmt(pf1)]);
+    A.push(["PF₂",fmt(pf2)]);
+    A.push(["F₁F₂",fmt(2*c)]);
+    A.push(["θ",fmt(th*180/Math.PI,1)+"°"]);
+    A.push(["S=b²/tan(θ/2)",fmt(b*b/Math.tan(th/2))]);
+  }else if(s==="h_fchord"){
+    const lr=b*b/a;
+    A.push(["通径 2b²/a",fmt(2*lr)]);
+    if(isNum(p.lm)){
+      const m=p.lm,n=-m*c;
+      const res=hyperbolaLine(a,b,m,n);
+      if(res.roots.length===2&&!res.parallel){
+        const pts=pointsFromRoots(res.roots,m,n);
+        if(pts.length===2){
+          A.push(["|AB|",fmt(chordLen(res.roots,m))]);
+          A.push(["x₁x₂",fmt(pts[0].x*pts[1].x)]);
+          A.push(["y₁y₂",fmt(pts[0].y*pts[1].y)]);
+        }
+      }else{
+        A.push(["|AB|","—"]);
+        A.push(["x₁x₂","—"]);
+        A.push(["y₁y₂","—"]);
+      }
+    }
+  }else if(s==="h_mid"){
+    const Pp=getP();
+    const k=Math.abs(Pp.y)<0.05?null:b*b*Pp.x/(a*a*Pp.y);
+    A.push(["中点 M","("+fmt(Pp.x)+", "+fmt(Pp.y)+")"]);
+    A.push(["弦斜率 k",k===null?"不存在":fmt(k,3)]);
+    A.push(["点差法","k=b²x₀/(a²y₀)"]);
+  }else if(s==="h_ecc"){
+    A.push(["e=c/a",fmt(e,3)]);
+    A.push(["范围","e>1"]);
+    A.push(["b/a",fmt(b/a,3)]);
+    A.push(["√(e²−1)",fmt(Math.sqrt(Math.max(e*e-1,0)),3)]);
+  }else if(s==="h_dir"){
+    const d=a*a/c;
+    A.push(["e",fmt(e,3)]);
+    A.push(["右准线 x=a²/c",fmt(d)]);
+    A.push(["左准线",fmt(-d)]);
+  }else if(s==="h_line"){
+    const res=hyperbolaLine(a,b,p.lm,p.ln);
+    let rel;
+    if(res.parallel)rel="与渐近线平行（一个交点）";
+    else rel=positionFromDisc(res.disc);
+    A.push(["直线","y="+fmt(p.lm,2)+"x"+(p.ln>=0?"+":"−")+fmt(Math.abs(p.ln),2)]);
+    A.push(["判别式 Δ",fmt(res.disc)]);
+    A.push(["位置关系",rel]);
+    A.push(["弦长",(res.roots.length===2&&!res.parallel)?fmt(chordLen(res.roots,p.lm)):"—"]);
+  }else if(s==="h_tan"){
+    const Pp=getP();
+    A.push(["切点 P","("+fmt(Pp.x)+", "+fmt(Pp.y)+")"]);
+    A.push(["切线","xx₀/a² − yy₀/b² = 1"]);
+    A.push(["斜率不存在","切线为竖直线"]);
+  }else if(s==="h_ell"){
+    const aE=c/0.6, bE=Math.sqrt(Math.max(aE*aE-c*c,0));
+    A.push(["公共 c",fmt(c)]);
+    A.push(["椭圆 a,b,e",fmt(aE)+", "+fmt(bE)+", "+fmt(c/aE,3)]);
+    A.push(["双曲线 a,b,e",fmt(a)+", "+fmt(b)+", "+fmt(e,3)]);
+  }
+  return A;
+}
+
+/* =========================================================
+   抛物线
+   ========================================================= */
+function panelParabola(s){
+  const p=state.params;
+  const pp=p.p, form=p.pform;
+  const F=paraFocus(pp,form), D=paraDirectrix(pp,form);
+  const A=[];
+  const eqs=["y² = "+fmt(2*pp,2)+"x","y² = −"+fmt(2*pp,2)+"x","x² = "+fmt(2*pp,2)+"y","x² = −"+fmt(2*pp,2)+"y"];
+  const dirStr=(D.x!==undefined)?"x = "+fmt(D.x,2):"y = "+fmt(D.y,2);
+
+  if(s==="p_def"){
+    const Pp=getP();
+    const pf=Math.hypot(Pp.x-F.x,Pp.y-F.y);
+    const d=(D.x!==undefined)?Math.abs(Pp.x-D.x):Math.abs(Pp.y-D.y);
+    A.push(["PF",fmt(pf)]);
+    A.push(["d（到准线）",fmt(d)]);
+    A.push(["PF/d",d>0?fmt(pf/d,3):"—"]);
+    A.push(["e",fmt(1)]);
+  }else if(s==="p_std"){
+    A.push(["p",fmt(pp)]);
+    A.push(["方程",eqs[form]]);
+    A.push(["焦点","("+fmt(F.x)+", "+fmt(F.y)+")"]);
+    A.push(["准线",dirStr]);
+    A.push(["开口",["向右","向左","向上","向下"][form]]);
+  }else if(s==="p_fd"){
+    A.push(["p",fmt(pp)]);
+    A.push(["焦点 F","("+fmt(F.x)+", "+fmt(F.y)+")"]);
+    A.push(["准线",dirStr]);
+    A.push(["方程",eqs[form]]);
+  }else if(s==="p_par"){
+    const Pp=getP();
+    A.push(["t",fmt(p.t,3)]);
+    A.push(["x",fmt(Pp.x)]);
+    A.push(["y",fmt(Pp.y)]);
+    A.push(["参数方程",form===0?"x=2pt², y=2pt":"按开口方向对称"]);
+  }else if(s==="p_fr"){
+    const Pp=getP();
+    const pf=Math.hypot(Pp.x-F.x,Pp.y-F.y);
+    const fml=["x+p/2","−x+p/2","y+p/2","−y+p/2"][form];
+    const val=[Pp.x+pp/2,-Pp.x+pp/2,Pp.y+pp/2,-Pp.y+pp/2][form];
+    A.push(["P","("+fmt(Pp.x)+", "+fmt(Pp.y)+")"]);
+    A.push(["PF="+fml,fmt(val)]);
+    A.push(["实际 PF",fmt(pf)]);
+    A.push(["e",fmt(1)]);
+  }else if(s==="p_lr"){
+    A.push(["p",fmt(pp)]);
+    A.push(["通径 2p",fmt(2*pp)]);
+    A.push(["说明","过焦点垂直于对称轴"]);
+  }else if(s==="p_fchord"){
+    const m=p.lm, n=-m*pp/2;   /* 过焦点 (p/2,0) */
+    const res=parabolaLineForm(pp,m,n,0);
+    if(res.roots.length===2){
+      const pts=pointsFromRoots(res.roots,m,n);
+      if(pts.length===2){
+        const y1=pts[0].y,y2=pts[1].y,x1=pts[0].x,x2=pts[1].x;
+        const t1=y1/(2*pp),t2=y2/(2*pp);
+        A.push(["A","("+fmt(x1)+", "+fmt(y1)+")"]);
+        A.push(["B","("+fmt(x2)+", "+fmt(y2)+")"]);
+        A.push(["t₁,t₂",fmt(t1,3)+", "+fmt(t2,3)]);
+        A.push(["t₁·t₂",fmt(t1*t2)]);
+        A.push(["y₁y₂",fmt(y1*y2)]);
+        A.push(["x₁x₂",fmt(x1*x2)]);
+        A.push(["弦长 x₁+x₂+p",fmt(x1+x2+pp)]);
+        A.push(["最短 2p",fmt(2*pp)]);
+      }
+    }else{
+      A.push(["焦点弦","—"]);
+      A.push(["t₁·t₂","—"]);
+    }
+  }else if(s==="p_ecc"){
+    A.push(["e",fmt(1)]);
+    A.push(["说明","抛物线离心率恒为 1"]);
+    A.push(["对比","e=1 是临界状态"]);
+  }else if(s==="p_line"){
+    const res=parabolaLineForm(pp,p.lm,p.ln,form);
+    let rel;
+    if(Math.abs(res.A)<1e-9)rel="水平直线（一个交点）";
+    else rel=positionFromDisc(res.disc);
+    A.push(["直线","y="+fmt(p.lm,2)+"x"+(p.ln>=0?"+":"−")+fmt(Math.abs(p.ln),2)]);
+    A.push(["判别式 Δ",fmt(res.disc)]);
+    A.push(["位置关系",rel]);
+    A.push(["弦长",res.roots.length===2?fmt(chordLen(res.roots,p.lm)):"—"]);
+  }else if(s==="p_tan"){
+    const Pp=getP();
+    A.push(["切点 P","("+fmt(Pp.x)+", "+fmt(Pp.y)+")"]);
+    A.push(["切线","y₀y = p(x+x₀)"]);
+    A.push(["y₀=0 时","切线为竖直线"]);
+    A.push(["拓展","焦点弦两端切线交于准线"]);
+  }else if(s==="p_mid"){
+    const Pp=getP();
+    let k=null;
+    if(form===0||form===1)k=Math.abs(Pp.y)<0.05?null:(form===0?pp:-pp)/Pp.y;
+    else k=(form===2?Pp.x:-Pp.x)/pp;
+    A.push(["中点 M","("+fmt(Pp.x)+", "+fmt(Pp.y)+")"]);
+    A.push(["弦斜率 k",k===null?"不存在":fmt(k,3)]);
+    A.push(["点差法",form===0?"k=p/y₀":"按开口方向对应"]);
+  }else if(s==="p_app"){
+    A.push(["应用","平行光反射聚焦于焦点"]);
+    A.push(["焦点","("+fmt(F.x)+", "+fmt(F.y)+")"]);
+    A.push(["p",fmt(pp)]);
+  }else if(s==="p_rel"){
+    A.push(["抛物线 e",fmt(1)]);
+    A.push(["椭圆 e","0<e<1"]);
+    A.push(["双曲线 e","e>1"]);
+    A.push(["结论","e=1 为临界"]);
+  }
+  return A;
+}
+
+/* =========================================================
+   综合
+   ========================================================= */
+function panelSyn(s){
+  const p=state.params;
+  const A=[];
+  if(s==="s_uni"){
+    const Pp=getP();
+    const e=p.e, d0=p.d0;
+    const type=e<0.02?"圆":(e<1?"椭圆":(Math.abs(e-1)<0.02?"抛物线":"双曲线"));
+    const pf=Math.hypot(Pp.x,Pp.y);
+    const d=Math.abs(Pp.x+d0);
+    A.push(["e",fmt(e,3)]);
+    A.push(["曲线类型",type]);
+    A.push(["极坐标方程","r=ed/(1−e·cosθ)"]);
+    A.push(["θ",fmt(((p.t*180/Math.PI)%360+360)%360,1)+"°"]);
+    A.push(["r=PF",fmt(pf)]);
+    A.push(["d",fmt(d)]);
+    A.push(["PF/d",d>0?fmt(pf/d,3):"—"]);
+    A.push(["准线",e<0.02?"退化（e=0）":"x=−"+fmt(d0)]);
+  }else if(s==="s_disc"){
+    const idx=clamp(Math.round(p.discCase),0,6);
+    const data=[
+      ["圆",1,1,0,0,-4],
+      ["椭圆",4,9,0,0,-36],
+      ["双曲线",1,-1,0,0,-1],
+      ["抛物线",0,1,-4,0,0],
+      ["两直线",1,-1,0,0,0],
+      ["一点",1,1,0,0,0],
+      ["空集",1,1,0,0,1]
+    ][idx];
+    A.push(["类型",data[0]]);
+    A.push(["A",fmt(data[1])]);
+    A.push(["B",fmt(data[2])]);
+    A.push(["D",fmt(data[3])]);
+    A.push(["E",fmt(data[4])]);
+    A.push(["F",fmt(data[5])]);
+  }else if(s==="s_compare"){
+    A.push(["圆","e=0, c=0"]);
+    A.push(["椭圆","0<e<1, c²=a²−b²"]);
+    A.push(["双曲线","e>1, c²=a²+b²"]);
+    A.push(["抛物线","e=1"]);
+    A.push(["通径","椭圆/双曲线 2b²/a；抛物线 2p"]);
+  }else if(s==="s_table"){
+    A.push(["圆","e=0"]);
+    A.push(["椭圆","e<1"]);
+    A.push(["双曲线","e>1"]);
+    A.push(["抛物线","e=1"]);
+    A.push(["说明","详见知识卡片"]);
+  }else if(s==="s_line"){
+    const m=p.lm,n=p.ln;
+    let res,rel,typeName;
+    if(p.ctype===0){
+      const a=DEMO.ellA,b=DEMO.ellB;res=ellipseLine(a,b,m,n);
+      rel=positionFromDisc(res.disc);typeName="椭圆";
+    }else if(p.ctype===1){
+      const a=DEMO.hypA,b=DEMO.hypB;res=hyperbolaLine(a,b,m,n);
+      rel=res.parallel?"平行渐近线（一个交点）":positionFromDisc(res.disc);typeName="双曲线";
+    }else{
+      res=parabolaLineForm(DEMO.parP,m,n,0);
+      rel=positionFromDisc(res.disc);typeName="抛物线";
+    }
+    A.push(["曲线类型",typeName]);
+    A.push(["直线","y="+fmt(m,2)+"x"+(n>=0?"+":"−")+fmt(Math.abs(n),2)]);
+    A.push(["Δ",fmt(res.disc)]);
+    A.push(["关系",rel]);
+    A.push(["弦长",res.roots.length===2?fmt(chordLen(res.roots,m)):"—"]);
+  }else if(s==="s_chord"){
+    const a=DEMO.ellA,b=DEMO.ellB;
+    const x0=a*0.55*Math.cos(p.t), y0=b*0.55*Math.sin(p.t);
+    const k=Math.abs(y0)<0.05?null:-b*b*x0/(a*a*y0);
+    A.push(["中点 M","("+fmt(x0)+", "+fmt(y0)+")"]);
+    A.push(["弦斜率 k",k===null?"不存在":fmt(k,3)]);
+    A.push(["椭圆","k=−b²x₀/(a²y₀)"]);
+    A.push(["双曲线","k=b²x₀/(a²y₀)"]);
+    A.push(["抛物线","k=p/y₀"]);
+  }else if(s==="s_polar"){
+    const a=DEMO.ellA,b=DEMO.ellB;
+    const x0=a*Math.cos(p.t),y0=b*Math.sin(p.t);
+    A.push(["切点 P","("+fmt(x0)+", "+fmt(y0)+")"]);
+    A.push(["椭圆切线","xx₀/a²+yy₀/b²=1"]);
+    A.push(["双曲线切线","xx₀/a²−yy₀/b²=1"]);
+    A.push(["抛物线切线","y₀y=p(x+x₀)"]);
+    A.push(["极线","外点切点弦即极线"]);
+  }else if(s==="s_fchord"){
+    const a=DEMO.ellA,b=DEMO.ellB;
+    A.push(["椭圆通径 2b²/a",fmt(2*b*b/a)]);
+    A.push(["双曲线通径 2b²/a","同式"]);
+    A.push(["抛物线通径 2p",fmt(2*DEMO.parP)]);
+  }else if(s==="s_ftri"){
+    const a=DEMO.ellA,b=DEMO.ellB,c=Math.sqrt(a*a-b*b);
+    const aH=1.5,bH=Math.sqrt(Math.max(c*c-aH*aH,0));
+    const Pp={x:a*Math.cos(p.t),y:b*Math.sin(p.t)};
+    const v1={x:-c-Pp.x,y:-Pp.y},v2={x:c-Pp.x,y:-Pp.y};
+    const pf1=Math.hypot(v1.x,v1.y),pf2=Math.hypot(v2.x,v2.y);
+    const cosT=(v1.x*v2.x+v1.y*v2.y)/(pf1*pf2);
+    const th=Math.acos(clamp(cosT,-1,1));
+    A.push(["θ",fmt(th*180/Math.PI,1)+"°"]);
+    A.push(["椭圆 S=b²tan(θ/2)",fmt(b*b*Math.tan(th/2))]);
+    A.push(["双曲线 S=bH²/tan(θ/2)",fmt(bH*bH/Math.tan(th/2))]);
+    A.push(["抛物线","只有一个焦点，无焦点三角形"]);
+  }else if(s==="s_ecc"){
+    const e=p.e;
+    A.push(["e",fmt(e,3)]);
+    A.push(["类型",e<0.02?"圆":(e<1?"椭圆":(Math.abs(e-1)<0.02?"抛物线":"双曲线"))]);
+    A.push(["焦点","F(0,0)"]);
+    A.push(["准线",e<0.02?"退化":"x=−"+fmt(p.d0)]);
+  }else if(s==="s_circ"){
+    const a=DEMO.ellA,b=clamp(p.bSlide,1e-3,a);
+    const e=Math.sqrt(Math.max(a*a-b*b,0))/a;
+    A.push(["a",fmt(a)]);
+    A.push(["b",fmt(b)]);
+    A.push(["e",fmt(e,3)]);
+    A.push(["b=a 时","圆，e=0"]);
+  }else if(s==="s_ellhyp"){
+    const c=DEMO.synC,a1=DEMO.synEllA,a2=DEMO.synHypA;
+    const b1=Math.sqrt(Math.max(a1*a1-c*c,0));
+    const b2=Math.sqrt(Math.max(c*c-a2*a2,0));
+    A.push(["公共 c",fmt(c)]);
+    A.push(["椭圆 a,b,e",fmt(a1)+", "+fmt(b1)+", "+fmt(c/a1,3)]);
+    A.push(["双曲线 a,b,e",fmt(a2)+", "+fmt(b2)+", "+fmt(c/a2,3)]);
+  }else if(s==="s_hypPara"){
+    A.push(["双曲线 e","e>1"]);
+    A.push(["抛物线 e","e=1"]);
+    A.push(["双曲线","有渐近线"]);
+    A.push(["抛物线","无渐近线"]);
+  }else if(s==="s_optics"){
+    A.push(["椭圆","F₁→P→F₂ 反射"]);
+    A.push(["双曲线","反射光反向延长过另一焦点"]);
+    A.push(["抛物线","平行光聚焦于焦点"]);
+  }else if(s==="s_extreme"){
+    const a=DEMO.ellA,b=DEMO.ellB,c=Math.sqrt(a*a-b*b);
+    A.push(["a",fmt(a)]);
+    A.push(["c",fmt(c)]);
+    A.push(["PF 最大 a+c",fmt(a+c)]);
+    A.push(["PF 最小 a−c",fmt(a-c)]);
+  }else if(s==="s_card"){
+    A.push(["圆","e=0"]);
+    A.push(["椭圆","0<e<1"]);
+    A.push(["抛物线","e=1"]);
+    A.push(["双曲线","e>1"]);
+    A.push(["统一","PF/d=e"]);
+  }
+  return A;
+}
+
+/* =========================================================
+   知识卡片
+   ========================================================= */
+function subName(m,s){
+  const arr=MODULES[m]?MODULES[m].subs:[];
+  for(const it of arr)if(it[0]===s)return it[1];
+  return"";
+}
+const CARDS={
+  circle:{
+    c_def:"<b>圆的定义：</b>平面内到定点 O 的距离等于定长 r 的点的集合，|OP|=r。",
+    c_std:"<b>标准方程：</b>(x−a)²+(y−b)²=r²，圆心 (a,b)，半径 r。<br>展开即一般方程。",
+    c_gen:"<b>一般方程：</b>x²+y²+Dx+Ey+F=0。<br>当 D²+E²−4F&gt;0 时表示圆，圆心 (−D/2,−E/2)，半径 r=½√(D²+E²−4F)。<br>若 ≤0 则不表示圆。",
+    c_par:"<b>参数方程：</b>x=a+r cosθ，y=b+r sinθ。θ 为参数（旋转角）。",
+    c_pq:"<b>点与圆：</b>|OQ|&lt;r 圆内；|OQ|=r 圆上；|OQ|&gt;r 圆外。<br>拖动 Q 接近圆时自动吸附。",
+    c_lc:"<b>直线与圆：</b>比较圆心到直线距离 d 与 r。<br>d&lt;r 相交（弦）；d=r 相切；d&gt;r 相离。",
+    c_chord:"<b>弦长公式：</b>L=2√(r²−d²)。<br>半径、弦心距、半弦构成直角三角形 r²=d²+(L/2)²。",
+    c_diam:"<b>垂径定理：</b>垂直于弦的直径平分弦，并且平分弦所对的两条弧。",
+    c_tan:"<b>圆的切线：</b>过圆上一点的切线垂直于过该点的半径；圆外一点可作两条切线，切线长 √(d²−r²)。<br>两切点连线为切点弦（极线）。",
+    c_ang:"<b>圆周角与圆心角：</b>同弧所对圆周角等于圆心角的一半；直径所对圆周角为 90°。",
+    c_arc:"<b>弧长与扇形：</b>l=rθ，S=½r²θ=½lr（θ 用弧度）。<br>180°=π rad。",
+    c_cc:"<b>两圆位置：</b>d&gt;r₁+r₂ 外离；d=r₁+r₂ 外切；|r₁−r₂|&lt;d&lt;r₁+r₂ 相交；d=|r₁−r₂| 内切；d&lt;|r₁−r₂| 内含；d=0 且 r₁=r₂ 同心。",
+    c_common:"<b>公共弦：</b>两圆方程相减得公共弦所在直线；仅相交时存在。<br>弦长由弦心距与半径求得。",
+    c_ctan:"<b>公切线：</b>外离 4 条，外切 3 条，相交 2 条，内切 1 条，内含 0 条。<br>外公切线长 √(d²−(r₁−r₂)²)，内公切线长 √(d²−(r₁+r₂)²)。<br>两圆等半径时外公切线平行于连心线。",
+    c_sys:"<b>圆系方程：</b>过两圆交点的圆系为 圆₁+λ(圆₁−圆₂)=0；λ=−1 时得公共弦直线。",
+    c_sym:"<b>对称性：</b>圆关于圆心、任意直径所在直线都对称；关于 x 轴、y 轴、y=x 对称时圆心作相应变换，半径不变。"
+  },
+  ellipse:{
+    e_def1:"<b>第一定义：</b>|PF₁|+|PF₂|=2a（2a&gt;|F₁F₂|）。",
+    e_def2:"<b>第二定义：</b>PF/d=e=c/a；准线 x=±a²/c。<br>注意：e=0（b=a）时准线退化，第二定义不适用。",
+    e_def3:"<b>第三定义：</b>k<sub>PA₁</sub>·k<sub>PA₂</sub>=−b²/a²。<br>P 接近长轴端点时斜率不存在，不能代入数值。",
+    e_std:"<b>标准方程：</b>x²/a²+y²/b²=1（a&gt;b&gt;0）。<br>b²=a²−c²，e=c/a，0&lt;e&lt;1。",
+    e_par:"<b>参数方程：</b>x=a cos t，y=b sin t。<br><b>易错：</b>t 是离心角，不是极角 θ；tan t=(a/b)tanθ。",
+    e_elem:"<b>几何元素：</b>焦点 (±c,0)，顶点 (±a,0)、(0,±b)，长轴 2a，短轴 2b，a²=b²+c²。",
+    e_fr:"<b>焦半径：</b>PF₁=a+ex，PF₂=a−ex，二者之和恒为 2a。",
+    e_ftri:"<b>焦点三角形：</b>S=b²tan(θ/2)，θ=∠F₁PF₂。",
+    e_fchord:"<b>焦点弦与通径：</b>通径长 2b²/a，是最短的焦点弦；最长焦点弦为 2a。",
+    e_mid:"<b>中点弦（点差法）：</b>k=−b²x₀/(a²y₀)。<br>中点必须位于椭圆内部，否则不存在弦。",
+    e_ecc:"<b>离心率：</b>e=c/a，0&lt;e&lt;1；b/a=√(1−e²)。e 越大越扁平，e→0 趋近圆。",
+    e_dir:"<b>准线：</b>x=±a²/c。",
+    e_line:"<b>直线与椭圆：</b>联立得二次方程，Δ&gt;0 相交、Δ=0 相切、Δ&lt;0 相离；弦长=|x₁−x₂|√(1+k²)。",
+    e_tan:"<b>切线：</b>过椭圆上一点 (x₀,y₀) 的切线为 xx₀/a²+yy₀/b²=1。<br>斜率为无穷时切线为竖直线。",
+    e_circle:"<b>圆与椭圆：</b>b=a 时 c=0、e=0，椭圆退化为圆；b 连续减小时椭圆逐渐变扁。"
+  },
+  hyperbola:{
+    h_def1:"<b>第一定义：</b>||PF₁|−|PF₂||=2a（0&lt;2a&lt;|F₁F₂|）。",
+    h_def2:"<b>第二定义：</b>PF/d=e=c/a，e&gt;1，准线 x=±a²/c。",
+    h_def3:"<b>第三定义：</b>k<sub>PA₁</sub>·k<sub>PA₂</sub>=b²/a²。<br>P 在顶点时斜率不存在。",
+    h_std:"<b>标准方程：</b>x²/a²−y²/b²=1，c²=a²+b²，e=c/a&gt;1。",
+    h_par:"<b>参数方程：</b><br>① x=a·sec t，y=b·tan t（t=π/2 有奇点）；<br>② x=±a·cosh u，y=b·sinh u（连续，推荐用于动画与拖动）。",
+    h_elem:"<b>几何元素：</b>焦点 (±c,0)，顶点 (±a,0)，实轴 2a，虚轴 2b。",
+    h_asy:"<b>渐近线：</b>y=±(b/a)x；等轴双曲线 a=b 时 e=√2。",
+    h_conj:"<b>共轭双曲线：</b>x²/a²−y²/b²=1 与 y²/b²−x²/a²=1 有共同渐近线。",
+    h_fr:"<b>焦半径：</b>右支 PF₁=ex+a，PF₂=ex−a；左支 PF₁=−ex−a，PF₂=−ex+a。",
+    h_ftri:"<b>焦点三角形：</b>S=b²/tan(θ/2)，θ=∠F₁PF₂。",
+    h_fchord:"<b>焦点弦与通径：</b>通径长 2b²/a。",
+    h_mid:"<b>中点弦（点差法）：</b>k=b²x₀/(a²y₀)。",
+    h_ecc:"<b>离心率：</b>e=c/a&gt;1，b/a=√(e²−1)，e 越大开口越大。",
+    h_dir:"<b>准线：</b>x=±a²/c。",
+    h_line:"<b>直线与双曲线：</b>Δ 判断交点；<b>与渐近线平行时只有一个交点</b>；相离时无弦。弦长=|x₁−x₂|√(1+k²)。",
+    h_tan:"<b>切线：</b>过双曲线上一点 (x₀,y₀) 的切线为 xx₀/a²−yy₀/b²=1。",
+    h_ell:"<b>双曲线与椭圆（共焦点对比）：</b>取同一 c，椭圆 c²=a²−b²，双曲线 c²=a²+b²；e 分别小于 1 与大于 1。"
+  },
+  parabola:{
+    p_def:"<b>定义：</b>到定点 F 与到定直线 l 距离相等的点的轨迹，PF=d。",
+    p_std:"<b>标准方程：</b>y²=2px、y²=−2px、x²=2py、x²=−2py。<br>四种方向的焦点与准线不同。",
+    p_fd:"<b>焦点与准线：</b>y²=2px 时焦点 (p/2,0)，准线 x=−p/2；其余方向按对称性对应。",
+    p_par:"<b>参数方程：</b>y²=2px 时 x=2pt²，y=2pt；其他方向按对称性。",
+    p_fr:"<b>焦半径（四种方向不同）：</b><br>y²=2px：PF=x+p/2；y²=−2px：PF=−x+p/2；<br>x²=2py：PF=y+p/2；x²=−2py：PF=−y+p/2。",
+    p_lr:"<b>通径：</b>过焦点且垂直对称轴的弦，长 2p。",
+    p_fchord:"<b>焦点弦：</b>y₁y₂=−p²，x₁x₂=p²/4，弦长=x₁+x₂+p。<br>参数形式 A(2pt₁²,2pt₁)、B(2pt₂²,2pt₂) 为焦点弦 ⇔ <b>t₁t₂=−1</b>；最短焦点弦为通径 2p。",
+    p_ecc:"<b>离心率：</b>e=1。",
+    p_line:"<b>直线与抛物线：</b>按开口方向联立；水平直线（对 y²=2px）只有一个交点；相切有切点，相离无弦。",
+    p_tan:"<b>切线：</b>y²=2px 上一点 (x₀,y₀) 的切线为 y₀y=p(x+x₀)。<br>y₀=0 时切线为竖直线；焦点弦两端切线交于准线。",
+    p_mid:"<b>中点弦（点差法）：</b>y²=2px 时 k=p/y₀；其他方向按对称性。<br>中点须在开口内。",
+    p_app:"<b>实际应用：</b>平行光经抛物面反射聚焦于焦点（卫星天线、车灯、探照灯）。",
+    p_rel:"<b>与其他曲线：</b>e=1 是圆、椭圆、双曲线连续变化中的临界状态。"
+  },
+  synthesis:{
+    s_uni:"<b>统一定义：</b>PF/d=e。e=0 圆（准线退化）；0&lt;e&lt;1 椭圆；e=1 抛物线；e&gt;1 双曲线。<br>极坐标 r=ed/(1−e·cosθ)，分母趋近 0 时不绘制巨大坐标。",
+    s_disc:"<b>统一方程：</b>Ax²+By²+Dx+Ey+F=0。<br>A=B≠0 圆；A、B 同号且不等 椭圆；A、B 异号 双曲线；A=0 或 B=0 抛物线。<br>退化：两直线、一点、空集。",
+    s_compare:"<b>参数对比：</b>圆 e=0；椭圆 0&lt;e&lt;1 且 c²=a²−b²；双曲线 e&gt;1 且 c²=a²+b²；抛物线 e=1。<br>圆可视为 e=0 的退化圆锥曲线。",
+    s_table:"<b>统一对比：</b>椭圆/双曲线通径 2b²/a；抛物线通径 2p；椭圆、双曲线准线 x=±a²/c，抛物线准线 x=−p/2。详见综合卡片表格。",
+    s_line:"<b>直线与圆锥：</b>联立→二次方程→Δ 判别；韦达定理求 x₁+x₂、x₁x₂；弦长=|x₁−x₂|√(1+k²)；双曲线与渐近线平行时只有一个交点。",
+    s_chord:"<b>弦长与中点弦：</b>椭圆 k=−b²x₀/(a²y₀)；双曲线 k=b²x₀/(a²y₀)；抛物线 k=p/y₀。<br>中点需在曲线内部才存在弦。",
+    s_polar:"<b>切线 / 切点弦 / 极线：</b>椭圆 xx₀/a²+yy₀/b²=1；双曲线 xx₀/a²−yy₀/b²=1；抛物线 y₀y=p(x+x₀)。<br>过曲线外一点的切点弦即该点的极线。",
+    s_fchord:"<b>焦点弦对比：</b>椭圆/双曲线通径 2b²/a；抛物线通径 2p；抛物线焦点弦满足 y₁y₂=−p²。",
+    s_ftri:"<b>焦点三角形面积：</b>椭圆 S=b²tan(θ/2)；双曲线 S=b²/tan(θ/2)；抛物线只有一个焦点，无焦点三角形。",
+    s_ecc:"<b>离心率与形状：</b>e=0 圆；0&lt;e&lt;1 椭圆；e=1 抛物线；e&gt;1 双曲线。连续改变 e 观察形状过渡。",
+    s_circ:"<b>圆与椭圆：</b>圆是 b=a、c=0、e=0 的特殊椭圆；连续压缩 b 演示圆到椭圆的过渡。",
+    s_ellhyp:"<b>椭圆与双曲线：</b>共焦点时 e 分别小于 1 和大于 1；椭圆 c²=a²−b²，双曲线 c²=a²+b²。",
+    s_hypPara:"<b>双曲线与抛物线：</b>双曲线 e&gt;1 有渐近线；抛物线 e=1 无渐近线、开口单向。",
+    s_optics:"<b>光学性质：</b>椭圆：从一个焦点出发的光反射后过另一焦点；双曲线：反射光反向延长过另一焦点；抛物线：平行光反射聚焦于焦点。",
+    s_extreme:"<b>轨迹与最值：</b>椭圆上点到焦点距离范围 [a−c, a+c]；抛物线焦点弦最短为通径 2p；利用定义转化距离是求最值常用方法。",
+    s_card:"<b>综合汇总：</b><table><tr><th>曲线</th><th>标准方程</th><th>e</th><th>焦点</th><th>准线</th><th>通径</th></tr><tr><td>圆</td><td>x²+y²=r²</td><td>0</td><td>圆心</td><td>无</td><td>2r</td></tr><tr><td>椭圆</td><td>x²/a²+y²/b²=1</td><td>&lt;1</td><td>(±c,0)</td><td>±a²/c</td><td>2b²/a</td></tr><tr><td>双曲线</td><td>x²/a²−y²/b²=1</td><td>&gt;1</td><td>(±c,0)</td><td>±a²/c</td><td>2b²/a</td></tr><tr><td>抛物线</td><td>y²=2px</td><td>1</td><td>(p/2,0)</td><td>−p/2</td><td>2p</td></tr></table>"
+  }
+};
+
+function setFormula(){
+  const m=state.module,s=state.submode;
+  const html=(CARDS[m]&&CARDS[m][s])?CARDS[m][s]:"";
+  $("cardBody").innerHTML=html;
+  $("cardTitle").textContent="知识卡片："+subName(m,s);
+}
+</script>
+
+<!-- ===== 第七段结束（请在此下方粘贴第八段·最后一段） ===== -->
+<style>
+/* 桌面端一级/二级按钮允许换行，避免横向挤压 */
+@media (min-width:768px){
+  #modules,#submodes{flex-wrap:wrap;overflow:visible}
+}
+</style>
+<script>
+/* =========================================================
+   第八段：参数控件 / 校验应用 / 按钮 / 快捷键 / 初始化
+   ========================================================= */
+
+/* ---------- 数值输入显示格式 ---------- */
+function fmtInput(v,step){
+  if(!isNum(v))return"";
+  const dec=step>=1?0:(step>=0.1?1:2);
+  return (+v.toFixed(dec)).toString();
+}
+
+/* ---------- 当前场景参数描述表 ---------- */
+let _specs={};
+let _rows=[];
+
+/* ---------- 应用参数（统一校验、钳制、同步、重绘） ---------- */
+function applyParam(key,value){
+  const spec=_specs[key];
+  if(!isNum(value))return {ok:false,msg:"请输入有效数字"};
+  if(spec&&typeof spec.check==="function"){
+    const r=spec.check(value);
+    if(r&&!r.ok)return r;
+  }
+  let v=value;
+  if(spec){
+    if(isNum(spec.min))v=Math.max(v,spec.min);
+    if(isNum(spec.max))v=Math.min(v,spec.max);
+    if(typeof spec.slide==="function")v=spec.slide(v);
+  }
+  state.params[key]=v;
+  if(key==="Dg"||key==="Eg"||key==="Fg")syncGenFromDEF();
+  syncControls();
+  requestRender();
+  return {ok:true,msg:""};
+}
+/* 由 D、E、F 反推圆心与半径；D²+E²−4F≤0 时半径置 0（触发校验失败） */
+function syncGenFromDEF(){
+  const p=state.params;
+  const disc=p.Dg*p.Dg+p.Eg*p.Eg-4*p.Fg;
+  p.h=-p.Dg/2;
+  p.k=-p.Eg/2;
+  p.r=disc>0?Math.sqrt(disc)/2:0;
+}
+
+/* ---------- 同步所有控件显示值 ---------- */
+function syncControls(){
+  for(const r of _rows){
+    const v=state.params[r.key];
+    if(!isNum(v))continue;
+    r.range.value=v;
+    if(document.activeElement!==r.num){
+      r.num.value=fmtInput(v,r.step);
+    }
+  }
+}
+
+/* ---------- 生成一行参数控件 ---------- */
+function makeRow(label,key,min,max,step,opt){
+  opt=opt||{};
+  _specs[key]={min:min,max:max,step:step,check:opt.check,slide:opt.slide};
+  const el=document.createElement("div");
+  el.className="prow";
+
+  const lab=document.createElement("span");
+  lab.className="plab";lab.textContent=label;
+
+  const range=document.createElement("input");
+  range.type="range";range.min=min;range.max=max;range.step=step;
+  range.value=state.params[key];
+
+  const num=document.createElement("input");
+  num.type="text";num.className="pnum";
+  num.inputMode="decimal";num.autocomplete="off";
+  num.value=fmtInput(state.params[key],step);
+
+  const minus=document.createElement("button");
+  minus.className="pstep";minus.type="button";minus.textContent="−";
+  const plus=document.createElement("button");
+  plus.className="pstep";plus.type="button";plus.textContent="+";
+
+  const err=document.createElement("span");
+  err.className="perr";
+
+  el.appendChild(lab);el.appendChild(range);el.appendChild(num);
+  el.appendChild(minus);el.appendChild(plus);el.appendChild(err);
+  $("params").appendChild(el);
+
+  const row={key:key,el:el,range:range,num:num,err:err,step:step,min:min,max:max};
+  _rows.push(row);
+
+  /* 滑条：允许 slide 做数学约束修正 */
+  range.addEventListener("input",function(){
+    let v=parseFloat(range.value);
+    if(opt.slide)v=opt.slide(v);
+    if(!isNum(v))return;
+    state.params[key]=v;
+    if(key==="Dg"||key==="Eg"||key==="Fg")syncGenFromDEF();
+    num.value=fmtInput(state.params[key],step);
+    el.classList.remove("err");err.textContent="";
+    requestRender();
+  });
+
+  /* 数字框提交 */
+  function commit(){
+    const raw=parseNum(num.value);
+    const res=applyParam(key,raw);
+    if(!res.ok){
+      el.classList.add("err");
+      err.textContent=res.msg;
+      num.value=fmtInput(state.params[key],step);
+    }else{
+      el.classList.remove("err");
+      err.textContent="";
+    }
+  }
+  num.addEventListener("keydown",function(ev){
+    if(ev.key==="Enter"){
+      ev.preventDefault();commit();num.blur();
+    }else if(ev.key==="Escape"){
+      ev.preventDefault();
+      num.value=fmtInput(state.params[key],step);
+      el.classList.remove("err");err.textContent="";
+      num.blur();
+    }
+  });
+  num.addEventListener("blur",commit);
+  num.addEventListener("focus",function(){
+    setTimeout(function(){try{num.scrollIntoView({block:"center",behavior:"smooth"});}catch(e){}},250);
+  });
+
+  function stepBy(dir){
+    const cur=isNum(state.params[key])?state.params[key]:0;
+    const res=applyParam(key,cur+dir*step);
+    if(!res.ok){el.classList.add("err");err.textContent=res.msg;}
+    else{el.classList.remove("err");err.textContent="";}
+  }
+  minus.addEventListener("click",function(){stepBy(-1);});
+  plus.addEventListener("click",function(){stepBy(1);});
+
+  return row;
+}
+
+/* ---------- 选项按钮组 ---------- */
+function makeChoice(label,opts,key){
+  const row=document.createElement("div");
+  row.className="choice-row";
+  const lab=document.createElement("span");
+  lab.className="plab";lab.textContent=label;
+  row.appendChild(lab);
+  opts.forEach(function(o){
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="btn"+(state.params[key]===o[0]?" sel":"");
+    b.textContent=o[1];
+    b.addEventListener("click",function(){
+      state.params[key]=o[0];
+      const btns=row.querySelectorAll("button");
+      for(let i=0;i<btns.length;i++)btns[i].classList.remove("sel");
+      b.classList.add("sel");
+      requestRender();
+    });
+    row.appendChild(b);
+  });
+  $("params").appendChild(row);
+}
+
+/* ---------- 按模块/子模式构建控件 ---------- */
+function buildControls(){
+  $("params").innerHTML="";
+  _specs={};_rows=[];
+  const m=state.module, s=state.submode;
+
+  const chkPos=function(v){
+    return (isNum(v)&&v>0)?{ok:true}:{ok:false,msg:"数值必须大于 0"};
+  };
+
+  if(m==="circle"){
+    if(s==="c_gen"){
+      makeRow("D","Dg",-10,10,0.1);
+      makeRow("E","Eg",-10,10,0.1);
+      makeRow("F","Fg",-20,10,0.1);
+    }else if(s==="c_cc"||s==="c_common"||s==="c_ctan"||s==="c_sys"){
+      makeRow("h₂","h2",-8,8,0.1);
+      makeRow("k₂","k2",-8,8,0.1);
+      makeRow("r₁","r",0.5,4,0.1,{check:chkPos});
+      makeRow("r₂","r2",0.5,4,0.1,{check:chkPos});
+      if(s==="c_sys")makeRow("λ","lam",-3,3,0.1);
+    }else if(s==="c_lc"||s==="c_chord"||s==="c_diam"){
+      makeRow("h","h",-6,6,0.1);
+      makeRow("k","k",-6,6,0.1);
+      makeRow("r","r",0.5,5,0.1,{check:chkPos});
+      makeRow("斜率","lm",-3,3,0.1);
+      makeRow("截距","ln",-6,6,0.1);
+    }else if(s==="c_ang"||s==="c_arc"){
+      makeRow("r","r",0.5,5,0.1,{check:chkPos});
+      makeRow("角度","ang",5,180,1);
+    }else if(s==="c_pq"){
+      makeRow("r","r",0.5,5,0.1,{check:chkPos});
+      makeRow("Qx","qx",-8,8,0.1);
+      makeRow("Qy","qy",-8,8,0.1);
+    }else if(s==="c_tan"){
+      makeRow("r","r",0.5,5,0.1,{check:chkPos});
+      makeRow("Qx","px",-8,8,0.1);
+      makeRow("Qy","py",-8,8,0.1);
+    }else if(s==="c_sym"){
+      makeRow("h","h",-6,6,0.1);
+      makeRow("k","k",-6,6,0.1);
+      makeRow("r","r",0.5,5,0.1,{check:chkPos});
+    }else{
+      makeRow("h","h",-6,6,0.1);
+      makeRow("k","k",-6,6,0.1);
+      makeRow("r","r",0.5,5,0.1,{check:chkPos});
+    }
+  }
+  else if(m==="ellipse"){
+    if(s==="e_circle"){
+      makeRow("a","a",2,7,0.1,{check:chkPos});
+      makeRow("b","bSlide",0.2,7,0.05,{
+        check:chkPos,
+        slide:function(v){return Math.min(v,P().a);}
+      });
+    }else{
+      makeRow("a","a",2,7,0.1,{
+        check:function(v){
+          if(!(v>0))return {ok:false,msg:"a 必须大于 0"};
+          if(v<=P().c)return {ok:false,msg:"a 必须大于 c，否则 b²=a²−c² 不为正"};
+          return {ok:true};
+        },
+        slide:function(v){return Math.max(v,P().c+0.05);}
+      });
+      makeRow("c","c",0.2,6.5,0.05,{
+        check:function(v){
+          if(!(v>0))return {ok:false,msg:"c 必须大于 0"};
+          if(v>=P().a)return {ok:false,msg:"c 必须小于 a"};
+          return {ok:true};
+        },
+        slide:function(v){return Math.min(v,P().a-0.05);}
+      });
+      if(s==="e_line"||s==="e_fchord"){
+        makeRow("斜率","lm",-3,3,0.1);
+      }
+      if(s==="e_line"){
+        makeRow("截距","ln",-6,6,0.1);
+      }
+    }
+  }
+  else if(m==="hyperbola"){
+    makeRow("a","a",0.5,5,0.1,{check:chkPos});
+    makeRow("b","b",0.5,5,0.1,{check:chkPos});
+    if(s==="h_line"){
+      makeRow("斜率","lm",-3,3,0.1);
+      makeRow("截距","ln",-6,6,0.1);
+    }
+    if(s==="h_fchord"){
+      makeRow("斜率","lm",-3,3,0.1);
+    }
+  }
+  else if(m==="parabola"){
+    if(s!=="p_fchord"){
+      makeChoice("开口",[[0,"y²=2px"],[1,"y²=−2px"],[2,"x²=2py"],[3,"x²=−2py"]],"pform");
+    }
+    makeRow("p","p",0.5,4,0.1,{check:chkPos});
+    if(s==="p_fchord"){
+      makeRow("斜率","lm",-2.5,2.5,0.1);
+    }
+    if(s==="p_line"){
+      makeRow("斜率","lm",-3,3,0.1);
+      makeRow("截距","ln",-6,6,0.1);
+    }
+  }
+  else{
+    if(s==="s_uni"||s==="s_ecc"){
+      makeRow("e","e",0,2,0.01,{
+        check:function(v){return (isNum(v)&&v>=0)?{ok:true}:{ok:false,msg:"e 必须大于或等于 0"};}
+      });
+      makeRow("d","d0",1,3,0.1,{check:chkPos});
+    }else if(s==="s_disc"){
+      makeRow("示例","discCase",0,6,1);
+    }else if(s==="s_line"){
+      makeChoice("曲线",[[0,"椭圆"],[1,"双曲线"],[2,"抛物线"]],"ctype");
+      makeRow("斜率","lm",-3,3,0.1);
+      makeRow("截距","ln",-6,6,0.1);
+    }else if(s==="s_circ"){
+      makeRow("b","bSlide",0.2,3,0.05,{check:chkPos});
+    }else if(s==="s_fchord"){
+      makeRow("斜率","lm",-2.5,2.5,0.1);
+    }
+  }
+
+  syncControls();
+}
+
+/* ---------- 模块 / 子模式按钮 ---------- */
+function buildModules(){
+  const box=$("modules");
+  box.innerHTML="";
+  let i=0;
+  for(const key in MODULES){
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="btn module"+(state.module===key?" sel":"");
+    b.textContent=MODULES[key].name;
+    b.setAttribute("data-module",key);
+    b.addEventListener("click",function(){selectModule(key);});
+    box.appendChild(b);
+    i++;
+  }
+}
+function buildSubmodes(){
+  const box=$("submodes");
+  box.innerHTML="";
+  const subs=MODULES[state.module]?MODULES[state.module].subs:[];
+  for(const it of subs){
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="btn sub"+(state.submode===it[0]?" sel":"");
+    b.textContent=it[1];
+    b.addEventListener("click",function(){selectSubmode(it[0]);});
+    box.appendChild(b);
+  }
+}
+
+/* ---------- 默认参数微调 ---------- */
+function tuneDefaults(){
+  const p=state.params;
+  if(state.module==="circle"){
+    if(state.submode==="c_common"||state.submode==="c_cc"||state.submode==="c_sys"){
+      p.h2=3.0;p.k2=0;p.r2=2.6;
+    }
+    if(state.submode==="c_ctan"){
+      p.h2=5.0;p.k2=0;p.r2=1.6;
+    }
+  }
+}
+
+/* ---------- 场景刷新 ---------- */
+function applyScene(){
+  resetParams();
+  tuneDefaults();
+  buildModules();
+  buildSubmodes();
+  buildControls();
+  setFormula();
+  syncControls();
+  requestRender();
+}
+function selectModule(m){
+  if(!MODULES[m])return;
+  state.module=m;
+  state.submode=MODULES[m].subs[0][0];
+  state.anim.playing=false;
+  updatePlayBtn();
+  applyScene();
+}
+function selectSubmode(s){
+  state.submode=s;
+  state.anim.playing=false;
+  updatePlayBtn();
+  applyScene();
+}
+function selectModuleByIndex(i){
+  const keys=Object.keys(MODULES);
+  if(keys[i])selectModule(keys[i]);
+}
+
+/* ---------- 播放 / 缩放 ---------- */
+function updatePlayBtn(){
+  $("btnPlay").textContent=state.anim.playing?"⏸ 暂停":"▶ 播放";
+}
+function togglePlay(){
+  state.anim.playing=!state.anim.playing;
+  updatePlayBtn();
+  requestRender();
+}
+function zoomBy(f){
+  state.zoom=clamp(state.zoom*f,0.4,6);
+  requestRender();
+}
+function resetView(){
+  state.zoom=1;state.panX=0;state.panY=0;
+  requestRender();
+}
+function doReset(){
+  state.anim.playing=false;
+  updatePlayBtn();
+  resetParams();
+  tuneDefaults();
+  buildControls();
+  setFormula();
+  syncControls();
+  requestRender();
+}
+
+/* ---------- 工具栏绑定 ---------- */
+$("btnPlay").addEventListener("click",togglePlay);
+$("btnStepBack").addEventListener("click",function(){stepT(-1);requestRender();});
+$("btnStepFwd").addEventListener("click",function(){stepT(1);requestRender();});
+$("btnReset").addEventListener("click",doReset);
+$("btnZoomIn").addEventListener("click",function(){zoomBy(1.25);});
+$("btnZoomOut").addEventListener("click",function(){zoomBy(1/1.25);});
+$("btnZoomView").addEventListener("click",resetView);
+$("btnHelp").addEventListener("click",function(){
+  const hv=$("helpBox");
+  hv.open=!hv.open;
+  if(hv.open)hv.scrollIntoView({block:"nearest",behavior:"smooth"});
+});
+
+/* ---------- 开关 ---------- */
+$("tgAux").addEventListener("change",function(e){state.showAux=e.target.checked;requestRender();});
+$("tgCard").addEventListener("change",function(e){
+  state.showCard=e.target.checked;
+  $("cardBox").style.display=e.target.checked?"":"none";
+});
+$("tgLegend").addEventListener("change",function(e){
+  state.showLegend=e.target.checked;
+  $("legendBox").style.display=e.target.checked?"":"none";
+});
+$("tgGrid").addEventListener("change",function(e){state.showGrid=e.target.checked;requestRender();});
+$("tgTicks").addEventListener("change",function(e){state.showTicks=e.target.checked;requestRender();});
+$("tgFill").addEventListener("change",function(e){state.showFill=e.target.checked;requestRender();});
+$("tgCoord").addEventListener("change",function(e){state.showCoord=e.target.checked;requestRender();});
+
+/* ---------- 鼠标坐标显示 ---------- */
+let _hover=null;
+cv.addEventListener("pointermove",function(e){
+  const r=cv.getBoundingClientRect();
+  _hover={x:e.clientX-r.left,y:e.clientY-r.top};
+  if(state.showCoord)requestRender();
+});
+cv.addEventListener("pointerleave",function(){
+  _hover=null;
+  if(state.showCoord)requestRender();
+});
+function drawCoordOverlay(){
+  if(!state.showCoord||!_hover)return;
+  if(!isNum(H)||H<=0)return;
+  const mx=MX(_hover.x), my=MY(_hover.y);
+  if(!isNum(mx)||!isNum(my))return;
+  const s="("+fmt(mx,2)+", "+fmt(my,2)+")";
+  ctx.font="11px sans-serif";
+  const w=ctx.measureText(s).width+12;
+  ctx.fillStyle="rgba(255,255,255,.88)";
+  ctx.fillRect(8,H-28,w,20);
+  ctx.strokeStyle="#cbd5e1";ctx.lineWidth=1;ctx.setLineDash([]);
+  ctx.strokeRect(8,H-28,w,20);
+  ctx.fillStyle="#475569";ctx.textAlign="left";ctx.textBaseline="middle";
+  ctx.fillText(s,14,H-18);
+}
+/* 在原始 render 之后叠加坐标文字 */
+(function wrapRender(){
+  const base=render;
+  render=function(){
+    base();
+    drawCoordOverlay();
+  };
+})();
+
+/* ---------- 键盘快捷键 ---------- */
+document.addEventListener("keydown",function(e){
+  const tag=(e.target&&e.target.tagName)?e.target.tagName.toLowerCase():"";
+  const editing=(tag==="input"||tag==="textarea"||tag==="select");
+  if(editing)return;
+
+  if(e.code==="Space"){e.preventDefault();togglePlay();return;}
+  if(e.key==="ArrowLeft"){e.preventDefault();stepT(-1);requestRender();return;}
+  if(e.key==="ArrowRight"){e.preventDefault();stepT(1);requestRender();return;}
+  if(e.key==="+"||e.key==="="){e.preventDefault();zoomBy(1.25);return;}
+  if(e.key==="-"||e.key==="_"){e.preventDefault();zoomBy(1/1.25);return;}
+  if(e.key==="0"){e.preventDefault();resetView();return;}
+  if(e.key==="r"||e.key==="R"){e.preventDefault();doReset();return;}
+  if(e.key>="1"&&e.key<="5"){e.preventDefault();selectModuleByIndex(parseInt(e.key,10)-1);return;}
+});
+
+/* ---------- 参数导入 / 导出 ---------- */
+$("btnCopyParams").addEventListener("click",function(){
+  const data={module:state.module,submode:state.submode,params:{}};
+  for(const k in state.params){
+    if(Object.prototype.hasOwnProperty.call(state.params,k))data.params[k]=state.params[k];
+  }
+  const txt=JSON.stringify(data,null,2);
+  $("pasteBox").value=txt;
+  $("ioMsg").style.color="#059669";
+  $("ioMsg").textContent="已生成参数文本，可手动复制。";
+  try{ $("pasteBox").focus(); $("pasteBox").select(); }catch(e){}
+});
+$("btnApplyPaste").addEventListener("click",function(){
+  const txt=$("pasteBox").value.trim();
+  const msg=$("ioMsg");
+  if(!txt){msg.style.color="#dc2626";msg.textContent="粘贴内容为空。";return;}
+  let obj=null;
+  try{ obj=JSON.parse(txt); }catch(e){ obj=null; }
+
+  if(!obj){
+    /* 退化为 key=value 行解析 */
+    obj={params:{}};
+    const lines=txt.split(/[\n,;]+/);
+    for(const line of lines){
+      const kv=line.split("=");
+      if(kv.length===2){
+        const k=kv[0].trim();
+        const v=parseFloat(kv[1]);
+        if(isNum(v))obj.params[k]=v;
+      }
+    }
+  }
+
+  const flat=(obj&&obj.params)?obj.params:obj;
+  if(!flat||typeof flat!=="object"){msg.style.color="#dc2626";msg.textContent="无法解析参数文本。";return;}
+
+  if(obj&&obj.module&&MODULES[obj.module])state.module=obj.module;
+  if(obj&&obj.submode)state.submode=obj.submode;
+
+  resetParams();
+  let count=0;
+  for(const k in flat){
+    if(!Object.prototype.hasOwnProperty.call(state.params,k))continue;
+    const v=parseFloat(flat[k]);
+    if(isNum(v)){state.params[k]=v;count++;}
+  }
+  tuneDefaults();
+  buildModules();
+  buildSubmodes();
+  buildControls();
+  setFormula();
+  syncControls();
+  requestRender();
+
+  msg.style.color="#059669";
+  msg.textContent="已应用 "+count+" 项参数。";
+});
+
+/* ---------- 初始化 ---------- */
+function init(){
+  buildLegend();
+  buildModules();
+  buildSubmodes();
+  buildControls();
+  setFormula();
+  updatePlayBtn();
+  observeCanvasSize();
+  resize();
+  requestAnimationFrame(loop);
+}
+init();
+</script>
+</body>
+</html>
