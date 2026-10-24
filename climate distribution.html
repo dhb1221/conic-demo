@@ -1,0 +1,2461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="高中地理《全球气候分布示意图》交互式教学网页">
+<title>全球气候分布示意图 | 高中地理</title>
+<style>
+:root{
+  --blue:#1f6feb;
+  --blue-dark:#1558c0;
+  --blue-soft:#eaf2ff;
+  --green:#2ea043;
+  --amber:#d29922;
+  --red:#d64545;
+  --bg:#f7f9fc;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --radius:12px;
+  --shadow:0 6px 22px rgba(31,111,235,.08);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  padding-top:68px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,-apple-system,sans-serif;
+  font-size:14px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select{font-family:inherit;}
+button{cursor:pointer;}
+h1,h2,h3,h4,p{margin:0;}
+:focus-visible{outline:3px solid rgba(31,111,235,.4);outline-offset:2px;}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+.no-scroll{overflow:hidden;}
+
+/* ============ 顶栏 ============ */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:68px;z-index:400;
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:0 24px;background:rgba(255,255,255,.97);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(10px);
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;}
+.brand-badge{
+  width:40px;height:40px;border-radius:12px;flex:0 0 auto;
+  display:grid;place-items:center;color:#fff;
+  background:linear-gradient(135deg,#1f6feb 0%,#2ea043 100%);
+  box-shadow:0 5px 14px rgba(31,111,235,.25);
+}
+.brand-badge svg{width:22px;height:22px;display:block;}
+.brand h1{font-size:19px;line-height:1.25;font-weight:700;letter-spacing:.3px;}
+.brand p{font-size:12px;color:var(--muted);margin-top:2px;}
+.top-actions{display:flex;align-items:center;gap:10px;flex:0 0 auto;}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:999px;font-size:12px;
+  background:var(--blue-soft);color:var(--blue-dark);font-weight:600;
+}
+.pill.green{background:#e9f7ec;color:#1a7f37;}
+.pill.amber{background:#fff5dd;color:#8a6100;}
+
+/* ============ 左侧导航 / 主内容 ============ */
+.shell{display:block;min-height:calc(100vh - 68px);}
+.sidenav{
+  position:fixed;top:68px;left:0;bottom:0;width:248px;z-index:300;
+  padding:20px 14px 28px;background:#fff;border-right:1px solid var(--line);
+  overflow-y:auto;
+}
+.nav-title{
+  font-size:11px;font-weight:700;letter-spacing:1.5px;color:#94a3b8;
+  padding:0 12px 10px;text-transform:uppercase;
+}
+.nav-btn{
+  display:flex;align-items:flex-start;gap:11px;width:100%;
+  padding:12px 13px;margin-bottom:6px;border:0;border-radius:10px;
+  background:transparent;color:#475569;text-align:left;
+  transition:background .18s,color .18s,box-shadow .18s;
+}
+.nav-btn:hover{background:#eef4ff;color:var(--blue-dark);}
+.nav-btn.active{
+  background:var(--blue);color:#fff;
+  box-shadow:0 7px 16px rgba(31,111,235,.24);
+}
+.nav-num{
+  flex:0 0 auto;width:22px;font-size:11px;font-weight:800;
+  opacity:.7;padding-top:2px;letter-spacing:.5px;
+}
+.nav-text{display:block;min-width:0;}
+.nav-text b{display:block;font-size:14px;font-weight:600;line-height:1.35;}
+.nav-text small{display:block;font-size:11px;opacity:.72;margin-top:3px;line-height:1.4;}
+.nav-foot{
+  margin-top:18px;padding:12px;border-radius:10px;background:#f7f9fc;
+  font-size:11.5px;color:var(--muted);line-height:1.6;
+}
+.content{
+  margin-left:248px;padding:24px 28px 46px;
+  width:calc(100% - 248px);max-width:1520px;
+}
+
+/* ============ 面板 / 卡片 ============ */
+.panel{display:none;}
+.panel.active{display:block;animation:fadeUp .2s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:none;}}
+.panel-head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:16px;flex-wrap:wrap;margin-bottom:16px;
+}
+.panel-head h2{font-size:23px;font-weight:700;letter-spacing:.3px;line-height:1.3;}
+.panel-head .sub{font-size:13px;color:var(--muted);margin-top:4px;}
+.card{
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:var(--shadow);border:1px solid rgba(226,232,240,.75);
+}
+.hint-chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 13px;border-radius:999px;background:#fff;
+  border:1px solid var(--line);font-size:12.5px;color:var(--muted);
+  box-shadow:0 3px 10px rgba(15,23,42,.04);
+}
+.hint-chip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);}
+
+/* ============ 模块一：模式图 ============ */
+.module-grid{
+  display:grid;grid-template-columns:minmax(0,1fr) 330px;
+  gap:18px;align-items:start;
+}
+.map-card{padding:14px 16px 16px;min-width:0;}
+.map-wrap{position:relative;}
+#climateMap{display:block;width:100%;height:auto;border-radius:10px;background:#fbfcfe;}
+.map-tooltip{
+  position:absolute;z-index:8;left:0;top:0;max-width:270px;
+  padding:8px 11px;border-radius:8px;background:#1f2937;color:#fff;
+  font-size:12.5px;line-height:1.55;pointer-events:none;
+  opacity:0;transform:translate(-50%,-100%) translateY(-8px);
+  transition:opacity .15s ease;box-shadow:0 8px 20px rgba(15,23,42,.22);
+}
+.map-tooltip.show{opacity:1;}
+.map-tooltip::after{
+  content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;
+  border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:5px solid #1f2937;
+}
+.legend{
+  display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;
+  padding:12px 4px 4px;border-top:1px dashed var(--line);margin-top:10px;
+}
+.legend-title{font-size:12px;color:var(--muted);font-weight:600;}
+.legend-item{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#475569;}
+.legend-item i{width:14px;height:14px;border-radius:4px;display:inline-block;border:1px solid rgba(0,0,0,.06);}
+.block-info{
+  margin-top:12px;padding:10px 13px;border-radius:8px;
+  background:#f2f7ff;border-left:3px solid var(--blue);
+  font-size:13px;color:#334155;min-height:44px;
+}
+.block-info b{color:var(--blue-dark);}
+
+/* SVG 色块交互 */
+.climate-block{
+  cursor:pointer;
+  transition:stroke-width .15s ease,filter .15s ease;
+  outline:none;
+}
+.climate-block:hover,.climate-block:focus{
+  stroke:#1f6feb !important;stroke-width:2.6 !important;
+  filter:drop-shadow(0 2px 6px rgba(31,111,235,.25));
+}
+.climate-block text{pointer-events:none;user-select:none;}
+
+/* 判读算法 */
+.algo-card{position:sticky;top:88px;align-self:start;overflow:hidden;}
+.algo summary{
+  list-style:none;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:15px 17px;cursor:pointer;user-select:none;
+  font-size:15px;font-weight:700;color:#0f2a55;
+  background:linear-gradient(180deg,#f6f9ff,#fff);
+  border-bottom:1px solid var(--line);
+}
+.algo summary::-webkit-details-marker{display:none;}
+.algo .chev{font-size:12px;color:var(--muted);transition:transform .2s;}
+.algo[open] .chev{transform:rotate(180deg);}
+.algo-body{padding:14px 16px 18px;}
+.steps{margin:0 0 12px;padding-left:18px;font-size:12.8px;color:#475569;}
+.steps li{margin-bottom:7px;}
+.steps b{color:var(--text);}
+.threshold-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px;}
+.threshold-table th,.threshold-table td{
+  border:1px solid var(--line);padding:6px 7px;text-align:left;vertical-align:top;
+}
+.threshold-table th{background:#f3f7fd;color:#334155;font-weight:600;}
+.threshold-table td:first-child{color:var(--blue-dark);font-weight:700;white-space:nowrap;}
+.algo-note{
+  margin-top:12px;padding:8px 10px;border-radius:7px;
+  background:#fff8e6;color:#8a6100;font-size:12px;line-height:1.55;
+}
+
+/* ============ 模块二：世界底图 / 抽屉 ============ */
+.world-card{padding:12px;}
+.world-wrap{position:relative;}
+#worldMap{display:block;width:100%;height:auto;border-radius:10px;background:#eaf3fb;}
+.map-note{font-size:12px;color:var(--muted);padding:10px 6px 2px;}
+.map-note b{color:var(--blue-dark);}
+.marker{cursor:pointer;outline:none;}
+.marker .pulse{
+  fill:var(--blue);opacity:.28;
+  transform-box:fill-box;transform-origin:center;
+  animation:pulse 2.4s ease-out infinite;
+}
+@keyframes pulse{
+  0%{transform:scale(.62);opacity:.42;}
+  72%{transform:scale(1.85);opacity:0;}
+  100%{transform:scale(1.85);opacity:0;}
+}
+.marker .pin{fill:var(--blue);stroke:#fff;stroke-width:1.6;transition:.15s;}
+.marker:hover .pin,.marker:focus .pin{fill:#0f4fae;stroke:#fff;stroke-width:2.4;}
+.marker text{fill:#fff;font-size:10px;font-weight:700;pointer-events:none;}
+
+.drawer-overlay{
+  position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.38);
+  opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s;
+}
+.drawer-overlay.open{opacity:1;visibility:visible;}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;z-index:510;
+  width:min(440px,100vw);background:#fff;display:flex;flex-direction:column;
+  transform:translateX(105%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  box-shadow:-12px 0 34px rgba(15,23,42,.18);
+}
+.drawer.open{transform:translateX(0);}
+.drawer-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  padding:18px 20px 13px;border-bottom:1px solid var(--line);background:#fbfdff;
+}
+.drawer-head h2{font-size:17px;line-height:1.45;font-weight:700;padding-right:6px;}
+.icon-btn{
+  flex:0 0 auto;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);
+  background:#fff;color:#475569;font-size:21px;line-height:1;display:grid;place-items:center;
+}
+.icon-btn:hover{background:#f1f5f9;}
+.drawer-body{padding:16px 20px 34px;overflow-y:auto;}
+.card-tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.tag{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:999px;font-size:11.5px;font-weight:700;
+}
+.tag.azonal{background:#e9f7ec;color:#1a7f37;}
+.tag.weather{background:#fff4d6;color:#8a6100;}
+.tag.soft{background:#eef4ff;color:var(--blue-dark);font-weight:600;}
+.field{margin-top:15px;}
+.field h4{
+  display:flex;align-items:center;gap:7px;
+  font-size:12.5px;color:var(--blue-dark);letter-spacing:.5px;
+  margin:0 0 6px;font-weight:700;
+}
+.field h4::before{content:"";width:3px;height:12px;border-radius:2px;background:var(--blue);flex:0 0 auto;}
+.field p{font-size:13.2px;color:#334155;line-height:1.7;}
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.chain-step{
+  background:#f1f6ff;border:1px solid #dbe8ff;color:#1e40af;
+  padding:6px 9px;border-radius:8px;font-size:12.2px;line-height:1.45;
+}
+.chain-arrow{color:var(--blue);font-weight:700;font-size:13px;}
+.profile-svg{
+  display:block;width:100%;height:40px;margin-top:8px;
+  border:1px solid var(--line);border-radius:8px;background:#f7f9fc;
+}
+.profile-key{font-size:10.8px;color:var(--muted);margin-top:4px;}
+.question-box{
+  background:#fffaf0;border-left:3px solid var(--amber);
+  padding:10px 12px;border-radius:8px;
+}
+.question-box .q{font-size:13.2px;color:#3f2d00;font-weight:600;}
+.question-box .kw{font-size:12.2px;color:#8a6100;margin-top:4px;}
+
+/* ============ 模块三：统计图 ============ */
+.chart-layout{
+  display:grid;grid-template-columns:minmax(0,1fr) 330px;
+  gap:18px;align-items:start;
+}
+.chart-card{padding:18px 20px 18px;min-width:0;}
+.chart-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;margin-bottom:10px;
+}
+.select-wrap{display:flex;align-items:center;gap:9px;}
+.select-wrap label{font-size:12.5px;color:var(--muted);font-weight:600;}
+#stationSelect{
+  appearance:none;border:1px solid #cfdaea;border-radius:9px;
+  padding:9px 34px 9px 12px;font-size:14px;color:var(--text);
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2364748b' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+}
+.chart-notice{
+  font-size:11.8px;color:#8a6100;background:#fff8e6;
+  border-radius:8px;padding:6px 10px;max-width:100%;
+}
+.chart-notice:empty{display:none;}
+.canvas-box{position:relative;width:100%;height:430px;}
+#climateCanvas{display:block;width:100%;height:100%;border-radius:10px;background:#fff;}
+.timeline{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);
+}
+#monthSlider{flex:1 1 200px;min-width:160px;accent-color:var(--blue);height:22px;}
+.month-readout{display:flex;gap:7px;flex-wrap:wrap;}
+.readout-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:5px 10px;border-radius:999px;background:#f1f5f9;
+  font-size:12px;color:#475569;font-variant-numeric:tabular-nums;
+}
+.readout-pill.temp{background:#fdeeee;color:#b42318;}
+.readout-pill.rain{background:#e8f1ff;color:#1558c0;}
+.season-hint{
+  margin-top:11px;padding:9px 12px;border-radius:8px;
+  background:#eef5ff;border-left:3px solid var(--blue);
+  font-size:12.8px;color:#1e3a8a;min-height:38px;
+}
+.season-hint:empty{display:none;}
+
+.quiz-card{position:sticky;top:88px;align-self:start;padding:18px;}
+.quiz-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.quiz-head h3{font-size:16px;font-weight:700;}
+.quiz-count{font-size:11px;color:var(--muted);background:#f1f5f9;border-radius:999px;padding:3px 9px;}
+.quiz-tip{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.55;}
+.quiz-canvas-box{position:relative;width:100%;height:168px;margin-top:10px;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff;}
+#quizCanvas{display:block;width:100%;height:100%;}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px;}
+.quiz-opt{
+  border:1px solid var(--line);background:#fff;border-radius:9px;
+  padding:9px 7px;font-size:12.2px;line-height:1.35;color:#334155;
+  transition:.15s;text-align:center;
+}
+.quiz-opt:hover{border-color:#9dc0ff;background:#f7faff;}
+.quiz-opt.correct{background:#e9f7ec;border-color:var(--green);color:#1a7f37;font-weight:700;}
+.quiz-opt.wrong{background:#fdeeee;border-color:var(--red);color:#b42318;}
+.quiz-feedback{margin-top:10px;font-size:12.2px;line-height:1.65;color:#475569;}
+.quiz-feedback .ok{color:#1a7f37;font-weight:700;margin-bottom:5px;}
+.quiz-feedback .bad{color:#b42318;font-weight:600;}
+.quiz-feedback ol{margin:6px 0 0;padding-left:18px;}
+.quiz-feedback li{margin-bottom:4px;}
+#quizNext{margin-top:11px;width:100%;}
+
+/* ============ 模块四：表格 ============ */
+.filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.filter-btn{
+  border:1px solid var(--line);background:#fff;color:#475569;
+  border-radius:999px;padding:7px 15px;font-size:12.8px;transition:.15s;
+}
+.filter-btn:hover{border-color:#9dc0ff;color:var(--blue-dark);}
+.filter-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 4px 11px rgba(31,111,235,.22);}
+.table-card{padding:4px 4px 6px;overflow:hidden;}
+.table-wrap{width:100%;overflow-x:auto;border-radius:10px;}
+#climateTable{width:100%;min-width:980px;border-collapse:separate;border-spacing:0;font-size:12.4px;}
+#climateTable th{
+  position:sticky;top:0;z-index:2;background:#f3f7fd;color:#334155;
+  font-weight:700;text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+#climateTable td{
+  padding:10px;border-bottom:1px solid #eef2f7;vertical-align:top;
+  color:#3f4b5b;line-height:1.6;
+}
+#climateTable tbody tr:hover td{background:#f8fbff;}
+#climateTable td:first-child{font-weight:700;color:#0f2a55;white-space:nowrap;}
+.heat-badge{
+  display:inline-block;padding:2px 8px;border-radius:999px;
+  font-size:11px;font-weight:700;white-space:nowrap;
+}
+.heat-热带{background:#fde6da;color:#9a3412;}
+.heat-亚热带{background:#fff1c9;color:#7a5200;}
+.heat-温带{background:#e2f3e5;color:#166534;}
+.heat-寒带{background:#e7e5f8;color:#3730a3;}
+.heat-其他{background:#e8edf4;color:#334155;}
+
+.compare-section{margin-top:24px;}
+.compare-section h3{font-size:18px;margin-bottom:4px;}
+.compare-section .sub{font-size:12.5px;color:var(--muted);margin-bottom:13px;}
+.compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px;}
+.compare-card{padding:15px 16px 16px;}
+.compare-card h4{font-size:14.5px;color:#0f2a55;margin-bottom:10px;line-height:1.4;}
+.compare-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.compare-col{border-radius:9px;padding:10px;background:#f8fafc;border:1px solid #edf1f6;}
+.compare-col h5{font-size:12.5px;font-weight:700;color:var(--blue-dark);margin-bottom:7px;}
+.compare-col dl{margin:0;}
+.compare-col dt{font-size:10.8px;color:#94a3b8;font-weight:700;margin-top:6px;}
+.compare-col dd{margin:1px 0 0;font-size:11.8px;color:#475569;line-height:1.55;}
+
+/* ============ 页脚 ============ */
+.page-foot{
+  margin-top:30px;padding:14px 4px 4px;text-align:center;
+  font-size:11.5px;color:#94a3b8;border-top:1px dashed var(--line);
+}
+
+/* ============ 响应式 ============ */
+@media (max-width:1180px){
+  .module-grid,.chart-layout{grid-template-columns:minmax(0,1fr) 300px;}
+  .sidenav{width:216px;}
+  .content{margin-left:216px;width:calc(100% - 216px);padding:20px 20px 40px;}
+}
+@media (max-width:980px){
+  .sidenav{
+    position:static;width:100%;height:auto;bottom:auto;
+    display:flex;gap:8px;padding:12px 14px;overflow-x:auto;
+    border-right:0;border-bottom:1px solid var(--line);
+  }
+  .nav-title,.nav-foot{display:none;}
+  .nav-btn{flex:0 0 auto;width:auto;margin:0;padding:10px 13px;align-items:center;}
+  .nav-text small{display:none;}
+  .nav-num{padding-top:0;}
+  .content{margin-left:0;width:100%;padding:18px 16px 36px;}
+  .module-grid,.chart-layout{grid-template-columns:minmax(0,1fr);}
+  .algo-card,.quiz-card{position:static;}
+  .canvas-box{height:380px;}
+}
+@media (max-width:768px){
+  .topbar{padding:0 14px;}
+  .brand h1{font-size:16.5px;}
+  .brand p{display:none;}
+  .top-actions .pill{display:none;}
+  .panel-head h2{font-size:20px;}
+  .chart-card{padding:14px;}
+  .canvas-box{height:330px;}
+  .quiz-options{grid-template-columns:1fr;}
+  .compare-cols{grid-template-columns:1fr;}
+  .drawer{width:100vw;}
+}
+</style>
+</head>
+<body>
+<noscript>
+  <p style="padding:20px;background:#fff4d6;color:#8a6100;">本页面需要启用 JavaScript 才能进行交互演示。</p>
+</noscript>
+
+<!-- ================= 顶部固定标题栏 ================= -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-badge" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"></circle>
+        <ellipse cx="12" cy="12" rx="4" ry="9"></ellipse>
+        <path d="M3.6 9h16.8M3.6 15h16.8"></path>
+      </svg>
+    </div>
+    <div>
+      <h1>全球气候分布示意图</h1>
+      <p>高中地理 · 气候类型判读与成因探究</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <span class="pill">人教 A 版 · 必修一</span>
+    <span class="pill green">可离线运行</span>
+  </div>
+</header>
+
+<div class="shell">
+  <!-- ================= 左侧导航 ================= -->
+  <nav class="sidenav" aria-label="模块导航">
+    <div class="nav-title">四大探究模块</div>
+
+    <button id="nav-map" class="nav-btn active" data-tab="map" role="tab"
+            aria-selected="true" aria-controls="panel-map">
+      <span class="nav-num">01</span>
+      <span class="nav-text">
+        <b>全球气候分布模式图</b>
+        <small>纬度带 × 海陆位置</small>
+      </span>
+    </button>
+
+    <button id="nav-special" class="nav-btn" data-tab="special" role="tab"
+            aria-selected="false" aria-controls="panel-special" tabindex="-1">
+      <span class="nav-num">02</span>
+      <span class="nav-text">
+        <b>特殊地区气候</b>
+        <small>非地带性 · 特殊天气</small>
+      </span>
+    </button>
+
+    <button id="nav-chart" class="nav-btn" data-tab="chart" role="tab"
+            aria-selected="false" aria-controls="panel-chart" tabindex="-1">
+      <span class="nav-num">03</span>
+      <span class="nav-text">
+        <b>气温降水统计图</b>
+        <small>判读训练 · 逐月动画</small>
+      </span>
+    </button>
+
+    <button id="nav-table" class="nav-btn" data-tab="table" role="tab"
+            aria-selected="false" aria-controls="panel-table" tabindex="-1">
+      <span class="nav-num">04</span>
+      <span class="nav-text">
+        <b>气候类型速查表</b>
+        <small>分布 · 成因 · 易混辨析</small>
+      </span>
+    </button>
+
+    <div class="nav-foot">
+      提示：所有色块、标记点与选项均可用 <b>Tab</b> 聚焦，按 <b>Enter</b> 触发。
+    </div>
+  </nav>
+
+  <main class="content">
+
+    <!-- ============================================================
+         模块 1：全球气候分布模式图
+    ============================================================ -->
+    <section id="panel-map" class="panel active" role="tabpanel" aria-labelledby="nav-map">
+      <div class="panel-head">
+        <div>
+          <h2>全球气候分布模式图</h2>
+          <p class="sub">把“地带性”装进一张图：纵轴看纬度，横轴看海陆位置。</p>
+        </div>
+        <div class="hint-chip">悬停或聚焦色块，查看成因一句话</div>
+      </div>
+
+      <div class="module-grid">
+        <div class="card map-card">
+          <div class="map-wrap">
+            <svg id="climateMap" viewBox="0 0 1040 860" role="img"
+                 aria-label="全球气候分布模式示意图：横轴为大陆西岸、大陆内部、大陆东岸，纵轴为北纬90度到南纬90度">
+            </svg>
+            <div id="mapTooltip" class="map-tooltip" role="status" aria-live="polite"></div>
+          </div>
+
+          <div class="legend" aria-label="气候族系图例">
+            <span class="legend-title">气候族系</span>
+            <span class="legend-item"><i style="background:#f8c3a6;border-color:#e59a72"></i>热带</span>
+            <span class="legend-item"><i style="background:#f8e3a3;border-color:#e3c25c"></i>亚热带</span>
+            <span class="legend-item"><i style="background:#bfe3c4;border-color:#8fc79a"></i>温带</span>
+            <span class="legend-item"><i style="background:#cdc7ee;border-color:#a9a1dd"></i>寒带</span>
+            <span class="legend-item"><i style="background:#dbe2ea;border-color:#b8c2cf"></i>其他（高原山地）</span>
+          </div>
+
+          <div id="blockInfo" class="block-info">
+            点击或聚焦任一色块，这里会显示该气候类型的成因。
+          </div>
+        </div>
+
+        <aside class="card algo-card">
+          <details class="algo" open>
+            <summary>
+              <span>判读算法 · 三步定型</span>
+              <span class="chev" aria-hidden="true">▾</span>
+            </summary>
+            <div class="algo-body">
+              <ol class="steps">
+                <li><b>定半球：</b>以最高温月份判断。6、7、8 月为北半球，12、1、2 月为南半球。</li>
+                <li><b>定温度带：</b>看最冷月均温，锁定热带、亚热带、温带或寒带。</li>
+                <li><b>定降水型：</b>看年降水量与季节分配，区分年雨、夏雨、冬雨、少雨四型。</li>
+              </ol>
+
+              <table class="threshold-table">
+                <thead>
+                  <tr><th>步骤</th><th>判断指标</th><th>结论</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>① 半球</td><td>最高温月 6 / 7 / 8 月</td><td>北半球</td></tr>
+                  <tr><td></td><td>最高温月 12 / 1 / 2 月</td><td>南半球</td></tr>
+                  <tr><td>② 温度带</td><td>最冷月均温 ≥ 15 ℃</td><td>热带</td></tr>
+                  <tr><td></td><td>最冷月均温 0—15 ℃</td><td>亚热带或温带海洋性</td></tr>
+                  <tr><td></td><td>最冷月均温 −15—0 ℃</td><td>温带</td></tr>
+                  <tr><td></td><td>最热月均温 &lt; 10 ℃</td><td>寒带</td></tr>
+                  <tr><td>③ 降水</td><td>年雨型</td><td>各月降水较均匀</td></tr>
+                  <tr><td></td><td>夏雨型</td><td>夏季降水集中</td></tr>
+                  <tr><td></td><td>冬雨型</td><td>冬季降水较多</td></tr>
+                  <tr><td></td><td>少雨型</td><td>全年降水量少</td></tr>
+                </tbody>
+              </table>
+
+              <p class="algo-note">
+                口诀：<b>先半球，再温度，最后看雨型。</b><br>
+                注意：热带草原与热带季风都属夏雨型，还要比较降水量级与雨季长短。
+              </p>
+            </div>
+          </details>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         模块 2：特殊地区气候
+    ============================================================ -->
+    <section id="panel-special" class="panel" role="tabpanel" aria-labelledby="nav-special">
+      <div class="panel-head">
+        <div>
+          <h2>特殊地区气候</h2>
+          <p class="sub">十个“不按常理出牌”的地方：非地带性、垂直地带性与特殊天气现象。</p>
+        </div>
+        <div class="hint-chip">点击编号标记，展开知识卡片</div>
+      </div>
+
+      <div class="card world-card">
+        <div class="world-wrap">
+          <svg id="worldMap" viewBox="0 0 1000 520" role="img"
+               aria-label="简化世界经纬网格底图，标有十个特殊地区的位置">
+          </svg>
+        </div>
+        <p class="map-note">
+          <b>读图提示：</b>底图仅示意经纬网与六大洲大致位置，不追求精确轮廓。
+          点击编号点可查看该地区的地带性预期、实际气候、成因链条、地形剖面与高考设问。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         模块 3：气温降水统计图
+    ============================================================ -->
+    <section id="panel-chart" class="panel" role="tabpanel" aria-labelledby="nav-chart">
+      <div class="panel-head">
+        <div>
+          <h2>气温降水统计图</h2>
+          <p class="sub">13 个代表站点：红色折线看气温，蓝色柱状看降水，拖动时间轴逐月判读。</p>
+        </div>
+        <div class="hint-chip">先看最冷月，再判降水型</div>
+      </div>
+
+      <div class="chart-layout">
+        <div class="card chart-card">
+          <div class="chart-head">
+            <div class="select-wrap">
+              <label for="stationSelect">选择站点</label>
+              <select id="stationSelect" aria-label="选择气温降水统计站点"></select>
+            </div>
+            <div id="chartNotice" class="chart-notice" role="status" aria-live="polite"></div>
+          </div>
+
+          <div class="canvas-box">
+            <canvas id="climateCanvas" aria-label="气温曲线与降水量柱状组合图"></canvas>
+          </div>
+
+          <div class="timeline">
+            <button id="playBtn" class="btn btn-primary" aria-label="播放逐月气温降水动画">▶ 播放</button>
+            <label class="sr-only" for="monthSlider">选择月份</label>
+            <input type="range" id="monthSlider" min="0" max="11" step="1" value="0"
+                   aria-label="选择月份，一月到十二月" aria-valuetext="1月">
+            <div class="month-readout" aria-live="polite">
+              <span class="readout-pill" id="monthLabel">1 月</span>
+              <span class="readout-pill temp" id="monthTemp">气温 — ℃</span>
+              <span class="readout-pill rain" id="monthPrecip">降水 — mm</span>
+            </div>
+          </div>
+
+          <div id="seasonHint" class="season-hint" role="status" aria-live="polite"></div>
+        </div>
+
+        <aside class="card quiz-card">
+          <div class="quiz-head">
+            <h3>判读练习</h3>
+            <span class="quiz-count">随机抽题</span>
+          </div>
+          <p class="quiz-tip">图中已隐藏地点名称，请依据气温与降水判断气候类型。</p>
+
+          <div class="quiz-canvas-box">
+            <canvas id="quizCanvas" aria-label="判读练习用气温降水图"></canvas>
+          </div>
+
+          <div id="quizOptions" class="quiz-options" role="group" aria-label="气候类型选项"></div>
+          <div id="quizFeedback" class="quiz-feedback" role="status" aria-live="polite"></div>
+          <button id="quizNext" class="btn btn-ghost" aria-label="随机换一道判读题">换一题</button>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         模块 4：气候类型速查表
+    ============================================================ -->
+    <section id="panel-table" class="panel" role="tabpanel" aria-labelledby="nav-table">
+      <div class="panel-head">
+        <div>
+          <h2>气候类型速查表</h2>
+          <p class="sub">分布、成因、特征、典型地区与易混辨析，一表查全。</p>
+        </div>
+        <div class="hint-chip">按热量带筛选</div>
+      </div>
+
+      <div id="filterBar" class="filter-bar" role="group" aria-label="按热量带筛选气候类型">
+        <button class="filter-btn active" data-heat="全部" aria-pressed="true">全部</button>
+        <button class="filter-btn" data-heat="热带" aria-pressed="false">热带</button>
+        <button class="filter-btn" data-heat="亚热带" aria-pressed="false">亚热带</button>
+        <button class="filter-btn" data-heat="温带" aria-pressed="false">温带</button>
+        <button class="filter-btn" data-heat="寒带" aria-pressed="false">寒带</button>
+        <button class="filter-btn" data-heat="其他" aria-pressed="false">其他</button>
+      </div>
+
+      <div class="card table-card">
+        <div class="table-wrap">
+          <table id="climateTable">
+            <thead>
+              <tr>
+                <th scope="col">气候类型</th>
+                <th scope="col">热量带</th>
+                <th scope="col">分布规律</th>
+                <th scope="col">成因</th>
+                <th scope="col">气候特征</th>
+                <th scope="col">典型地区</th>
+                <th scope="col">易混辨析</th>
+              </tr>
+            </thead>
+            <tbody id="climateTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="compare-section">
+        <h3>高频易混对比区</h3>
+        <p class="sub">三组“长得像、考得多”的气候类型，放在一起记差异。</p>
+        <div id="compareGrid" class="compare-grid"></div>
+      </div>
+    </section>
+
+    <footer class="page-foot">
+      数据为教学用近似值，仅用于气候类型判读练习。
+    </footer>
+  </main>
+</div>
+
+<!-- ================= 特殊地区知识卡片抽屉 ================= -->
+<div id="drawerOverlay" class="drawer-overlay" aria-hidden="true"></div>
+
+<aside id="specialDrawer" class="drawer" role="dialog" aria-modal="true"
+       aria-labelledby="drawerTitle" aria-hidden="true">
+  <div class="drawer-head">
+    <h2 id="drawerTitle">知识卡片</h2>
+    <button id="drawerClose" class="icon-btn" aria-label="关闭知识卡片">&times;</button>
+  </div>
+  <div id="drawerBody" class="drawer-body"></div>
+</aside>
+<script>
+"use strict";
+
+/* ============================================================
+   一、数据常量（数据与视图分离，绘图函数只读数据）
+   ============================================================ */
+
+/* ---------- 1. 特殊地区数据表 ---------- */
+const SPECIAL_REGIONS = [
+  {id:1, name:"马达加斯加岛东侧", climate:"热带雨林气候", type:"非地带性",
+   expect:"18°S 位于东南信风带，按地带性应为热带草原气候",
+   actual:"全年高温多雨的热带雨林气候",
+   chain:["东南信风从印度洋带来大量水汽","纵贯全岛的山地形成迎风坡，气流抬升产生地形雨","沿岸马达加斯加暖流增温增湿","降水丰沛，发育热带雨林"],
+   terrain:"岛屿中部为南北向山地，海拔 800—1500m；东侧为狭窄沿海平原，面向印度洋；西侧为宽阔的背风平原。",
+   question:["说明该岛东侧形成热带雨林气候的原因。","关键词：信风迎风坡 / 地形抬升 / 暖流增湿"]},
+
+  {id:2, name:"东非高原（内罗毕）", climate:"热带草原气候", type:"非地带性",
+   expect:"赤道穿过，按地带性应为热带雨林气候",
+   actual:"干湿季分明的热带草原气候",
+   chain:["高原海拔 1000—1500m，气温比同纬度盆地低","空气对流上升运动减弱","降水达不到热带雨林标准","形成干湿季分明的热带草原"],
+   terrain:"东非高原面，平均海拔 1000—1500m，地势起伏和缓，东非大裂谷纵贯；周边为刚果盆地低地。",
+   question:["与刚果盆地对比，说明东非高原未形成热带雨林的原因。","关键词：地势高 / 气温低 / 对流弱 / 降水少"]},
+
+  {id:3, name:"南美西岸（利马）", climate:"热带沙漠气候", type:"非地带性",
+   expect:"热带沙漠一般分布在回归线附近的大陆内部和西岸，且不向赤道延伸",
+   actual:"热带沙漠气候沿西海岸南北狭长分布，向北延伸至赤道附近",
+   chain:["秘鲁寒流沿海南流，降温减湿","近地面空气下冷上暖，逆温抑制对流，难以成雨","安第斯山脉逼近海岸，阻挡沙漠向东扩展","沙漠只能贴岸狭长分布并向低纬延伸"],
+   terrain:"安第斯山脉紧逼海岸，西侧几乎无沿海平原；山地海拔 4000m 以上，走向与海岸线平行。",
+   question:["分析南美西岸热带沙漠狭长分布并向低纬延伸的原因。","关键词：寒流减湿 / 逆温 / 山地阻挡"]},
+
+  {id:4, name:"巴塔哥尼亚（里奥加耶戈斯）", climate:"温带荒漠（温带大陆性干旱型）", type:"非地带性",
+   expect:"52°S 地处西风带，按地带性应为温带海洋性气候",
+   actual:"全年干旱少雨的温带荒漠",
+   chain:["西风携带太平洋水汽自西向东越过安第斯山","西侧为迎风坡多雨，东侧为背风坡","气流下沉增温，水汽耗尽（雨影效应）","东岸福克兰寒流进一步减湿，形成温带荒漠"],
+   terrain:"安第斯山脉纵贯西部，海拔 3000m 以上；东部为巴塔哥尼亚高原，地表起伏平缓，向东降至大西洋岸。",
+   question:["分析巴塔哥尼亚高原东临大西洋却形成荒漠的原因。","关键词：西风背风坡 / 雨影 / 焚风 / 寒流减湿"]},
+
+  {id:5, name:"澳大利亚东北部（凯恩斯）", climate:"热带雨林气候", type:"非地带性",
+   expect:"17°S 位于信风带，按地带性应为热带草原气候",
+   actual:"全年高温多雨的热带雨林气候",
+   chain:["东南信风从太平洋带来水汽","大分水岭迎风坡抬升，形成地形雨","沿岸东澳大利亚暖流增温增湿","形成非地带性热带雨林"],
+   terrain:"大分水岭南北纵贯东部，东侧为狭窄沿海平原，紧邻太平洋；西侧为宽广的内陆盆地。",
+   question:["说明澳大利亚东北部热带雨林气候的成因。","关键词：信风迎风坡 / 地形雨 / 暖流增湿"]},
+
+  {id:6, name:"几内亚湾沿岸（阿比让）", climate:"热带雨林气候", type:"非地带性",
+   expect:"5°N 已接近热带草原带，按地带性应为热带草原气候",
+   actual:"全年高温多雨的热带雨林气候",
+   chain:["夏季南半球东南信风越过赤道偏转为西南风","西南风从大西洋带来大量水汽","几内亚湾暖流增温增湿","沿岸降水丰沛，雨林带向北延伸"],
+   terrain:"沿海为低平原，几内亚湾海域开阔；内陆为低缓丘陵与高原，无高大山脉阻挡。",
+   question:["说明几内亚湾沿岸热带雨林气候向北延伸的原因。","关键词：越赤道气流 / 暖流增湿 / 迎岸风"]},
+
+  {id:7, name:"澳大利亚中西部（艾丽斯斯普林斯）", climate:"热带沙漠气候", type:"半环状分布",
+   expect:"澳大利亚气候呈半环状：东部沿海湿润，向内陆依次过渡为草原、沙漠",
+   actual:"中西部为广阔的热带沙漠气候",
+   chain:["大分水岭阻挡东南信风，东侧迎风坡多雨","越山后气流下沉，西侧背风坡降水锐减","水分由东向西递减，植被由森林→草原→荒漠过渡","中西部深居内陆，受副热带高压控制，形成沙漠"],
+   terrain:"西部为低矮高原（海拔 300—600m），中部为大自流盆地，东部为大分水岭；整体地势东高西低。",
+   question:["说明澳大利亚气候呈半环状分布的原因。","关键词：大分水岭阻挡 / 迎风坡与背风坡 / 降水自东向西递减"]},
+
+  {id:8, name:"斯堪的纳维亚半岛西岸（卑尔根）", climate:"温带海洋性气候", type:"非地带性",
+   expect:"60°N 已接近亚寒带，按地带性应为亚寒带针叶林气候",
+   actual:"全年温和多雨的温带海洋性气候，且向北明显延伸",
+   chain:["北大西洋暖流规模大、势力强，沿西海岸北上","暖流增温增湿，使沿岸最冷月均温显著高于同纬度","西风带携带海洋水汽登陆","温带海洋性气候北界被明显推高"],
+   terrain:"斯堪的纳维亚山脉纵贯半岛，西坡陡峭直逼海岸，多峡湾；东坡平缓。",
+   question:["说明斯堪的纳维亚半岛西岸温带海洋性气候向北延伸的原因。","关键词：北大西洋暖流 / 增温增湿 / 西风带"]},
+
+  {id:9, name:"青藏高原（拉萨）", climate:"高原山地气候", type:"垂直地带性",
+   expect:"30°N 按地带性应为亚热带季风气候",
+   actual:"气温低、日较差大、降水少的高原山地气候",
+   chain:["平均海拔 4000m 以上，气温随高度递减","空气稀薄，白天太阳辐射强、夜间地面辐射散热快，日较差大","高原面阻挡水汽，降水少于同纬度平原","形成独特的高原山地气候"],
+   terrain:"青藏高原平均海拔 4000m 以上，被称为“世界屋脊”；拉萨位于雅鲁藏布江谷地，海拔约 3650m，河谷地形。",
+   question:["分析青藏高原气温低、日较差大的原因。","关键词：海拔高 / 空气稀薄 / 大气逆辐射弱"]},
+
+  {id:10, name:"越南中南部沿海（顺化）", climate:"热带季风气候 + 克拉香天气", type:"特殊天气现象",
+   expect:"不属于气候类型异常，而是特定季节的天气现象",
+   actual:"冬末春初出现持续 2—5 天的毛毛雨伴雾，称为“克拉香天气”",
+   chain:["冬末春初为季风转换期，冬季大陆冷气团东移入海","冷气团在海面变性，变得暖湿","在风力微弱条件下水汽凝结成雾和毛毛雨","越南北部沿海受海南岛等阻挡，风力更小，雾更不易消散，出现几率更大"],
+   terrain:"长山山脉紧邻西侧海岸，沿海为狭长平原，北部有海南岛等岛屿屏障，海域半封闭。",
+   question:["说明克拉香天气的形成条件。","关键词：季风转换期 / 冷气团出海变性 / 风力弱 / 水汽凝结"]}
+];
+
+/* ---------- 2. 气温降水逐月数据表 ---------- */
+const STATIONS = [
+  {name:"新加坡", temp:[26.5,27.0,27.5,28.0,28.3,28.2,27.7,27.6,27.6,27.5,27.0,26.5], precip:[240,160,180,190,170,160,160,180,180,200,250,290], type:"热带雨林气候"},
+  {name:"孟买", temp:[24.0,24.5,26.5,28.5,30.0,29.0,27.5,27.0,27.0,28.0,27.0,25.5], precip:[1,0,0,1,20,520,700,450,270,70,15,3], type:"热带季风气候"},
+  {name:"内罗毕", temp:[20.0,21.0,21.0,20.0,19.0,18.0,17.0,17.5,19.0,20.0,19.0,19.0], precip:[60,70,120,200,150,40,20,20,25,60,150,100], type:"热带草原气候"},
+  {name:"开罗", temp:[14.0,15.0,17.0,21.0,25.0,27.0,28.0,28.0,26.0,23.0,19.0,15.0], precip:[5,4,3,1,0,0,0,0,0,1,3,5], type:"热带沙漠气候"},
+  {name:"罗马", temp:[8.0,9.0,11.0,14.0,18.0,22.0,25.0,25.0,22.0,17.0,12.0,9.0], precip:[80,75,65,65,45,35,20,30,70,110,110,95], type:"地中海气候"},
+  {name:"伦敦", temp:[5.0,5.0,7.0,9.0,13.0,16.0,18.0,18.0,15.0,11.0,8.0,6.0], precip:[55,40,42,44,49,45,45,50,49,69,59,55], type:"温带海洋性气候"},
+  {name:"北京", temp:[-3.5,-0.5,6.0,14.0,20.0,24.0,26.0,25.0,20.0,13.0,4.0,-2.0], precip:[3,5,8,20,35,70,175,180,50,20,7,2], type:"温带季风气候"},
+  {name:"上海", temp:[4.0,5.0,9.0,15.0,20.0,24.0,28.0,28.0,24.0,19.0,13.0,7.0], precip:[50,60,80,100,110,160,150,130,150,60,50,35], type:"亚热带季风气候"},
+  {name:"乌鲁木齐", temp:[-15.0,-12.0,-2.0,10.0,17.0,22.0,24.0,22.0,16.0,6.0,-4.0,-12.0], precip:[10,8,15,25,30,30,25,25,20,15,10,10], type:"温带大陆性气候"},
+  {name:"巴罗", temp:[-26.0,-28.0,-26.0,-18.0,-7.0,1.0,5.0,4.0,0.0,-8.0,-18.0,-24.0], precip:[5,4,4,4,5,10,15,20,15,15,10,6], type:"苔原气候"},
+  {name:"塔马塔夫", temp:[26.0,26.0,26.0,25.0,23.0,22.0,21.0,21.0,22.0,24.0,25.0,26.0], precip:[400,380,380,250,180,150,150,160,130,100,150,270], type:"热带雨林气候（非地带性）"},
+  {name:"里奥加耶戈斯", temp:[13.0,13.0,11.0,8.0,5.0,2.0,1.0,2.0,5.0,8.0,10.0,12.0], precip:[15,12,10,10,10,8,8,8,8,10,10,12], type:"温带荒漠（温带大陆性干旱型）"},
+  {name:"拉萨", temp:[0.0,2.0,6.0,9.0,13.0,17.0,16.0,15.0,13.0,9.0,3.0,0.0], precip:[1,1,2,5,27,73,120,140,60,10,1,1], type:"高原山地气候"}
+];
+
+/* ---------- 3. 模式图色块数据 ---------- */
+const CLIMATE_BLOCKS = [
+  /* 北半球——大陆西岸 */
+  {name:"冰原气候", family:"cold", col:"ALL", top:90, bottom:80, mirror:true,
+   cause:"终年受极地高压控制，酷寒干燥，降水稀少。"},
+  {name:"苔原气候", family:"cold", col:"ALL", top:80, bottom:70, mirror:true,
+   cause:"纬度高、太阳辐射弱，最热月均温低于 10 ℃，只能生长苔藓地衣。"},
+
+  {name:"亚寒带针叶林气候", family:"cold", col:"W", top:70, bottom:60, mirror:false,
+   cause:"受极地大陆气团控制，冬季漫长严寒，夏季短促温和。"},
+  {name:"温带海洋性气候", family:"temperate", col:"W", top:60, bottom:40, mirror:true,
+   cause:"终年受西风带控制，海洋水汽充足，全年温和多雨。"},
+  {name:"地中海气候", family:"subtropical", col:"W", top:40, bottom:30, mirror:true,
+   cause:"夏季受副热带高压控制炎热干燥，冬季受西风带控制温和多雨。"},
+  {name:"热带沙漠气候", family:"tropical", col:"W", top:30, bottom:20, mirror:true,
+   cause:"受副热带高压或信风带控制，气流下沉，全年炎热干燥。"},
+  {name:"热带草原气候", family:"tropical", col:"W", top:20, bottom:10, mirror:true,
+   cause:"赤道低压带与信风带交替控制，干湿季分明。"},
+  {name:"热带雨林气候", family:"tropical", col:"W", top:10, bottom:0, mirror:true,
+   cause:"终年受赤道低压带控制，盛行上升气流，全年高温多雨。"},
+
+  /* 北半球——大陆内部 */
+  {name:"亚寒带针叶林气候", family:"cold", col:"C", top:70, bottom:55, mirror:false,
+   cause:"深居内陆，受极地大陆气团控制，冬季严寒漫长。"},
+  {name:"温带大陆性气候", family:"temperate", col:"C", top:55, bottom:40, mirror:true,
+   cause:"深居内陆、距海远，海洋水汽难以到达，冬冷夏热、降水少。"},
+  {name:"高原山地气候", family:"other", col:"C", top:40, bottom:30, mirror:false,
+   cause:"海拔高，气温随高度递减，垂直地带性显著，日较差大。"},
+  {name:"热带沙漠气候", family:"tropical", col:"C", top:30, bottom:20, mirror:true,
+   cause:"常年受副热带高压控制，盛行下沉气流，炎热干燥。"},
+  {name:"热带草原气候", family:"tropical", col:"C", top:20, bottom:10, mirror:true,
+   cause:"赤道低压带与信风带交替控制，干湿季分明。"},
+  {name:"热带雨林气候", family:"tropical", col:"C", top:10, bottom:0, mirror:false,
+   cause:"终年受赤道低压带控制，全年高温多雨。"},
+
+  /* 北半球——大陆东岸 */
+  {name:"亚寒带针叶林气候", family:"cold", col:"E", top:70, bottom:55, mirror:false,
+   cause:"纬度高，受极地大陆气团控制，冬季寒冷漫长。"},
+  {name:"温带季风气候", family:"temperate", col:"E", top:55, bottom:40, mirror:false,
+   cause:"海陆热力性质差异显著，冬季寒冷干燥，夏季高温多雨。"},
+  {name:"亚热带季风（湿润）气候", family:"subtropical", col:"E", top:40, bottom:25, mirror:true,
+   cause:"海陆热力性质差异，夏季东南季风带来充沛降水，冬季温和少雨。"},
+  {name:"热带季风气候", family:"tropical", col:"E", top:25, bottom:10, mirror:false,
+   cause:"气压带风带季节移动，夏季西南季风带来大量降水，冬季东北季风干燥。"},
+  {name:"热带雨林气候", family:"tropical", col:"E", top:10, bottom:0, mirror:true,
+   cause:"终年高温多雨，受赤道低压带和海洋影响显著。"},
+
+  /* 南半球补充（仅示意） */
+  {name:"热带草原气候", family:"tropical", col:"E", top:-10, bottom:-25, mirror:false,
+   cause:"南半球低纬东岸，受赤道低压与信风交替控制，干湿季分明。"},
+  {name:"温带大陆性气候", family:"temperate", col:"C", top:-30, bottom:-40, mirror:false,
+   cause:"南半球中纬内陆，距海远，降水少，气温年较差较大。"}
+];
+
+const FAMILY_COLORS = {
+  tropical:   {fill:"#f8c3a6", stroke:"#e59a72", text:"#7c2d12"},
+  subtropical:{fill:"#f8e3a3", stroke:"#dfc05a", text:"#6b4a00"},
+  temperate:  {fill:"#bfe3c4", stroke:"#8fc79a", text:"#14532d"},
+  cold:       {fill:"#cdc7ee", stroke:"#a9a1dd", text:"#312e81"},
+  other:      {fill:"#dbe2ea", stroke:"#b8c2cf", text:"#334155"}
+};
+
+const COLS = {
+  W:{x:118, w:264, label:"大陆西岸"},
+  C:{x:398, w:264, label:"大陆内部"},
+  E:{x:678, w:264, label:"大陆东岸"},
+  ALL:{x:118, w:824, label:"全域"}
+};
+
+/* ---------- 4. 气候类型速查表 ---------- */
+const CLIMATE_TABLE = [
+  {heat:"热带", name:"热带雨林气候",
+   distribution:"赤道附近，南北纬 10° 之间",
+   cause:"终年受赤道低压带控制，盛行上升气流",
+   feature:"全年高温多雨，年均温约 26 ℃，年降水量 2000 mm 以上",
+   regions:"亚马孙平原、刚果盆地、马来群岛",
+   confuse:"与热带季风相比：全年降水均匀，无明显干季"},
+  {heat:"热带", name:"热带草原气候",
+   distribution:"南北纬 10°—20° 之间",
+   cause:"赤道低压带与信风带交替控制",
+   feature:"全年高温，干湿季分明，年降水量 750—1000 mm",
+   regions:"东非高原、南非高原、巴西高原",
+   confuse:"与热带季风相比：雨季较短、降水量较少"},
+  {heat:"热带", name:"热带季风气候",
+   distribution:"南北纬 10°—25° 的大陆东岸",
+   cause:"气压带风带季节移动，叠加海陆热力性质差异",
+   feature:"全年高温，旱雨季分明，雨季集中在 6—9 月，年降水量 1500—2000 mm",
+   regions:"印度半岛、中南半岛",
+   confuse:"与热带草原相比：降水更集中、总量更大"},
+  {heat:"热带", name:"热带沙漠气候",
+   distribution:"南北回归线附近的大陆内部和西岸",
+   cause:"受副热带高压或信风带控制，气流下沉",
+   feature:"全年炎热干燥，年降水量不足 250 mm",
+   regions:"撒哈拉沙漠、阿拉伯半岛、澳大利亚中西部",
+   confuse:"与温带大陆性干旱区相比：气温年较差较小"},
+  {heat:"亚热带", name:"亚热带季风气候",
+   distribution:"南北纬 25°—35° 的大陆东岸",
+   cause:"海陆热力性质差异显著",
+   feature:"夏季高温多雨，冬季温和少雨，最冷月均温 0—15 ℃",
+   regions:"我国秦岭—淮河以南、美国东南部",
+   confuse:"与温带季风以最冷月 0 ℃ 为界"},
+  {heat:"亚热带", name:"地中海气候",
+   distribution:"南北纬 30°—40° 的大陆西岸",
+   cause:"副热带高压与西风带交替控制",
+   feature:"夏季炎热干燥，冬季温和多雨，雨热不同期",
+   regions:"地中海沿岸、美国加利福尼亚、智利中部",
+   confuse:"唯一“雨热不同期”的气候类型"},
+  {heat:"温带", name:"温带海洋性气候",
+   distribution:"南北纬 40°—60° 的大陆西岸",
+   cause:"终年受西风带控制，沿岸暖流增温增湿",
+   feature:"全年温和湿润，最冷月均温 0 ℃ 以上，气温年较差小",
+   regions:"西欧、新西兰、智利南部",
+   confuse:"与温带大陆性相比：年较差小、降水均匀"},
+  {heat:"温带", name:"温带季风气候",
+   distribution:"南北纬 35°—55° 的大陆东岸",
+   cause:"海陆热力性质差异显著",
+   feature:"夏季高温多雨，冬季寒冷干燥，最冷月均温 0 ℃ 以下",
+   regions:"我国华北和东北、朝鲜半岛",
+   confuse:"与亚热带季风以最冷月 0 ℃ 为界"},
+  {heat:"温带", name:"温带大陆性气候",
+   distribution:"南北纬 40°—60° 的大陆内部",
+   cause:"深居内陆，距海远，海洋水汽难以到达",
+   feature:"冬冷夏热，气温年较差大，降水少且集中于夏季",
+   regions:"亚欧大陆内部、北美大陆中部",
+   confuse:"与温带海洋性相比：年较差大、降水少"},
+  {heat:"寒带", name:"亚寒带针叶林气候",
+   distribution:"北纬 50°—70°",
+   cause:"受极地大陆气团控制，纬度高",
+   feature:"冬季漫长严寒，夏季短促温暖，降水较少",
+   regions:"俄罗斯西伯利亚、加拿大北部",
+   confuse:"与苔原以最热月 10 ℃ 为界"},
+  {heat:"寒带", name:"苔原气候",
+   distribution:"北半球高纬，北纬 70°—80°",
+   cause:"纬度高，太阳辐射弱",
+   feature:"全年严寒，最热月均温 0—10 ℃，降水稀少",
+   regions:"北冰洋沿岸、格陵兰岛沿海",
+   confuse:"与冰原以最热月 0 ℃ 为界"},
+  {heat:"寒带", name:"冰原气候",
+   distribution:"南北极圈以内",
+   cause:"终年受极地高压控制",
+   feature:"全年酷寒，最热月均温低于 0 ℃，降水极少",
+   regions:"南极大陆、格陵兰岛内陆",
+   confuse:"与苔原以最热月 0 ℃ 为界"},
+  {heat:"其他", name:"高原山地气候",
+   distribution:"海拔较高的高原和山地",
+   cause:"海拔高，气温随高度递减，地形抬升影响降水",
+   feature:"气温低、日较差大，垂直自然带分异明显",
+   regions:"青藏高原、南美安第斯山脉",
+   confuse:"与同纬度平原相比：气温低、日较差大"}
+];
+
+/* ---------- 5. 高频易混对比 ---------- */
+const COMPARISONS = [
+  {
+    title:"① 热带季风 vs 热带草原",
+    left:{name:"热带季风气候", items:[
+      ["分布范围","10°—25° 大陆东岸"],
+      ["降水量级","1500—2000 mm，6—9 月高度集中"],
+      ["成因差异","气压带风带季节移动 + 海陆热力差异，西南季风"]
+    ]},
+    right:{name:"热带草原气候", items:[
+      ["分布范围","10°—20°，多在内陆与西岸"],
+      ["降水量级","750—1000 mm，湿季较短"],
+      ["成因差异","赤道低压带与信风带交替控制"]
+    ]}
+  },
+  {
+    title:"② 温带海洋性 vs 温带大陆性",
+    left:{name:"温带海洋性气候", items:[
+      ["年较差","小，通常小于 15 ℃"],
+      ["降水总量","600—1000 mm"],
+      ["季节分配","全年均匀，无明显干季"]
+    ]},
+    right:{name:"温带大陆性气候", items:[
+      ["年较差","大，常超过 30 ℃"],
+      ["降水总量","多在 400 mm 以下"],
+      ["季节分配","集中于夏季，冬季干旱"]
+    ]}
+  },
+  {
+    title:"③ 亚热带季风 vs 温带季风",
+    left:{name:"亚热带季风气候", items:[
+      ["最冷月均温","0 ℃ 以上"],
+      ["年降水量","800 mm 以上"],
+      ["分布纬度","25°—35° 大陆东岸"]
+    ]},
+    right:{name:"温带季风气候", items:[
+      ["最冷月均温","0 ℃ 以下"],
+      ["年降水量","400—800 mm"],
+      ["分布纬度","35°—55° 大陆东岸"]
+    ]}
+  }
+];
+
+/* ---------- 6. 季节区间标注规则 ---------- */
+const SEASON_RULES = {
+  "内罗毕":{seasons:[
+    {name:"湿季", months:[10,11,0,1,2,3], color:"#2ea043", hint:"受赤道低压控制，降水较多"},
+    {name:"干季", months:[4,5,6,7,8,9], color:"#d29922", hint:"受信风控制，降水稀少"}
+  ]},
+  "孟买":{seasons:[
+    {name:"雨季", months:[5,6,7,8], color:"#2ea043", hint:"受西南季风控制，降水集中"},
+    {name:"旱季", months:[9,10,11,0,1,2,3,4], color:"#d29922", hint:"受东北季风控制，干燥少雨"}
+  ]},
+  "罗马":{seasons:[
+    {name:"夏季炎热干燥", months:[5,6,7], color:"#d29922", hint:"受副热带高压控制，炎热干燥"},
+    {name:"冬季温和多雨", months:[10,11,0,1,2], color:"#1f6feb", hint:"受西风带控制，温和多雨"}
+  ]}
+};
+
+/* ---------- 7. 特殊地区 → 统计图站点映射 ---------- */
+const REGION_STATION = {
+  1:"塔马塔夫", 2:"内罗毕", 3:"开罗", 4:"里奥加耶戈斯", 5:"新加坡",
+  6:"新加坡", 7:"开罗", 8:"伦敦", 9:"拉萨", 10:"孟买"
+};
+
+const REGION_STATION_NOTE = {
+  3:"利马无独立站点，已载入同为热带沙漠气候的代表站点「开罗」。",
+  5:"凯恩斯无独立站点，已载入同为热带雨林气候的代表站点「新加坡」。",
+  6:"阿比让无独立站点，已载入同为热带雨林气候的代表站点「新加坡」。",
+  7:"艾丽斯斯普林斯无独立站点，已载入同为热带沙漠气候的代表站点「开罗」。",
+  8:"卑尔根无独立站点，已载入同为温带海洋性气候的代表站点「伦敦」。",
+  10:"顺化无独立站点，已载入同为热带季风气候的代表站点「孟买」。"
+};
+
+/* ---------- 8. 地形剖面小图配置 ---------- */
+const PROFILES = {
+  1:{sea:"right", peak:28, wind:"rtl"},
+  2:{sea:"right", peak:14, plateau:true, wind:"up"},
+  3:{sea:"left", peak:30, peakX:150, wind:"ltr", dry:true},
+  4:{sea:"left", peak:28, peakX:72, wind:"ltr", dry:true},
+  5:{sea:"right", peak:28, wind:"rtl"},
+  6:{sea:"left", peak:9, wind:"ltr"},
+  7:{sea:"right", peak:15, peakX:172, wind:"rtl", dry:true},
+  8:{sea:"left", peak:30, peakX:72, wind:"ltr"},
+  9:{sea:"left", peak:20, plateau:true, wind:"up"},
+  10:{sea:"right", peak:22, wind:"rtl", fog:true}
+};
+
+/* ============================================================
+   二、通用工具函数
+   ============================================================ */
+const $  = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.prototype.slice.call(root.querySelectorAll(sel));
+
+function esc(value){
+  return String(value).replace(/[&<>"']/g, function(ch){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch];
+  });
+}
+function clamp(v, min, max){ return Math.min(max, Math.max(min, v)); }
+function sum(arr){ return arr.reduce(function(a,b){ return a + b; }, 0); }
+function fixed1(v){ return Number(v).toFixed(1); }
+
+/* ============================================================
+   三、三步判读算法
+   返回：{ hemisphere, tempZone, precipType, climateName, ... }
+   ============================================================ */
+function classifyClimate(tempArr, precipArr){
+  const maxTemp = Math.max.apply(null, tempArr);
+  const minTemp = Math.min.apply(null, tempArr);
+  const maxIdx = tempArr.indexOf(maxTemp);
+  const annual = sum(precipArr);
+  const maxPrecip = Math.max.apply(null, precipArr);
+  const minPrecip = Math.min.apply(null, precipArr);
+
+  /* ① 以最高温月份定半球：6/7/8 月北半球，12/1/2 月南半球 */
+  let hemisphere;
+  if ([5, 6, 7].indexOf(maxIdx) !== -1) hemisphere = "北半球";
+  else if ([11, 0, 1].indexOf(maxIdx) !== -1) hemisphere = "南半球";
+  else hemisphere = "北半球";
+
+  const isSouth = hemisphere === "南半球";
+  const summerIdx = isSouth ? [11, 0, 1] : [5, 6, 7];
+  const winterIdx = isSouth ? [5, 6, 7] : [11, 0, 1];
+  const summerRain = summerIdx.reduce(function(s,i){ return s + precipArr[i]; }, 0);
+  const winterRain = winterIdx.reduce(function(s,i){ return s + precipArr[i]; }, 0);
+
+  /* ② 以最冷月均温定温度带 */
+  let tempZone;
+  if (maxTemp < 10) tempZone = "寒带";                 // 最热月不足 10 ℃
+  else if (minTemp >= 15) tempZone = "热带";           // 最冷月 ≥ 15 ℃
+  else if (minTemp >= 0) tempZone = "亚热带";          // 最冷月 0—15 ℃
+  else if (minTemp >= -15) tempZone = "温带";          // 最冷月 −15—0 ℃
+  else tempZone = "寒带";
+
+  /* ③ 以年降水量与季节分配定降水型 */
+  let precipType;
+  if (annual < 250) precipType = "少雨型";
+  else if (minPrecip >= 40) precipType = "年雨型";
+  else if (summerRain > winterRain * 1.8) precipType = "夏雨型";
+  else if (winterRain > summerRain * 1.5) precipType = "冬雨型";
+  else precipType = "年雨型";
+
+  /* 综合定型（先处理高原、温带荒漠等特殊情形） */
+  let climateName;
+  if (maxTemp <= 18 && minTemp <= 2 && annual >= 300 && annual < 800){
+    climateName = "高原山地气候";
+  } else if (annual < 250 && maxTemp < 18){
+    climateName = "温带大陆性气候";                    // 温带荒漠，如巴塔哥尼亚
+  } else if (annual < 250 && maxTemp >= 18 && minTemp >= 8){
+    climateName = "热带沙漠气候";
+  } else if (tempZone === "寒带"){
+    climateName = maxTemp <= 0 ? "冰原气候" : "苔原气候";
+  } else if (tempZone === "热带"){
+    if (minPrecip >= 60 && annual >= 1500) climateName = "热带雨林气候";
+    else if (maxPrecip >= 300) climateName = "热带季风气候";
+    else if (annual >= 600) climateName = "热带草原气候";
+    else climateName = "热带沙漠气候";
+  } else if (tempZone === "亚热带"){
+    if (precipType === "冬雨型") climateName = "地中海气候";
+    else if (precipType === "年雨型" && (maxTemp - minTemp) < 15) climateName = "温带海洋性气候";
+    else if (precipType === "少雨型") climateName = "热带沙漠气候";
+    else climateName = "亚热带季风气候";
+  } else if (tempZone === "温带"){
+    if (precipType === "少雨型") climateName = "温带大陆性气候";
+    else if (precipType === "年雨型" || (maxTemp - minTemp) < 15) climateName = "温带海洋性气候";
+    else climateName = "温带季风气候";
+  } else {
+    climateName = "温带大陆性气候";
+  }
+
+  return {
+    hemisphere: hemisphere,
+    tempZone: tempZone,
+    precipType: precipType,
+    climateName: climateName,
+    maxMonth: maxIdx + 1,
+    minTemp: minTemp,
+    maxTemp: maxTemp,
+    annual: annual
+  };
+}
+
+/* ============================================================
+   四、页面引用与 Tab 切换
+   ============================================================ */
+const dom = {
+  climateMap: $("#climateMap"),
+  mapTooltip: $("#mapTooltip"),
+  blockInfo: $("#blockInfo"),
+  worldMap: $("#worldMap"),
+  drawer: $("#specialDrawer"),
+  drawerOverlay: $("#drawerOverlay"),
+  drawerTitle: $("#drawerTitle"),
+  drawerBody: $("#drawerBody"),
+  drawerClose: $("#drawerClose")
+};
+
+function switchTab(tabId){
+  $$(".nav-btn").forEach(function(btn){
+    const on = btn.dataset.tab === tabId;
+    btn.classList.toggle("active", on);
+    btn.setAttribute("aria-selected", on ? "true" : "false");
+    btn.tabIndex = on ? 0 : -1;
+  });
+  $$(".panel").forEach(function(panel){
+    panel.classList.toggle("active", panel.id === "panel-" + tabId);
+  });
+
+  /* 统计图在隐藏状态下尺寸为 0，切换后再按实际宽度重绘 */
+  if (tabId === "chart"){
+    requestAnimationFrame(function(){
+      resizeChartCanvas();
+      drawClimateChart();
+      resizeQuizCanvas();
+      drawQuizChart();
+    });
+  }
+}
+
+/* ============================================================
+   五、模块一：全球气候分布模式图
+   ============================================================ */
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function svgEl(tag, attrs, text){
+  const node = document.createElementNS(SVG_NS, tag);
+  if (attrs){
+    Object.keys(attrs).forEach(function(key){
+      node.setAttribute(key, attrs[key]);
+    });
+  }
+  if (text !== undefined && text !== null) node.textContent = text;
+  return node;
+}
+
+/* 纬度 → 纵坐标：90°N 在 y=70，90°S 在 y=790 */
+function yOf(lat){ return 70 + (90 - lat) * 4; }
+
+function drawClimateBlock(group, block, latTop, latBottom, colKey, ariaCol){
+  const col = COLS[colKey];
+  const y1 = yOf(latTop);
+  const y2 = yOf(latBottom);
+  const x = col.x + 5;
+  const w = col.w - 10;
+  const y = y1 + 2;
+  const h = Math.max(18, y2 - y1 - 4);
+  const color = FAMILY_COLORS[block.family] || FAMILY_COLORS.other;
+
+  const rect = svgEl("rect", {
+    x: x, y: y, width: w, height: h, rx: 8,
+    fill: color.fill, stroke: color.stroke, "stroke-width": 1.2,
+    "class": "climate-block",
+    tabindex: "0",
+    role: "button",
+    "aria-label": block.name + "，" + ariaCol + "。" + block.cause,
+    "data-name": block.name,
+    "data-cause": block.cause
+  });
+  group.appendChild(rect);
+
+  const label = svgEl("text", {
+    x: x + w / 2,
+    y: y + h / 2 + 4,
+    "text-anchor": "middle",
+    "font-size": h < 28 ? 11 : 12.5,
+    "font-weight": 600,
+    fill: color.text,
+    "pointer-events": "none"
+  }, block.name);
+  group.appendChild(label);
+}
+
+function renderClimateMap(){
+  const svg = dom.climateMap;
+  if (!svg) return;
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  /* 背景绘图区 */
+  svg.appendChild(svgEl("rect", {
+    x: 110, y: 70, width: 840, height: 720, rx: 10,
+    fill: "#fbfcfe", stroke: "#dbe3ee", "stroke-width": 1.2
+  }));
+
+  /* 顶部三段式横轴标题 */
+  ["W", "C", "E"].forEach(function(key){
+    const col = COLS[key];
+    svg.appendChild(svgEl("text", {
+      x: col.x + col.w / 2, y: 44, "text-anchor": "middle",
+      "font-size": 16, "font-weight": 700, fill: "#0f2a55"
+    }, col.label));
+  });
+
+  /* 分栏竖线 */
+  [390, 670].forEach(function(x){
+    svg.appendChild(svgEl("line", {
+      x1: x, y1: 70, x2: x, y2: 790,
+      stroke: "#dce4ef", "stroke-width": 1
+    }));
+  });
+
+  /* 纬线与纬度标注 */
+  const latMarks = [
+    {lat: 90,    label: "90°N"},
+    {lat: 66.5,  label: "北极圈 66.5°N"},
+    {lat: 23.5,  label: "北回归线 23.5°N"},
+    {lat: 0,     label: "赤道 0°"},
+    {lat: -23.5, label: "南回归线 23.5°S"},
+    {lat: -66.5, label: "南极圈 66.5°S"},
+    {lat: -90,   label: "90°S"}
+  ];
+
+  latMarks.forEach(function(mark){
+    const y = yOf(mark.lat);
+    if (mark.lat !== 90 && mark.lat !== -90){
+      svg.appendChild(svgEl("line", {
+        x1: 110, y1: y, x2: 950, y2: y,
+        stroke: "#999999", "stroke-dasharray": "7 5",
+        "stroke-width": 1.1, opacity: 0.75
+      }));
+    }
+    svg.appendChild(svgEl("text", {
+      x: 100, y: y + 4, "text-anchor": "end",
+      "font-size": 12,
+      "font-weight": mark.lat === 0 ? 700 : 500,
+      fill: mark.lat === 0 ? "#475569" : "#64748b"
+    }, mark.label));
+  });
+
+  /* 色块层（画在虚线之上，保证文字清晰） */
+  const blockLayer = svgEl("g");
+  svg.appendChild(blockLayer);
+
+  CLIMATE_BLOCKS.forEach(function(block){
+    if (block.top > 0){
+      drawClimateBlock(blockLayer, block, block.top, block.bottom, block.col, COLS[block.col].label);
+      if (block.mirror){
+        drawClimateBlock(blockLayer, block, -block.bottom, -block.top, block.col, COLS[block.col].label + "（南半球）");
+      }
+    } else {
+      drawClimateBlock(blockLayer, block, block.top, block.bottom, block.col, COLS[block.col].label + "（南半球）");
+    }
+  });
+
+  /* 底部说明 */
+  svg.appendChild(svgEl("text", {
+    x: 530, y: 826, "text-anchor": "middle",
+    "font-size": 11, fill: "#94a3b8"
+  }, "南半球同纬度气候带作对称示意；高原山地属垂直地带性，不呈明显纬度带状"));
+
+  bindClimateMapEvents(svg);
+}
+
+function showMapTooltip(node){
+  const tip = dom.mapTooltip;
+  const wrap = node.ownerSVGElement && node.ownerSVGElement.parentElement;
+  if (!tip || !wrap) return;
+
+  const r = node.getBoundingClientRect();
+  const wr = wrap.getBoundingClientRect();
+  tip.textContent = node.getAttribute("data-cause") || "";
+  tip.classList.add("show");
+
+  let left = r.left - wr.left + r.width / 2;
+  left = clamp(left, 140, Math.max(140, wr.width - 140));
+  let top = r.top - wr.top;
+  top = Math.max(66, top);
+
+  tip.style.left = left + "px";
+  tip.style.top = top + "px";
+}
+
+function hideMapTooltip(){
+  if (dom.mapTooltip) dom.mapTooltip.classList.remove("show");
+}
+
+function selectClimateBlock(node){
+  const name = node.getAttribute("data-name") || "";
+  const cause = node.getAttribute("data-cause") || "";
+  if (dom.blockInfo){
+    dom.blockInfo.innerHTML = "<b>" + esc(name) + "</b> · " + esc(cause);
+  }
+}
+
+function bindClimateMapEvents(svg){
+  svg.addEventListener("mouseover", function(e){
+    const block = e.target.closest ? e.target.closest(".climate-block") : null;
+    if (block) showMapTooltip(block);
+  });
+  svg.addEventListener("mouseleave", hideMapTooltip);
+  svg.addEventListener("mouseout", function(e){
+    if (e.target.classList && e.target.classList.contains("climate-block")) hideMapTooltip();
+  });
+  svg.addEventListener("focusin", function(e){
+    if (e.target.classList && e.target.classList.contains("climate-block")) showMapTooltip(e.target);
+  });
+  svg.addEventListener("focusout", hideMapTooltip);
+  svg.addEventListener("click", function(e){
+    const block = e.target.closest ? e.target.closest(".climate-block") : null;
+    if (block) selectClimateBlock(block);
+  });
+  svg.addEventListener("keydown", function(e){
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const block = e.target.closest ? e.target.closest(".climate-block") : null;
+    if (block){
+      e.preventDefault();
+      selectClimateBlock(block);
+    }
+  });
+}
+
+/* ============================================================
+   六、模块二：世界经纬网格底图与特殊地区标记
+   ============================================================ */
+const MARKER_COORDS = {
+  1:[49, -18],    /* 塔马塔夫 */
+  2:[37, -1],     /* 内罗毕 */
+  3:[-77, -12],   /* 利马 */
+  4:[-70, -52],   /* 里奥加耶戈斯 */
+  5:[146, -17],   /* 凯恩斯 */
+  6:[-4, 5],      /* 阿比让 */
+  7:[134, -24],   /* 艾丽斯斯普林斯 */
+  8:[5, 60],      /* 卑尔根 */
+  9:[91, 30],     /* 拉萨 */
+  10:[108, 16]    /* 顺化 */
+};
+
+const CONTINENTS = [
+  {
+    name:"北美洲", label:[-100, 50],
+    points:[[-168,65],[-155,71],[-130,70],[-110,73],[-90,72],[-70,62],[-55,50],[-65,45],[-70,42],[-75,35],[-81,26],[-90,20],[-100,18],[-110,24],[-118,32],[-125,40],[-125,49],[-135,58],[-150,60],[-168,55]]
+  },
+  {
+    name:"南美洲", label:[-60, -20],
+    points:[[-80,9],[-70,12],[-60,10],[-50,2],[-35,-6],[-38,-22],[-48,-25],[-56,-35],[-65,-45],[-70,-55],[-75,-52],[-76,-40],[-80,-20],[-81,-4]]
+  },
+  {
+    name:"非洲", label:[18, 8],
+    points:[[-17,15],[-10,28],[0,36],[10,37],[25,32],[35,30],[43,12],[51,12],[42,-2],[40,-16],[35,-25],[25,-34],[18,-35],[12,-18],[9,3],[-5,5],[-12,10]]
+  },
+  {
+    name:"亚欧大陆", label:[90, 50],
+    points:[[-10,36],[-9,44],[-5,48],[2,51],[5,58],[10,64],[20,70],[30,71],[45,68],[60,70],[80,74],[100,76],[120,73],[140,72],[160,70],[180,66],[180,58],[160,56],[145,48],[140,43],[130,35],[122,24],[110,20],[105,10],[100,5],[95,10],[90,22],[80,8],[77,8],[72,20],[66,24],[60,25],[55,28],[50,30],[45,38],[35,36],[28,40],[22,40],[14,38],[8,44],[3,43],[-4,36]]
+  },
+  {
+    name:"大洋洲", label:[133, -24],
+    points:[[113,-22],[114,-34],[129,-32],[138,-35],[147,-38],[153,-28],[146,-17],[138,-12],[130,-11],[122,-17]]
+  },
+  {
+    name:"南极洲", label:[0, -78],
+    points:[[-180,-64],[-120,-70],[-60,-65],[0,-70],[60,-66],[120,-70],[180,-64],[180,-90],[-180,-90]]
+  },
+  {
+    name:"格陵兰岛", label:[-38, 72],
+    points:[[-45,60],[-20,70],[-20,82],[-45,83],[-58,75],[-55,65]]
+  }
+];
+
+function project(lon, lat){
+  return {
+    x: (lon + 180) / 360 * 1000,
+    y: (90 - lat) / 180 * 520
+  };
+}
+
+function renderWorldMap(){
+  const svg = dom.worldMap;
+  if (!svg) return;
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  /* 海洋背景 */
+  svg.appendChild(svgEl("rect", {x:0, y:0, width:1000, height:520, fill:"#eaf3fb"}));
+
+  /* 经纬网 */
+  for (let lon = -180; lon <= 180; lon += 30){
+    const p1 = project(lon, 90);
+    const p2 = project(lon, -90);
+    svg.appendChild(svgEl("line", {
+      x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y,
+      stroke:"#d6e4f1", "stroke-width":1
+    }));
+  }
+  for (let lat = -60; lat <= 60; lat += 30){
+    const p1 = project(-180, lat);
+    const p2 = project(180, lat);
+    svg.appendChild(svgEl("line", {
+      x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y,
+      stroke:"#d6e4f1", "stroke-width":1
+    }));
+  }
+
+  /* 赤道、回归线、极圈：虚线强调 */
+  [
+    {lat:0, label:"赤道"},
+    {lat:23.5, label:"北回归线"},
+    {lat:-23.5, label:"南回归线"},
+    {lat:66.5, label:"北极圈"},
+    {lat:-66.5, label:"南极圈"}
+  ].forEach(function(item){
+    const y = project(0, item.lat).y;
+    svg.appendChild(svgEl("line", {
+      x1:0, y1:y, x2:1000, y2:y,
+      stroke:"#8fa3b8", "stroke-dasharray":"6 4", "stroke-width":1,
+      opacity: item.lat === 0 ? 0.9 : 0.65
+    }));
+    svg.appendChild(svgEl("text", {
+      x:8, y:y - 4, "font-size":9.5, fill:"#7c8ea3"
+    }, item.label));
+  });
+
+  /* 经度标注 */
+  [-180,-120,-60,0,60,120,180].forEach(function(lon){
+    const p = project(lon, 88);
+    const txt = lon === 0 ? "0°" : (Math.abs(lon) + "°" + (lon > 0 ? "E" : "W"));
+    svg.appendChild(svgEl("text", {
+      x:p.x, y:12, "text-anchor": lon === -180 ? "start" : (lon === 180 ? "end" : "middle"),
+      "font-size":9.5, fill:"#8fa3b8"
+    }, txt));
+  });
+
+  /* 大陆近似多边形 */
+  CONTINENTS.forEach(function(continent){
+    const d = continent.points.map(function(pt, index){
+      const p = project(pt[0], pt[1]);
+      return (index === 0 ? "M" : "L") + p.x.toFixed(1) + " " + p.y.toFixed(1);
+    }).join(" ") + " Z";
+    svg.appendChild(svgEl("path", {
+      d:d, fill:"#e6ece5", stroke:"#c4cfc7", "stroke-width":1
+    }));
+    const lp = project(continent.label[0], continent.label[1]);
+    svg.appendChild(svgEl("text", {
+      x:lp.x, y:lp.y, "text-anchor":"middle",
+      "font-size":10.5, fill:"#94a39b", "pointer-events":"none"
+    }, continent.name));
+  });
+
+  /* 特殊地区标记点 */
+  const markerLayer = svgEl("g");
+  svg.appendChild(markerLayer);
+
+  SPECIAL_REGIONS.forEach(function(region){
+    const coord = MARKER_COORDS[region.id];
+    if (!coord) return;
+    const p = project(coord[0], coord[1]);
+
+    const g = svgEl("g", {
+      "class":"marker",
+      transform:"translate(" + p.x.toFixed(1) + "," + p.y.toFixed(1) + ")",
+      tabindex:"0",
+      role:"button",
+      "aria-label": region.id + ". " + region.name + "，" + region.climate + "，按 Enter 查看知识卡片",
+      "data-id": String(region.id)
+    });
+    g.appendChild(svgEl("circle", {"class":"pulse", r:10, cx:0, cy:0}));
+    g.appendChild(svgEl("circle", {"class":"pin", r:9.2, cx:0, cy:0}));
+    g.appendChild(svgEl("text", {x:0, y:3.4, "text-anchor":"middle"}, String(region.id)));
+    g.appendChild(svgEl("title", {}, region.name + "｜" + region.climate));
+    markerLayer.appendChild(g);
+  });
+
+  bindWorldMapEvents(svg);
+}
+
+function bindWorldMapEvents(svg){
+  function openFromTarget(target){
+    const marker = target.closest ? target.closest(".marker") : null;
+    if (marker) openDrawer(Number(marker.getAttribute("data-id")));
+  }
+  svg.addEventListener("click", function(e){ openFromTarget(e.target); });
+  svg.addEventListener("keydown", function(e){
+    if (e.key === "Enter" || e.key === " "){
+      const marker = e.target.closest ? e.target.closest(".marker") : null;
+      if (marker){
+        e.preventDefault();
+        openDrawer(Number(marker.getAttribute("data-id")));
+      }
+    }
+  });
+}
+
+/* ---------- 抽屉与知识卡片 ---------- */
+let lastFocusedElement = null;
+
+function openDrawer(regionId){
+  const region = SPECIAL_REGIONS.find(function(item){ return item.id === regionId; });
+  if (!region) return;
+
+  lastFocusedElement = document.activeElement;
+  renderSpecialCard(regionId);
+
+  dom.drawer.classList.add("open");
+  dom.drawerOverlay.classList.add("open");
+  dom.drawer.setAttribute("aria-hidden", "false");
+  dom.drawerOverlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("no-scroll");
+
+  setTimeout(function(){ dom.drawerClose.focus(); }, 60);
+}
+
+function closeDrawer(){
+  dom.drawer.classList.remove("open");
+  dom.drawerOverlay.classList.remove("open");
+  dom.drawer.setAttribute("aria-hidden", "true");
+  dom.drawerOverlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("no-scroll");
+
+  if (lastFocusedElement && typeof lastFocusedElement.focus === "function"){
+    lastFocusedElement.focus();
+  }
+}
+
+/* 生成 40px 高的“海洋—山地—内陆”剖面示意图 */
+function buildProfileSVG(id){
+  const cfg = PROFILES[id] || {sea:"left", peak:20, wind:"ltr"};
+  const seaLeft = cfg.sea !== "right";
+  const base = 34;
+  const peak = cfg.peak || 20;
+  const peakX = cfg.peakX || (seaLeft ? 100 : 140);
+
+  let landPath;
+  if (cfg.plateau){
+    const topY = base - peak;
+    landPath = seaLeft
+      ? "M60 " + base + " L60 " + topY + " L176 " + topY + " L196 " + base + " L240 " + base + " Z"
+      : "M0 " + base + " L44 " + base + " L64 " + topY + " L180 " + topY + " L180 " + base + " Z";
+  } else {
+    landPath = seaLeft
+      ? "M58 " + base + " L" + (peakX - 22) + " " + base + " L" + peakX + " " + (base - peak) + " L" + (peakX + 24) + " " + base + " L240 " + base + " Z"
+      : "M0 " + base + " L" + (peakX - 24) + " " + base + " L" + peakX + " " + (base - peak) + " L" + (peakX + 22) + " " + base + " L182 " + base + " Z";
+  }
+
+  const sea = seaLeft
+    ? '<rect x="0" y="23" width="62" height="17" fill="#cfe3ff"/><path d="M0 29 q10 -3 20 0 t20 0 t20 0" fill="none" stroke="#8fc3ff" stroke-width="1.2" opacity=".85"/>'
+    : '<rect x="178" y="23" width="62" height="17" fill="#cfe3ff"/><path d="M178 29 q10 -3 20 0 t20 0 t20 0" fill="none" stroke="#8fc3ff" stroke-width="1.2" opacity=".85"/>';
+
+  const markerId = "arrow-" + id;
+  let arrows = "";
+
+  if (cfg.wind === "up"){
+    arrows += '<line x1="120" y1="30" x2="120" y2="12" stroke="#1f6feb" stroke-width="1.5" marker-end="url(#' + markerId + ')"/>';
+    arrows += '<line x1="88" y1="30" x2="88" y2="16" stroke="#1f6feb" stroke-width="1.3" marker-end="url(#' + markerId + ')" opacity=".75"/>';
+    arrows += '<line x1="152" y1="30" x2="152" y2="16" stroke="#1f6feb" stroke-width="1.3" marker-end="url(#' + markerId + ')" opacity=".75"/>';
+  } else {
+    const startX = seaLeft ? 10 : 230;
+    const endX = seaLeft ? Math.max(68, peakX - 34) : Math.min(172, peakX + 34);
+    arrows += '<line x1="' + startX + '" y1="15" x2="' + endX + '" y2="15" stroke="#1f6feb" stroke-width="1.5" marker-end="url(#' + markerId + ')"/>';
+
+    const riseStartX = seaLeft ? peakX - 18 : peakX + 18;
+    const riseEndX = seaLeft ? peakX - 6 : peakX + 6;
+    arrows += '<line x1="' + riseStartX + '" y1="30" x2="' + riseEndX + '" y2="' + (base - peak + 7) + '" stroke="#1f6feb" stroke-width="1.2" marker-end="url(#' + markerId + ')" opacity=".8"/>';
+
+    if (cfg.dry){
+      const dryX = seaLeft ? Math.min(208, peakX + 40) : Math.max(32, peakX - 40);
+      arrows += '<line x1="' + dryX + '" y1="15" x2="' + (dryX + 12) + '" y2="30" stroke="#d29922" stroke-width="1.3" stroke-dasharray="3 2" marker-end="url(#' + markerId + ')"/>';
+    }
+  }
+
+  let fog = "";
+  if (cfg.fog){
+    fog = '<circle cx="176" cy="22" r="1.5" fill="#8fa3b8"/><circle cx="186" cy="18" r="1.2" fill="#8fa3b8"/><circle cx="166" cy="17" r="1.1" fill="#8fa3b8"/>';
+  }
+
+  let snow = "";
+  if (!cfg.plateau && peak >= 26){
+    snow = '<path d="M' + peakX + ' ' + (base - peak) + ' L' + (peakX - 7) + ' ' + (base - peak + 8) +
+           ' L' + peakX + ' ' + (base - peak + 5) + ' L' + (peakX + 7) + ' ' + (base - peak + 8) + ' Z" fill="#ffffff" opacity=".9"/>';
+  }
+
+  return '<svg viewBox="0 0 240 40" preserveAspectRatio="none" class="profile-svg" role="img" aria-label="地形剖面示意图：海洋、山地与内陆的相对高度及风向">' +
+    '<defs><marker id="' + markerId + '" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto">' +
+    '<path d="M0 0 L6 3 L0 6 Z" fill="#1f6feb"/></marker></defs>' +
+    '<rect width="240" height="40" fill="#f7f9fc"/>' +
+    sea +
+    '<path d="' + landPath + '" fill="' + (cfg.dry ? "#e9dfc6" : "#e3ead9") + '" stroke="#b9c7b4" stroke-width="1"/>' +
+    snow + arrows + fog +
+    '</svg>';
+}
+
+function renderSpecialCard(regionId){
+  const region = SPECIAL_REGIONS.find(function(item){ return item.id === regionId; });
+  if (!region) return;
+
+  dom.drawerTitle.textContent = region.name + " · " + region.climate;
+
+  const tagClass = region.type === "特殊天气现象" ? "weather" : "azonal";
+  const chainHtml = region.chain.map(function(step){
+    return '<span class="chain-step">' + esc(step) + '</span>';
+  }).join('<span class="chain-arrow" aria-hidden="true">→</span>');
+
+  const questionHtml =
+    '<p class="q">' + esc(region.question[0]) + '</p>' +
+    (region.question[1] ? '<p class="kw">' + esc(region.question[1]) + '</p>' : '');
+
+  dom.drawerBody.innerHTML =
+    '<div class="card-tag-row">' +
+      '<span class="tag ' + tagClass + '">' + esc(region.type) + '</span>' +
+      '<span class="tag soft">' + esc(region.climate) + '</span>' +
+    '</div>' +
+
+    '<div class="field"><h4>地带性预期</h4><p>' + esc(region.expect) + '</p></div>' +
+    '<div class="field"><h4>实际气候</h4><p>' + esc(region.actual) + '</p></div>' +
+    '<div class="field"><h4>成因链条</h4><div class="chain">' + chainHtml + '</div></div>' +
+
+    '<div class="field"><h4>地形特征</h4>' +
+      '<p>' + esc(region.terrain) + '</p>' +
+      buildProfileSVG(region.id) +
+      '<div class="profile-key">实线箭头：风向 / 抬升　虚线箭头：下沉气流（雨影）</div>' +
+    '</div>' +
+
+    '<div class="field"><h4>高考设问</h4><div class="question-box">' + questionHtml + '</div></div>' +
+
+    '<button id="toChartBtn" class="btn btn-primary wide" data-region="' + region.id + '">' +
+      '查看该地气温降水图' +
+    '</button>';
+
+  const btn = $("#toChartBtn", dom.drawerBody);
+  if (btn){
+    btn.addEventListener("click", function(){ goRegionToChart(region.id); });
+  }
+}
+
+function goRegionToChart(regionId){
+  const stationName = REGION_STATION[regionId];
+  const note = REGION_STATION_NOTE[regionId] || "";
+  closeDrawer();
+  switchTab("chart");
+  if (stationName){
+    setTimeout(function(){ selectStationByName(stationName, note); }, 40);
+  }
+}
+
+/* 抽屉关闭事件 */
+if (dom.drawerClose){
+  dom.drawerClose.addEventListener("click", closeDrawer);
+}
+if (dom.drawerOverlay){
+  dom.drawerOverlay.addEventListener("click", closeDrawer);
+}
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape" && dom.drawer.classList.contains("open")) closeDrawer();
+});
+
+/* ============================================================
+   七、模块三：气温降水统计图（Canvas 2D）
+   ============================================================ */
+const chartCanvas = $("#climateCanvas");
+const stationSelect = $("#stationSelect");
+const chartNotice = $("#chartNotice");
+const playBtn = $("#playBtn");
+const monthSlider = $("#monthSlider");
+const monthLabel = $("#monthLabel");
+const monthTemp = $("#monthTemp");
+const monthPrecip = $("#monthPrecip");
+const seasonHint = $("#seasonHint");
+
+let chartCtx = null;
+let chartW = 0;
+let chartH = 0;
+let currentStationIndex = 0;
+let currentMonth = 0;
+let playing = false;
+let playRaf = null;
+let animHandle = null;
+let barProgress = new Array(12).fill(1);
+
+/* 高清适配 */
+function resizeChartCanvas(){
+  if (!chartCanvas) return;
+  const rect = chartCanvas.getBoundingClientRect();
+  if (rect.width < 20 || rect.height < 20) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  chartW = rect.width;
+  chartH = rect.height;
+  chartCanvas.width = Math.round(chartW * dpr);
+  chartCanvas.height = Math.round(chartH * dpr);
+  chartCtx = chartCanvas.getContext("2d");
+  chartCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function roundBar(ctx, x, y, w, h, r){
+  if (h <= 0) return;
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawClimateChart(){
+  if (!chartCanvas) return;
+  if (!chartCtx || chartW < 20) resizeChartCanvas();
+  if (!chartCtx || chartW < 20) return;
+
+  const ctx = chartCtx;
+  const st = STATIONS[currentStationIndex];
+  const cls = classifyClimate(st.temp, st.precip);
+  const annual = sum(st.precip);
+  const minT = Math.min.apply(null, st.temp);
+  const maxT = Math.max.apply(null, st.temp);
+
+  const pad = {l:56, r:62, t:58, b:42};
+  const plotW = Math.max(100, chartW - pad.l - pad.r);
+  const plotH = Math.max(100, chartH - pad.t - pad.b);
+  const baseY = pad.t + plotH;
+  const monthW = plotW / 12;
+  const xOf = function(m){ return pad.l + m * monthW; };
+  const yT = function(v){ return pad.t + (40 - v) / 80 * plotH; };
+  const yP = function(v){ return pad.t + (1 - v / 700) * plotH; };
+
+  ctx.clearRect(0, 0, chartW, chartH);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, chartW, chartH);
+
+  /* 季节半透明色带 */
+  const rule = SEASON_RULES[st.name];
+  let activeSeason = null;
+  if (rule){
+    rule.seasons.forEach(function(season){
+      if (season.months.indexOf(currentMonth) !== -1) activeSeason = season;
+    });
+    rule.seasons.forEach(function(season){
+      const active = season === activeSeason;
+      ctx.save();
+      ctx.globalAlpha = active ? 0.20 : 0.08;
+      ctx.fillStyle = season.color;
+      season.months.forEach(function(m){
+        ctx.fillRect(xOf(m), pad.t, monthW, plotH);
+      });
+      ctx.restore();
+    });
+  }
+
+  /* 当前月份竖向高亮 */
+  ctx.save();
+  ctx.fillStyle = "rgba(31,111,235,.055)";
+  ctx.fillRect(xOf(currentMonth), pad.t, monthW, plotH);
+  ctx.restore();
+
+  /* 背景网格 */
+  ctx.strokeStyle = "#e9eef6";
+  ctx.lineWidth = 1;
+  for (let t = -40; t <= 40; t += 10){
+    const y = yT(t);
+    ctx.beginPath();
+    ctx.moveTo(pad.l, y);
+    ctx.lineTo(pad.l + plotW, y);
+    ctx.stroke();
+  }
+  for (let m = 0; m <= 12; m++){
+    const x = xOf(m);
+    ctx.beginPath();
+    ctx.moveTo(x, pad.t);
+    ctx.lineTo(x, baseY);
+    ctx.stroke();
+  }
+
+  /* 0 ℃ 加粗虚线 */
+  ctx.save();
+  ctx.strokeStyle = "#94a3b8";
+  ctx.lineWidth = 1.8;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(pad.l, yT(0));
+  ctx.lineTo(pad.l + plotW, yT(0));
+  ctx.stroke();
+  ctx.restore();
+
+  /* 降水柱状图 */
+  const barGrad = ctx.createLinearGradient(0, pad.t, 0, baseY);
+  barGrad.addColorStop(0, "#5b9bf8");
+  barGrad.addColorStop(1, "#1f6feb");
+
+  for (let m = 0; m < 12; m++){
+    const value = st.precip[m];
+    const progress = typeof barProgress[m] === "number" ? barProgress[m] : 1;
+    const h = value / 700 * plotH * progress;
+    if (h <= 0.4) continue;
+    const bw = monthW * 0.48;
+    const bx = xOf(m) + (monthW - bw) / 2;
+    ctx.fillStyle = barGrad;
+    roundBar(ctx, bx, baseY - h, bw, h, Math.min(4, bw / 2));
+  }
+
+  /* 气温折线 */
+  ctx.strokeStyle = "#d64545";
+  ctx.lineWidth = 2.4;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  for (let m = 0; m < 12; m++){
+    const x = xOf(m) + monthW / 2;
+    const y = yT(st.temp[m]);
+    if (m === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  /* 折线圆点与数值 */
+  for (let m = 0; m < 12; m++){
+    const x = xOf(m) + monthW / 2;
+    const y = yT(st.temp[m]);
+    const isCurrent = m === currentMonth;
+    const r = isCurrent ? 4.2 + 2.2 * (barProgress[m] || 0) : 3.7;
+
+    ctx.beginPath();
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#d64545";
+    ctx.lineWidth = 2;
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    if (isCurrent){
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(214,69,69,.25)";
+      ctx.lineWidth = 3;
+      ctx.arc(x, y, r + 3, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    if (plotW > 520){
+      ctx.fillStyle = "#b42318";
+      ctx.font = isCurrent ? "700 10px system-ui, sans-serif" : "10px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(fixed1(st.temp[m]), x, y - r - 5);
+    }
+  }
+
+  /* 季节名称标注 */
+  if (rule){
+    rule.seasons.forEach(function(season){
+      const midMonth = season.months[Math.floor(season.months.length / 2)];
+      ctx.fillStyle = season.color;
+      ctx.font = "700 10.5px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(season.name, xOf(midMonth) + monthW / 2, pad.t + 14);
+    });
+  }
+
+  /* 坐标轴 */
+  ctx.strokeStyle = "#cbd5e1";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.l, pad.t);
+  ctx.lineTo(pad.l, baseY);
+  ctx.lineTo(pad.l + plotW, baseY);
+  ctx.stroke();
+
+  ctx.fillStyle = "#64748b";
+  ctx.font = "11px system-ui, sans-serif";
+  ctx.textAlign = "right";
+  for (let t = -40; t <= 40; t += 10){
+    const y = yT(t);
+    ctx.fillText(t + "℃", pad.l - 8, y + 4);
+  }
+  ctx.textAlign = "right";
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "10px system-ui, sans-serif";
+  ctx.fillText("气温(℃)", pad.l - 8, pad.t - 8);
+
+  ctx.textAlign = "left";
+  for (let p = 0; p <= 700; p += 100){
+    const y = yP(p);
+    ctx.fillStyle = "#64748b";
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillText(String(p), pad.l + plotW + 8, y + 4);
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.beginPath();
+    ctx.moveTo(pad.l + plotW, y);
+    ctx.lineTo(pad.l + plotW + 4, y);
+    ctx.stroke();
+  }
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "10px system-ui, sans-serif";
+  ctx.fillText("降水(mm)", pad.l + plotW + 8, pad.t - 8);
+
+  ctx.fillStyle = "#64748b";
+  ctx.font = "11px system-ui, sans-serif";
+  ctx.textAlign = "center";
+  for (let m = 0; m < 12; m++){
+    ctx.fillText((m + 1) + "月", xOf(m) + monthW / 2, baseY + 19);
+  }
+
+  /* 左上角自动标注 */
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#0f2a55";
+  ctx.font = "700 13px system-ui, sans-serif";
+  ctx.fillText("气候类型：" + st.type + " ｜ " + cls.hemisphere, pad.l, 20);
+
+  ctx.fillStyle = "#64748b";
+  ctx.font = "11.5px system-ui, sans-serif";
+  ctx.fillText(
+    "年降水量 " + fixed1(annual) + " mm ｜ 最冷月 " + fixed1(minT) + " ℃ ｜ 最热月 " + fixed1(maxT) + " ℃",
+    pad.l, 38
+  );
+
+  ctx.textAlign = "right";
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "11px system-ui, sans-serif";
+  ctx.fillText("红线：气温　蓝柱：降水", chartW - 14, 20);
+
+  chartCanvas.setAttribute(
+    "aria-label",
+    st.name + "气温降水图：" + st.type + "，" + cls.hemisphere +
+    "，年降水量" + fixed1(annual) + "毫米，最冷月" + fixed1(minT) + "摄氏度，最热月" + fixed1(maxT) + "摄氏度"
+  );
+}
+
+/* ---------- 时间轴与季节提示 ---------- */
+function updateMonthReadout(){
+  const st = STATIONS[currentStationIndex];
+  const t = st.temp[currentMonth];
+  const p = st.precip[currentMonth];
+
+  monthLabel.textContent = (currentMonth + 1) + " 月";
+  monthTemp.textContent = "气温 " + fixed1(t) + " ℃";
+  monthPrecip.textContent = "降水 " + fixed1(p) + " mm";
+  monthSlider.setAttribute("aria-valuetext", (currentMonth + 1) + "月，气温" + fixed1(t) + "摄氏度，降水" + fixed1(p) + "毫米");
+
+  let text = "";
+  const rule = SEASON_RULES[st.name];
+  if (rule){
+    let season = null;
+    rule.seasons.forEach(function(item){
+      if (item.months.indexOf(currentMonth) !== -1) season = item;
+    });
+    if (season){
+      text = "当前处于" + season.name + "，" + season.hint + "。";
+    } else {
+      text = "当前处于季节转换期：" + (currentMonth + 1) + " 月气温 " + fixed1(t) +
+             " ℃，降水 " + fixed1(p) + " mm。";
+    }
+  } else if (st.type.indexOf("热带雨林") !== -1){
+    text = "该地全年高温多雨，各月降水较均匀，属于年雨型。";
+  } else if (st.type.indexOf("沙漠") !== -1 || st.type.indexOf("荒漠") !== -1){
+    text = "该地全年降水稀少，属于少雨型；先看最冷月均温判断温度带，再结合纬度定位。";
+  } else if (st.type.indexOf("海洋性") !== -1){
+    text = "该地全年温和湿润，各月降水较均匀，气温年较差小。";
+  } else {
+    text = "当前 " + (currentMonth + 1) + " 月：气温 " + fixed1(t) + " ℃，降水 " + fixed1(p) + " mm。";
+  }
+  seasonHint.textContent = text;
+}
+
+function animateMonthBar(index){
+  cancelAnimationFrame(animHandle);
+  barProgress[index] = 0;
+  const start = performance.now();
+
+  function frame(now){
+    const progress = Math.min(1, (now - start) / 450);
+    barProgress[index] = 1 - Math.pow(1 - progress, 3);
+    drawClimateChart();
+    if (progress < 1) animHandle = requestAnimationFrame(frame);
+  }
+  animHandle = requestAnimationFrame(frame);
+}
+
+function animateAllBars(){
+  cancelAnimationFrame(animHandle);
+  barProgress = new Array(12).fill(0);
+  const start = performance.now();
+
+  function frame(now){
+    const progress = Math.min(1, (now - start) / 650);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    for (let i = 0; i < 12; i++) barProgress[i] = eased;
+    drawClimateChart();
+    if (progress < 1) animHandle = requestAnimationFrame(frame);
+  }
+  animHandle = requestAnimationFrame(frame);
+}
+
+function setMonth(m, animate){
+  currentMonth = clamp(Number(m), 0, 11);
+  monthSlider.value = String(currentMonth);
+  updateMonthReadout();
+  if (animate){
+    animateMonthBar(currentMonth);
+  } else {
+    barProgress[currentMonth] = 1;
+    drawClimateChart();
+  }
+}
+
+function stopPlayback(){
+  playing = false;
+  if (playRaf) cancelAnimationFrame(playRaf);
+  playRaf = null;
+  if (playBtn) playBtn.textContent = "▶ 播放";
+}
+
+function playTimeline(){
+  if (playing){
+    stopPlayback();
+    return;
+  }
+
+  playing = true;
+  playBtn.textContent = "⏸ 暂停";
+
+  let m = currentMonth >= 11 ? 0 : currentMonth;
+  setMonth(m, false);
+  animateMonthBar(m);
+
+  let acc = 0;
+  let last = performance.now();
+
+  function tick(now){
+    if (!playing) return;
+    acc += now - last;
+    last = now;
+
+    if (acc >= 780){
+      acc = 0;
+      if (m >= 11){
+        stopPlayback();
+        return;
+      }
+      m++;
+      setMonth(m, false);
+      animateMonthBar(m);
+    }
+    playRaf = requestAnimationFrame(tick);
+  }
+  playRaf = requestAnimationFrame(tick);
+}
+
+function selectStationByName(name, note){
+  const index = STATIONS.findIndex(function(item){ return item.name === name; });
+  if (index < 0) return;
+
+  stopPlayback();
+  currentStationIndex = index;
+  stationSelect.value = String(index);
+  chartNotice.textContent = note || "";
+  currentMonth = 0;
+  monthSlider.value = "0";
+  barProgress = new Array(12).fill(0);
+  updateMonthReadout();
+
+  requestAnimationFrame(function(){
+    resizeChartCanvas();
+    drawClimateChart();
+    animateAllBars();
+  });
+}
+
+function initStationSelect(){
+  STATIONS.forEach(function(st, index){
+    const option = document.createElement("option");
+    option.value = String(index);
+    option.textContent = st.name;
+    stationSelect.appendChild(option);
+  });
+  stationSelect.value = "0";
+}
+
+/* ============================================================
+   八、模块三右侧：判读练习
+   ============================================================ */
+const quizCanvas = $("#quizCanvas");
+const quizOptions = $("#quizOptions");
+const quizFeedback = $("#quizFeedback");
+const quizNext = $("#quizNext");
+
+let quizCtx = null;
+let quizW = 0;
+let quizH = 0;
+let quizStationIndex = 0;
+let quizAnswered = false;
+
+function resizeQuizCanvas(){
+  if (!quizCanvas) return;
+  const rect = quizCanvas.getBoundingClientRect();
+  if (rect.width < 20 || rect.height < 20) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  quizW = rect.width;
+  quizH = rect.height;
+  quizCanvas.width = Math.round(quizW * dpr);
+  quizCanvas.height = Math.round(quizH * dpr);
+  quizCtx = quizCanvas.getContext("2d");
+  quizCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function drawQuizChart(){
+  if (!quizCanvas) return;
+  if (!quizCtx || quizW < 20) resizeQuizCanvas();
+  if (!quizCtx || quizW < 20) return;
+
+  const ctx = quizCtx;
+  const st = STATIONS[quizStationIndex];
+  const pad = {l:16, r:16, t:14, b:22};
+  const pw = quizW - pad.l - pad.r;
+  const ph = quizH - pad.t - pad.b;
+  const bw = pw / 12;
+  const xOf = function(m){ return pad.l + m * bw; };
+  const yT = function(v){ return pad.t + (40 - v) / 80 * ph; };
+  const yP = function(v){ return pad.t + (1 - v / 700) * ph; };
+
+  ctx.clearRect(0, 0, quizW, quizH);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, quizW, quizH);
+
+  ctx.strokeStyle = "#eef2f8";
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++){
+    const y = pad.t + ph * i / 4;
+    ctx.beginPath();
+    ctx.moveTo(pad.l, y);
+    ctx.lineTo(pad.l + pw, y);
+    ctx.stroke();
+  }
+  for (let m = 0; m <= 12; m++){
+    const x = xOf(m);
+    ctx.beginPath();
+    ctx.moveTo(x, pad.t);
+    ctx.lineTo(x, pad.t + ph);
+    ctx.stroke();
+  }
+
+  const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + ph);
+  grad.addColorStop(0, "#7fb0fa");
+  grad.addColorStop(1, "#1f6feb");
+
+  for (let m = 0; m < 12; m++){
+    const h = st.precip[m] / 700 * ph;
+    if (h <= 0.4) continue;
+    ctx.fillStyle = grad;
+    ctx.fillRect(xOf(m) + bw * 0.26, pad.t + ph - h, bw * 0.48, h);
+  }
+
+  ctx.strokeStyle = "#d64545";
+  ctx.lineWidth = 2;
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  for (let m = 0; m < 12; m++){
+    const x = xOf(m) + bw / 2;
+    const y = yT(st.temp[m]);
+    if (m === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = "#ffffff";
+  ctx.strokeStyle = "#d64545";
+  ctx.lineWidth = 1.6;
+  for (let m = 0; m < 12; m++){
+    const x = xOf(m) + bw / 2;
+    const y = yT(st.temp[m]);
+    ctx.beginPath();
+    ctx.arc(x, y, 2.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "9px system-ui, sans-serif";
+  ctx.textAlign = "center";
+  [0, 3, 6, 9, 11].forEach(function(m){
+    ctx.fillText((m + 1) + "月", xOf(m) + bw / 2, pad.t + ph + 15);
+  });
+  ctx.textAlign = "left";
+  ctx.fillText("℃", 4, 10);
+  ctx.textAlign = "right";
+  ctx.fillText("mm", quizW - 4, 10);
+}
+
+function newQuiz(){
+  quizAnswered = false;
+  quizStationIndex = Math.floor(Math.random() * STATIONS.length);
+
+  const st = STATIONS[quizStationIndex];
+  const cls = classifyClimate(st.temp, st.precip);
+  const correct = cls.climateName;
+
+  const pool = CLIMATE_TABLE
+    .map(function(item){ return item.name; })
+    .filter(function(name){ return name !== correct; });
+
+  for (let i = pool.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = pool[i];
+    pool[i] = pool[j];
+    pool[j] = temp;
+  }
+
+  const options = [correct].concat(pool.slice(0, 3));
+  for (let i = options.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = options[i];
+    options[i] = options[j];
+    options[j] = temp;
+  }
+
+  quizOptions.innerHTML = "";
+  options.forEach(function(name){
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "quiz-opt";
+    btn.textContent = name;
+    btn.setAttribute("aria-label", "选择 " + name);
+    btn.addEventListener("click", function(){
+      answerQuiz(btn, name, correct, st, cls);
+    });
+    quizOptions.appendChild(btn);
+  });
+
+  quizFeedback.innerHTML = "";
+  requestAnimationFrame(function(){
+    resizeQuizCanvas();
+    drawQuizChart();
+  });
+}
+
+function answerQuiz(btn, chosen, correct, station, cls){
+  if (quizAnswered) return;
+
+  if (chosen === correct){
+    quizAnswered = true;
+    btn.classList.add("correct");
+    quizFeedback.innerHTML =
+      '<div class="ok">✓ 回答正确：' + esc(correct) + '</div>' +
+      '<ol>' +
+        '<li>最高温出现在 ' + cls.maxMonth + ' 月，判断为' + esc(cls.hemisphere) + '。</li>' +
+        '<li>最冷月均温 ' + fixed1(cls.minTemp) + ' ℃，属于' + esc(cls.tempZone) + '。</li>' +
+        '<li>年降水量 ' + fixed1(cls.annual) + ' mm，降水类型为' + esc(cls.precipType) +
+          '，综合判断为' + esc(correct) + '。</li>' +
+      '</ol>';
+  } else {
+    btn.classList.add("wrong");
+    quizFeedback.innerHTML =
+      '<div class="bad">再想一想：先看最冷月均温，确定温度带；再看降水季节分配。</div>';
+  }
+}
+
+/* ============================================================
+   九、模块四：速查表与易混对比
+   ============================================================ */
+let currentHeatFilter = "全部";
+
+function renderClimateTable(){
+  const tbody = $("#climateTableBody");
+  if (!tbody) return;
+
+  const rows = CLIMATE_TABLE.filter(function(item){
+    return currentHeatFilter === "全部" || item.heat === currentHeatFilter;
+  });
+
+  tbody.innerHTML = rows.map(function(item){
+    return '<tr>' +
+      '<td>' + esc(item.name) + '</td>' +
+      '<td><span class="heat-badge heat-' + esc(item.heat) + '">' + esc(item.heat) + '</span></td>' +
+      '<td>' + esc(item.distribution) + '</td>' +
+      '<td>' + esc(item.cause) + '</td>' +
+      '<td>' + esc(item.feature) + '</td>' +
+      '<td>' + esc(item.regions) + '</td>' +
+      '<td>' + esc(item.confuse) + '</td>' +
+    '</tr>';
+  }).join("");
+}
+
+function renderComparisons(){
+  const grid = $("#compareGrid");
+  if (!grid) return;
+
+  grid.innerHTML = COMPARISONS.map(function(group){
+    function colHtml(col){
+      return '<div class="compare-col">' +
+        '<h5>' + esc(col.name) + '</h5>' +
+        '<dl>' + col.items.map(function(pair){
+          return '<dt>' + esc(pair[0]) + '</dt><dd>' + esc(pair[1]) + '</dd>';
+        }).join("") + '</dl>' +
+      '</div>';
+    }
+    return '<article class="card compare-card">' +
+      '<h4>' + esc(group.title) + '</h4>' +
+      '<div class="compare-cols">' + colHtml(group.left) + colHtml(group.right) + '</div>' +
+    '</article>';
+  }).join("");
+}
+
+/* ============================================================
+   十、事件绑定与初始化
+   ============================================================ */
+function init(){
+  renderClimateMap();
+  renderWorldMap();
+  initStationSelect();
+  renderClimateTable();
+  renderComparisons();
+  newQuiz();
+  updateMonthReadout();
+
+  /* 左侧 Tab */
+  const navButtons = $$(".nav-btn");
+  navButtons.forEach(function(btn, index){
+    btn.addEventListener("click", function(){ switchTab(btn.dataset.tab); });
+    btn.addEventListener("keydown", function(e){
+      if (["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].indexOf(e.key) === -1) return;
+      e.preventDefault();
+      const dir = (e.key === "ArrowRight" || e.key === "ArrowDown") ? 1 : -1;
+      const next = navButtons[(index + dir + navButtons.length) % navButtons.length];
+      next.focus();
+      switchTab(next.dataset.tab);
+    });
+  });
+
+  /* 站点选择 */
+  stationSelect.addEventListener("change", function(){
+    stopPlayback();
+    currentStationIndex = Number(stationSelect.value);
+    currentMonth = 0;
+    monthSlider.value = "0";
+    chartNotice.textContent = "";
+    barProgress = new Array(12).fill(0);
+    updateMonthReadout();
+    resizeChartCanvas();
+    animateAllBars();
+  });
+
+  /* 时间轴 */
+  monthSlider.addEventListener("input", function(){
+    if (playing) stopPlayback();
+    setMonth(Number(monthSlider.value), false);
+  });
+
+  /* 播放 */
+  playBtn.addEventListener("click", playTimeline);
+
+  /* 判读练习换题 */
+  quizNext.addEventListener("click", newQuiz);
+
+  /* 速查表筛选 */
+  $$(".filter-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      $$(".filter-btn").forEach(function(other){
+        const on = other === btn;
+        other.classList.toggle("active", on);
+        other.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      currentHeatFilter = btn.dataset.heat;
+      renderClimateTable();
+    });
+  });
+
+  /* 窗口缩放：200ms 防抖后重算 Canvas 尺寸 */
+  let resizeTimer = null;
+  window.addEventListener("resize", function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){
+      resizeChartCanvas();
+      drawClimateChart();
+      resizeQuizCanvas();
+      drawQuizChart();
+    }, 200);
+  });
+
+  /* 首帧绘制（统计图隐藏时自动跳过，切换 Tab 后补绘） */
+  requestAnimationFrame(function(){
+    resizeChartCanvas();
+    drawClimateChart();
+  });
+}
+
+init();
+</script>
+</body>
+</html>
